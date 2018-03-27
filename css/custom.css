@@ -1,0 +1,30 @@
+header {
+  top: 0;
+  position: sticky;
+  z-index: 9;
+}
+
+#editor-wrapper .controls,
+#display-wrapper .controls,
+#content > .controls {
+  bottom: 0px;
+  right: 0px;
+}
+
+#editor-wrapper .actual {
+  font-family: 'Courier New', Courier, monospace;
+  border: 1px solid;
+  overflow: hidden;
+}
+
+#display-wrapper .actual {
+  border: 1px dashed;
+  overflow: hidden;
+}
+
+.actual > *:first-child {
+  overflow: auto;
+  height: 100%;
+  width: 100%;
+  resize: none;
+}
