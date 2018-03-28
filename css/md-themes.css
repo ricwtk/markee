@@ -5,7 +5,6 @@
 }
 
 .md-default a {
-  /* background-color: #eeeeee; */
   color: inherit;
   text-decoration: none;
   border-bottom: 1px dashed;
@@ -18,11 +17,30 @@
 }
 
 .md-default table {
-  border-collapse: collapse;
+  /* border-collapse: collapse; */
 }
 
-.md-default thead {
-  border-bottom: 1px solid #dddddd;
+/* .md-default thead {
+  border-bottom: 2px solid #dddddd;
+} */
+
+
+.md-default thead tr {
+  background-color: #607D8B;
+  color: #ECEFF1;
+}
+
+.md-default tbody tr:nth-child(odd) {
+  background-color: #ECEFF1;
+}
+
+.md-default tbody tr:nth-child(even) {
+  background-color: #CFD8DC;
+}
+
+.md-default tbody tr:hover {
+  box-shadow: 0px 0px 2px 2px #607D8B;
+  z-index: 10;
 }
 
 .md-default td,

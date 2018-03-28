@@ -139,7 +139,7 @@ const guides = [
       +    "| first column      | second column | third column   | fourth column |" + "\n"
       +    "|-------------------|:--------------|:--------------:|--------------:|" + "\n"
       +    "| default alignment | aligned left  | aligned center | aligned right |" + "\n"
-      +    "| column 1          | column 2      | column 3       | column 4      |" + "\n"
+      +    "| column 1          | column 2      | column 3       | column 4      |" + "\n\n"
       +    "**Code:**\n\n"
       +    "```" + "\n"
       +    "| first column      | second column | third column   | fourth column |" + "\n"
