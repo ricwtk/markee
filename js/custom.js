@@ -245,7 +245,10 @@ new Vue({
   el: "#navbar",
   data: {
     guides: guides,
-    nguideshown: 3
+    nguideshown: 3,
+    fileDot: {
+      color: "#F44336" // red #8BC34A green
+    }
   },
   methods: {
     clickUser: function () {

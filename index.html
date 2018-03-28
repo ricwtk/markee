@@ -22,6 +22,7 @@
           <span>&nbsp;Markdown&nbsp;Editor</span></span>
         </section>
         <section class="navbar-section">
+          <span class="px-2 mdi mdi-circle" :style="fileDot"></span>
           <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-file" data-tooltip="New file"></span>
           <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-content-save" data-tooltip="Save file"></span>
           <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-cloud" data-tooltip="Open from cloud"></span>
@@ -30,7 +31,6 @@
           <span id="user" class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-account-circle" data-tooltip="User" @click="clickUser"></span>
         </section>
       </div>
-      <!-- <div class="divider"></div> -->
       <div id="md-guide" class="col-12 bg-secondary px-2">
         <div id="guide-items">
           <span v-for="g in guides.slice(0, nguideshown)"
