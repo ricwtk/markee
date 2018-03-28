@@ -16,15 +16,6 @@
   text-decoration: none;
 }
 
-.md-default table {
-  /* border-collapse: collapse; */
-}
-
-/* .md-default thead {
-  border-bottom: 2px solid #dddddd;
-} */
-
-
 .md-default thead tr {
   background-color: #607D8B;
   color: #ECEFF1;
