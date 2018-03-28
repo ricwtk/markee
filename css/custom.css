@@ -4,6 +4,23 @@ header {
   z-index: 9;
 }
 
+#md-guide {
+  display: flex;
+}
+
+#md-guide #guide-items {
+  flex-grow: 1;
+}
+
+#md-guide .menu > li {
+  display: flex;
+  align-items: center;
+}
+
+.emoji-group {
+  font-size: 150%;
+}
+
 #editor-wrapper .controls,
 #display-wrapper .controls,
 #content > .controls {

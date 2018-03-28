@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto+Slab');
+
+.md-default {
+  font-family: inherit;
+}
+/* 
+.md-default a {
+  background-color: #aaa;
+} */
+
+.md-default table {
+  border-collapse: collapse;
+}
+
+.md-default thead {
+  border-bottom: 1px solid #dddddd;
+}
+
+.md-default td,
+.md-default th {
+  padding: 5px;
+}
+
+.md-default pre > code {
+  display: block;
+}

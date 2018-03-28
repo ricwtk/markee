@@ -4,12 +4,14 @@
     <title>Title</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/md-themes.css">
     <link rel="stylesheet" href="css/custom.css">
     <link rel="stylesheet" href="css/spectre.min.css">
     <link rel="stylesheet" href="css/spectre-icons.min.css">
     <link rel="stylesheet" href="css/materialdesignicons.css">
     <script src="js/showdown.js"></script>
     <script src="js/vue.js"></script>
+    <script src="js/emoji.js"></script>
   </head>
 
   <body>
@@ -17,7 +19,7 @@
       <div class="navbar bg-dark px-2">
         <section class="navbar-section">
           <span class="navbar-brand"><strong>RIMARE</strong></span>
-          <span>&nbsp;Markdown&nbsp;Editor wH: {{ windowHeight }} wW: {{ windowWidth }}</span></span>
+          <span>&nbsp;Markdown&nbsp;Editor</span></span>
         </section>
         <section class="navbar-section">
           <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-file" data-tooltip="New file"></span>
@@ -30,17 +32,22 @@
       </div>
       <!-- <div class="divider"></div> -->
       <div id="md-guide" class="col-12 bg-secondary px-2">
-        <span class="c-hand mdi mdi-24px mdi-information"></span>
-        <span class="c-hand mdi mdi-24px mdi-format-bold"></span>
-        <span class="c-hand mdi mdi-24px mdi-format-italic"></span>
-        <span class="c-hand mdi mdi-24px mdi-format-underline"></span>
-        <span class="c-hand mdi mdi-24px mdi-format-header-pound"></span>
-        <span class="c-hand mdi mdi-24px mdi-format-list-checks"></span>
-        <span class="c-hand mdi mdi-24px mdi-format-list-numbers"></span>
-        <span class="c-hand mdi mdi-24px mdi-format-list-bulleted"></span>
-        <span class="c-hand mdi mdi-24px mdi-table"></span>
-        <span class="c-hand mdi mdi-24px mdi-code-tags"></span>
-        <span class="c-hand mdi mdi-24px mdi-quote-open"></span>
+        <div id="guide-items">
+          <span v-for="g in guides.slice(0, nguideshown)"
+            :class="['c-hand', 'px-1', 'mdi', 'mdi-24px', 'tooltip', 'tooltip-bottom', g.icon]"
+            :data-tooltip="g.tooltip"
+            @click="clickGuide(g)">
+          </span>
+        </div>
+        <div class="dropdown dropdown-right text-right" v-if="guides.slice(nguideshown).length > 0">
+          <span class="c-hand mdi mdi-24px mdi-chevron-down dropdown-toggle" tabIndex="0"></span>
+          <ul class="menu text-left">
+            <li v-for="g in guides.slice(nguideshown)" class="c-hand" @click="clickGuide(g)">
+              <i :class="['mdi', 'mdi-24px', g.icon]"></i><span class="px-1">{{ g.tooltip }}</span>
+            </li>
+          </ul>
+        </div>
+        
       </div>
     </header>
 
@@ -67,6 +74,17 @@
       </div>
     </div>
 
+    <div class="modal" id="modal-guide">
+      <span class="modal-overlay" aria-label="Close" @click="toggleModal"></span>
+      <div class="modal-container">
+        <div class="modal-header">
+          <a @click="toggleModal" class="btn btn-clear float-right" aria-label="Close"></a>
+          <strong>{{ title }}</strong>
+        </div>
+        <div :class="['modal-body', 'md-'+mdTheme]" v-html="compiledContent"></div>
+      </div>
+    </div>
+
     <div id="content" class="p-2 relative">
       <ul class="tab tab-block show-sm" id="content-tabs">
         <li class="tab-item">
@@ -89,6 +107,7 @@
           :contenteditable="false"
           :hide-sm="true"
           :content="compiledDoc"
+          content-theme="default"
         ></content-container>
       </div>
 
