@@ -120,15 +120,17 @@ const guides = [
       + "+ outer 1\n"
       + "    - outer 1 inner 1\n"
       + "+ outer 2\n"
-      + "    + outer 2 inner 1\n"
-      + "        + outer 2 inner 1 deep 1\n\n"
+      + "    1. outer 2 inner 1\n"
+      + "    2. outer 2 inner 2\n"
+      + "        + outer 2 inner 2 deep 1\n\n"
       + "**Code:**\n"
       + "```\n"
       + "+ outer 1\n"
       + "    - outer 1 inner 1\n"
       + "+ outer 2\n"
-      + "    + outer 2 inner 1\n"
-      + "        + outer 2 inner 1 deep 1\n"
+      + "    1. outer 2 inner 1\n"
+      + "    2. outer 2 inner 2\n"
+      + "        + outer 2 inner 2 deep 1\n"
       + "```"
   },{
     icon: "mdi-table",
@@ -332,12 +334,31 @@ var contentContainer = {
     },
     sendEditedContent: function (ev) {
       this.$emit("input", ev.target.value)
+    },
+    addTab: function (e) {
+      e.preventDefault()
+      this.$emit("addtab", this.$refs.textarea)
+    },
+    boldText: function (e) {
+      e.preventDefault()
+      this.$emit("boldtext", this.$refs.textarea)
+    },
+    italicText: function (e) {
+      e.preventDefault()
+      this.$emit("italictext", this.$refs.textarea)
     }
   },
   template: `
   <span :id="wrapperId" :class="wrapperClass">
     <div :class="['actual', 'col-12', 'relative', 'md-'+contentTheme]" :style="style">
-      <textarea v-if="contenteditable" class="p-1" :value="content" @input="sendEditedContent">
+      <textarea v-if="contenteditable" class="p-1" ref="textarea" 
+        :value="content" 
+        @input="sendEditedContent" 
+        @keydown.tab="addTab"
+        @keyup.ctrl.66.exact="boldText"
+        @keydown.ctrl.66.exact="e => e.preventDefault()"
+        @keyup.ctrl.73.exact="italicText"
+        @keydown.ctrl.73.exact="e => e.preventDefault()">
       </textarea>
       <div v-else v-html="content" class="p-1">
       </div>
@@ -377,6 +398,21 @@ var content = new Vue({
     },
     updateRaw: function (raw) {
       this.rawDoc = raw
+    },
+    addTab: function (ta) {
+      this.rawDoc = this.rawDoc.slice(0, ta.selectionStart+1) + "    " + this.rawDoc.slice(ta.selectionEnd)
+      ta.selectionStart += 4;
+      ta.selectionEnd += 4;
+    },
+    boldText: function (ta) {
+      this.rawDoc = this.rawDoc.slice(0, ta.selectionStart) + "**" + this.rawDoc.slice(ta.selectionStart, ta.selectionEnd+1) + "**" + this.rawDoc.slice(ta.selectionEnd)
+      ta.selectionStart += 2;
+      ta.selectionEnd += 2;
+    },
+    italicText: function (ta) {
+      this.rawDoc = this.rawDoc.slice(0, ta.selectionStart) + "*" + this.rawDoc.slice(ta.selectionStart, ta.selectionEnd+1) + "*" + this.rawDoc.slice(ta.selectionEnd)
+      ta.selectionStart += 1;
+      ta.selectionEnd += 1;
     }
   }
 })

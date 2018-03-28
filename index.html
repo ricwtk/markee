@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Title</title>
+    <title>RIMARE</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="css/md-themes.css">
@@ -101,6 +101,9 @@
           :hide-sm="false"
           :content="rawDoc"
           @input="updateRaw"
+          @addtab="addTab"
+          @boldtext="boldText"
+          @italictext="italicText"
         ></content-container>
         <content-container
           wrapper-id="display-wrapper"

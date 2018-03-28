@@ -3,10 +3,19 @@
 .md-default {
   font-family: inherit;
 }
-/* 
+
 .md-default a {
-  background-color: #aaa;
-} */
+  /* background-color: #eeeeee; */
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px dashed;
+}
+
+.md-default a:hover {
+  color: inherit;
+  background-color: #eee;
+  text-decoration: none;
+}
 
 .md-default table {
   border-collapse: collapse;
