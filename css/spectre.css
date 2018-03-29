@@ -1678,7 +1678,8 @@ video.video-responsive::before {
     display: none !important;
   }
   .show-xl {
-    display: block !important;
+    display: flex !important; 
+    display: -ms-flexbox !important;
   }
 }
 
@@ -1738,7 +1739,8 @@ video.video-responsive::before {
     display: none !important;
   }
   .show-lg {
-    display: block !important;
+    display: flex !important; 
+    display: -ms-flexbox !important;
   }
 }
 
@@ -1798,7 +1800,8 @@ video.video-responsive::before {
     display: none !important;
   }
   .show-md {
-    display: block !important;
+    display: flex !important; 
+    display: -ms-flexbox !important;
   }
 }
 
@@ -1858,7 +1861,8 @@ video.video-responsive::before {
     display: none !important;
   }
   .show-sm {
-    display: block !important;
+    display: flex !important; 
+    display: -ms-flexbox !important;
   }
 }
 
@@ -1918,7 +1922,8 @@ video.video-responsive::before {
     display: none !important;
   }
   .show-xs {
-    display: block !important;
+    display: flex !important; 
+    display: -ms-flexbox !important;
   }
 }
 

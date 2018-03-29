@@ -255,7 +255,8 @@ Paragraphs are separated with two newlines.
 - There are also two items on this list.
 
 \`\`\`
-This is a code block with a long long long long long long line
+This is a code block
+with multiple lines
 \`\`\`
 
 Supported markdown syntax can be found on the guide bar.

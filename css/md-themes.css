@@ -41,4 +41,6 @@
 
 .md-default pre > code {
   display: block;
+  margin: 10px;
+  overflow: auto;
 }
