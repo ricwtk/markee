@@ -241,6 +241,26 @@ const guides = [
   }
 ]
 
+const initialText = 
+`# This is a h1 heading
+
+This is normal text.
+
+Paragraphs are separated with two newlines.
+
+1. This is an ordered list.
+2. There are two items on this list.
+
+- This is an unordered list.
+- There are also two items on this list.
+
+\`\`\`
+This is a code block with a long long long long long long line
+\`\`\`
+
+Supported markdown syntax can be found on the guide bar.
+`
+
 new Vue({
   el: "#navbar",
   data: {
@@ -377,7 +397,7 @@ var contentContainer = {
 var content = new Vue({
   el: "#content",
   data: {
-    rawDoc: "",
+    rawDoc: initialText,
   },
   computed: {
     compiledDoc: function () {
@@ -420,6 +440,6 @@ var content = new Vue({
   }
 })
 
-Vue.nextTick(function () {
-  content.rawDoc = "# h1"
-})
+// Vue.nextTick(function () {
+//   content.rawDoc = "# h1"
+// })
