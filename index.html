@@ -23,9 +23,9 @@
         </section>
         <section class="navbar-section">
           <span class="px-2 mdi mdi-circle" :style="fileDot"></span>
-          <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-file" data-tooltip="New file"></span>
+          <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-file" data-tooltip="New file" @click="createNewFile"></span>
           <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-content-save" data-tooltip="Save file"></span>
-          <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-cloud" data-tooltip="Open from cloud"></span>
+          <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-folder-open" data-tooltip="Open from cloud" @click="openPicker"></span>
           <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-download" data-tooltip="Download as"></span>
           <div class="divider-vert"></div>
           <span id="user" class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-account-circle" data-tooltip="User" @click="clickUser"></span>
@@ -59,10 +59,22 @@
           <strong>User profile</strong>
         </div>
         <div class="modal-body">
-          <div class="columns">
+          <div class="card" v-if="(Object.values(signedIn)).some(el => el)">
+            <div class="card-header columns">
+              <div class="column col-2 columns"><img src="https://ricwtk.github.io/icons/icon.png" class="img-responsive img-fit-contain"></div>
+              <div class="column columns" style="flex-direction: column; align-items: center; justify-content: center">
+                <div class="card-title h5">Richard Wong</div>
+                <div class="card-subtitle text-gray">ricwtk@gmail.com</div>
+              </div>
+            </div>
+            <div class="card-footer columns">
+              <button class="btn btn-outline col-12" @click="signOut">Sign out</button>
+            </div>
+          </div>
+          <div class="columns" v-else>
             <div class="column col-12">Sign in to </div>
             <div class="column col-12 flex-centered" id="sign-in-icons">
-              <span class="tooltip tooltip-top px-2 c-hand mdi mdi-24px mdi-google-drive" data-tooltip="Google Drive"></span>
+              <span class="tooltip tooltip-top px-2 c-hand mdi mdi-24px mdi-google-drive" data-tooltip="Google Drive" @click="signInGoogle"></span>
               <span class="tooltip tooltip-top px-2 c-hand mdi mdi-24px mdi-onedrive" data-tooltip="Onedrive"></span>
               <span class="tooltip tooltip-top px-2 c-hand mdi mdi-24px mdi-dropbox" data-tooltip="Dropbox"></span>
             </div>
@@ -192,5 +204,10 @@
     });
     </script> -->
     <script src="js/custom.js"></script>
+    <script src="js/google-drive-access.js"></script>
+    <script async defer src="https://apis.google.com/js/api.js"
+      onload="initApis()"
+      onreadystatechange="if (this.readyState === 'complete') this.onload()">
+    </script>
   </body>
 </html>

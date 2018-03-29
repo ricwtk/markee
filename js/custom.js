@@ -1,3 +1,11 @@
+var gd;
+var signedInStatus = {
+  google: false,
+  onedrive: false,
+  dropbox: false
+}
+var urlParams = (new URL(location)).searchParams;
+
 var mdconverter = new showdown.Converter({
   smoothPreview: true,
   ghCodeBlocks: true,
@@ -288,6 +296,17 @@ new Vue({
       modalGuide.title = g.tooltip
       modalGuide.rawContent = g.guide
       modalGuide.toggleModal()
+    },
+    createNewFile: function () {
+      // check saving status of file
+      let url = new URL(location);
+      url.searchParams.set("action", "create");
+      url.searchParams.set("user", gd.getUserId());
+      url.searchParams.delete("file");
+      window.location = url.toString();
+    },
+    openPicker: function () {
+      gd.openPicker();
     }
   },
   mounted: function () {
@@ -301,9 +320,19 @@ new Vue({
 
 var modalUser = new Vue({
   el: "#modal-user",
+  data: {
+    signedIn: signedInStatus
+  },
   methods: {
     closeModal: function () {
-      this.$el.classList.toggle("active")
+      if (Object.values(signedInStatus).some(el => el))
+        this.$el.classList.toggle("active")
+    },
+    signInGoogle: function () {
+      gd.handleSignInClick();
+    },
+    signOut: function () {
+      gd.handleSignOutClick();
     }
   }
 })
@@ -444,3 +473,27 @@ var content = new Vue({
 // Vue.nextTick(function () {
 //   content.rawDoc = "# h1"
 // })
+function initApis() {
+  gd = new GDrive();
+  gd.signedInFunction = () => {
+    signedInStatus.google = true;
+    // check if the signed in user is the same user
+    console.log(gd.getUserId() == urlParams.get("user"));
+    // open file if action is open
+
+    // set as it is if action is create
+  }
+  gd.signedOutFunction = () => {
+    signedInStatus.google = false;
+  }
+  gd.signedInAtInit = () => {
+    document.querySelector("#modal-user").classList.remove("active");
+  }
+  gd.signedOutAtInit = () => {
+    document.querySelector("#modal-user").classList.add("active");
+  }
+}
+
+// open modal-user to prompt user to sign in
+// document.querySelector("#modal-user").classList.add("active");
+console.log(urlParams.get("user"), urlParams.get("file"), urlParams.get("action"));
