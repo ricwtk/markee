@@ -21,6 +21,24 @@ header {
   font-size: 150%;
 }
 
+#file-info {
+  font-size: 90%;
+}
+
+#file-info .dropdown-toggle {
+  display: flex;
+}
+
+#file-info .dropdown-toggle > *:nth-child(2) {
+  flex-grow: 1;
+}
+
+#file-info .breadcrumb {
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+}
+
 #editor-wrapper .controls,
 #display-wrapper .controls,
 #content > .controls {

@@ -5,6 +5,21 @@ var signedInStatus = {
   dropbox: false
 }
 var urlParams = (new URL(location)).searchParams;
+var notiObj = {
+  notifications: [],
+  notify(msg, stat) {
+    this.notifications.push({
+      statusClass: stat ? "toast-" + stat : "",
+      message: msg
+    })
+  }
+}
+var openedFile = {
+  name: "Unsaved.md",
+  id: "",
+  paths: [],
+  pathsInName: []
+}
 
 var mdconverter = new showdown.Converter({
   smoothPreview: true,
@@ -277,7 +292,8 @@ new Vue({
     nguideshown: 3,
     fileDot: {
       color: "#F44336" // red #8BC34A green
-    }
+    },
+    notiObj: notiObj
   },
   methods: {
     clickUser: function () {
@@ -353,6 +369,13 @@ var modalGuide = new Vue({
     toggleModal: function () {
       this.$el.classList.toggle("active")
     }
+  }
+})
+
+new Vue({
+  el: "#file-info",
+  data: {
+    file: openedFile
   }
 })
 
@@ -470,18 +493,53 @@ var content = new Vue({
   }
 })
 
-// Vue.nextTick(function () {
-//   content.rawDoc = "# h1"
-// })
+// initiation
 function initApis() {
   gd = new GDrive();
   gd.signedInFunction = () => {
     signedInStatus.google = true;
-    // check if the signed in user is the same user
-    console.log(gd.getUserId() == urlParams.get("user"));
-    // open file if action is open
+    // if no user is provided on url
+    if (!urlParams.get("user")) {
+      let url = new URL(window.location);
+      url.searchParams.set("action", "create");
+      url.searchParams.set("user", gd.getUserId());
+      url.searchParams.delete("file");
+      window.location = url.toString();
+    } else {
+      // check if the signed in user is the same user
+      if (gd.getUserId() == urlParams.get("user")) {
+        // open file if action is open
+        if (urlParams.get("action") == "open") {
+          gd.getFile(urlParams.get("file")).then((res) => {
+            openedFile.name = res.result.name;
+            openedFile.id = res.result.id;
+            openedFile.paths = [];
 
-    // set as it is if action is create
+            async function findParents(currentPath, currentPathInName, parents) {
+              if (!parents) {
+                openedFile.paths.push(currentPath);
+                openedFile.pathsInName.push(currentPathInName);
+                console.log(openedFile.paths, openedFile.pathsInName);
+              } else {
+                for (let i = 0; i < parents.length; i++) {
+                  gd.getFile(parents[i]).then((res) => {
+                    findParents(currentPath.concat(res.result.id), currentPathInName.concat(res.result.name), res.result.parents);
+                  })
+                }
+              }
+            }
+            
+            findParents([res.result.id], [res.result.name], res.result.parents);
+          });
+        }
+        // set as it is if action is create
+      } else {
+        notiObj.notify(`The signed in user is not the same as the user who opened this page. You can solve this by
+          (1) signing out and signing in as the user who opened this page, or
+          (2) opening a file or creating a new file from this page as the signed in user.
+        `, "error");
+      }
+    }
   }
   gd.signedOutFunction = () => {
     signedInStatus.google = false;

@@ -47,7 +47,12 @@
             </li>
           </ul>
         </div>
-        
+      </div>
+      <div id="notifications" class="col-12 bg-secondary p-2" v-if="notiObj.notifications.length > 0">
+        <div v-for="(noti, index) in notiObj.notifications" :class="['toast', noti.statusClass]">
+          <button class="btn btn-clear float-right" @click="notiObj.notifications.splice(index, 1)"></button>
+          {{ noti.message }}
+        </div>
       </div>
     </header>
 
@@ -95,6 +100,36 @@
         </div>
         <div :class="['modal-body', 'md-'+mdTheme]" v-html="compiledContent"></div>
       </div>
+    </div>
+
+    <div id="file-info" class="px-2">          
+      <template v-if="file.id">
+        <div class="dropdown col-12">
+          <span :class="file.pathsInName.length > 1 ? ['dropdown-toggle', 'c-hand', 'tooltip', 'tooltip-bottom'] : ['dropdown-toggle']" tabindex="0" data-tooltip="Show other paths that point to this file">
+            <ul class="breadcrumb">
+              <li class="breadcrumb-item" v-for="n in file.pathsInName[0].slice().reverse()">
+                {{ n }}
+              </li>
+            </ul>
+            <span class="mdi mdi-chevron-down text-right" v-if="file.pathsInName.length > 1"></span>
+          </span>
+          <ul class="menu col-12" v-if="file.pathsInName.length > 1">
+            <template v-for="(p,i) in file.pathsInName.slice(1)">
+              <li>
+                <ul class="breadcrumb">
+                  <li class="breadcrumb-item" v-for="n in p.slice().reverse()">
+                    {{ n }}
+                  </li>
+                </ul>
+              </li>
+              <li class="divider" v-if="i !== file.pathsInName.length-2"></li>
+            </template>
+          </ul>
+        </div>
+      </template>
+      <template v-else>
+        {{ file.name }}
+      </template>
     </div>
 
     <div id="content" class="p-2 relative">

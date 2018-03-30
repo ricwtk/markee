@@ -6,7 +6,8 @@
     this.discoveryDocs = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
     this.scopes = [
       "https://www.googleapis.com/auth/drive.install",
-      "https://www.googleapis.com/auth/drive.file"
+      "https://www.googleapis.com/auth/drive.file",
+      "https://www.googleapis.com/auth/drive.readonly"
     ].join(" ");
     this.initialised = false;
     this.initialising = false;
@@ -40,6 +41,7 @@
     }
     this.updateSigninStatus = (signedIn) => {
       console.log("signed in status (Google): ", signedIn);
+      this.accessToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse(true).access_token;
       if (signedIn) this.signedInFunction();
       else this.signedOutFunction();
     }
@@ -59,23 +61,22 @@
 
     this.getUserId = () => {
       if (this.accessToken) {
-        return gapi.auth2.getAuthInstance().currentUser.get().getId()
+        return gapi.auth2.getAuthInstance().currentUser.get().getId();
       } else {
-        return ""
+        return "";
       }
     }
 
-    this.getFileLists = () => {
-      return gapi.client.drive.files.list({
-        q: "'root' in parents",
-        spaces: "drive"
-      });
-    }
-
-    this.getFileData = (fileId) => {
-      return gapi.client.drive.files.get({
-        fileId: fileId
-      });
+    this.getFile = (fileId) => {
+      if (this.accessToken) {
+        return gapi.client.drive.files.get({
+          fileId: fileId,
+          // alt: "media",
+          fields: "parents, name, id"
+        });
+      } else {
+        return null;
+      }
     }
 
     this.openPicker = () => {
