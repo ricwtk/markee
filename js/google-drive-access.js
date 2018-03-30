@@ -67,13 +67,38 @@
       }
     }
 
-    this.getFile = (fileId) => {
+    this.getFileMetadata = (fileId) => {
       if (this.accessToken) {
         return gapi.client.drive.files.get({
           fileId: fileId,
-          // alt: "media",
           fields: "parents, name, id"
         });
+      } else {
+        return null;
+      }
+    }
+
+    this.getFileContent = (fileId) => {
+      if (this.accessToken) {
+        return gapi.client.drive.files.get({
+          fileId: fileId,
+          alt: "media"
+        });
+      } else {
+        return null;
+      }
+    }
+
+    this.updateFileContent = (fileId, newContent) => {
+      if (this.accessToken) {
+        return gapi.client.request({
+          path: "/upload/drive/v3/files/" + fileId,
+          method: "PATCH",
+          params: {
+            uploadType: "media"
+          },
+          body: newContent
+        })
       } else {
         return null;
       }

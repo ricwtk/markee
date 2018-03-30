@@ -18,7 +18,9 @@ var openedFile = {
   name: "Unsaved.md",
   id: "",
   paths: [],
-  pathsInName: []
+  pathsInName: [],
+  raw: "",
+  saved: ""
 }
 
 var mdconverter = new showdown.Converter({
@@ -283,17 +285,27 @@ with multiple lines
 \`\`\`
 
 Supported markdown syntax can be found on the guide bar.
-`
+`;
+openedFile.raw = initialText;
 
 new Vue({
   el: "#navbar",
   data: {
     guides: guides,
     nguideshown: 3,
-    fileDot: {
-      color: "#F44336" // red #8BC34A green
+    openedFile: openedFile,
+    notiObj: notiObj,
+    saving: false
+  },
+  computed: {
+    fileDot: function () {
+      return {
+        color: this.openedFile.raw == this.openedFile.saved ? "#8BC34A" : "#F44336"
+      }
     },
-    notiObj: notiObj
+    fileSavedString: function () {
+      return this.openedFile.raw == this.openedFile.saved ? "File saved" : "File unsaved";
+    }
   },
   methods: {
     clickUser: function () {
@@ -320,6 +332,17 @@ new Vue({
       url.searchParams.set("user", gd.getUserId());
       url.searchParams.delete("file");
       window.location = url.toString();
+    },
+    saveFile: function () {
+      this.saving = true;
+      gd.updateFileContent(this.openedFile.id, this.openedFile.raw).then((res) => {
+        if (res.status == 200) {
+          this.openedFile.saved = this.openedFile.raw;
+        } else {
+          notiObj.notify(res.body, "error");
+        }
+        this.saving = false;
+      });
     },
     openPicker: function () {
       gd.openPicker();
@@ -375,7 +398,7 @@ var modalGuide = new Vue({
 new Vue({
   el: "#file-info",
   data: {
-    file: openedFile
+    openedFile: openedFile
   }
 })
 
@@ -450,11 +473,11 @@ var contentContainer = {
 var content = new Vue({
   el: "#content",
   data: {
-    rawDoc: initialText,
+    openedFile: openedFile,
   },
   computed: {
     compiledDoc: function () {
-      return mdconverter.makeHtml(this.rawDoc)
+      return mdconverter.makeHtml(this.openedFile.raw)
     }
   },
   components: {
@@ -473,20 +496,20 @@ var content = new Vue({
       }
     },
     updateRaw: function (raw) {
-      this.rawDoc = raw
+      this.openedFile.raw = raw
     },
     addTab: function (ta) {
-      this.rawDoc = this.rawDoc.slice(0, ta.selectionStart+1) + "    " + this.rawDoc.slice(ta.selectionEnd)
+      this.openedFile.raw = this.openedFile.raw.slice(0, ta.selectionStart+1) + "    " + this.openedFile.raw.slice(ta.selectionEnd)
       ta.selectionStart += 4;
       ta.selectionEnd += 4;
     },
     boldText: function (ta) {
-      this.rawDoc = this.rawDoc.slice(0, ta.selectionStart) + "**" + this.rawDoc.slice(ta.selectionStart, ta.selectionEnd+1) + "**" + this.rawDoc.slice(ta.selectionEnd)
+      this.openedFile.raw = this.openedFile.raw.slice(0, ta.selectionStart) + "**" + this.openedFile.raw.slice(ta.selectionStart, ta.selectionEnd+1) + "**" + this.openedFile.raw.slice(ta.selectionEnd)
       ta.selectionStart += 2;
       ta.selectionEnd += 2;
     },
     italicText: function (ta) {
-      this.rawDoc = this.rawDoc.slice(0, ta.selectionStart) + "*" + this.rawDoc.slice(ta.selectionStart, ta.selectionEnd+1) + "*" + this.rawDoc.slice(ta.selectionEnd)
+      this.openedFile.raw = this.openedFile.raw.slice(0, ta.selectionStart) + "*" + this.openedFile.raw.slice(ta.selectionStart, ta.selectionEnd+1) + "*" + this.openedFile.raw.slice(ta.selectionEnd)
       ta.selectionStart += 1;
       ta.selectionEnd += 1;
     }
@@ -510,7 +533,11 @@ function initApis() {
       if (gd.getUserId() == urlParams.get("user")) {
         // open file if action is open
         if (urlParams.get("action") == "open") {
-          gd.getFile(urlParams.get("file")).then((res) => {
+          gd.getFileMetadata(urlParams.get("file")).then((res) => {
+            gd.getFileContent(res.result.id).then((res) => {
+              openedFile.raw = res.body;
+              openedFile.saved = res.body;
+            });
             openedFile.name = res.result.name;
             openedFile.id = res.result.id;
             openedFile.paths = [];
@@ -522,7 +549,7 @@ function initApis() {
                 console.log(openedFile.paths, openedFile.pathsInName);
               } else {
                 for (let i = 0; i < parents.length; i++) {
-                  gd.getFile(parents[i]).then((res) => {
+                  gd.getFileMetadata(parents[i]).then((res) => {
                     findParents(currentPath.concat(res.result.id), currentPathInName.concat(res.result.name), res.result.parents);
                   })
                 }

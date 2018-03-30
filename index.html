@@ -22,9 +22,10 @@
           <span>&nbsp;Markdown&nbsp;Editor</span></span>
         </section>
         <section class="navbar-section">
-          <span class="px-2 mdi mdi-circle" :style="fileDot"></span>
+          <span class="px-2 mdi mdi-circle tooltip tooltip-bottom" :style="fileDot" :data-tooltip="fileSavedString"></span>
           <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-file" data-tooltip="New file" @click="createNewFile"></span>
-          <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-content-save" data-tooltip="Save file"></span>
+          <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-content-save" data-tooltip="Save file" @click="saveFile" v-if="!saving"></span>
+          <span class="tooltip tooltip-bottom px-2 mdi mdi-24px mdi-loading mdi-spin" data-tooltip="Saving file" v-if="saving"></span>
           <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-folder-open" data-tooltip="Open from cloud" @click="openPicker"></span>
           <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-download" data-tooltip="Download as"></span>
           <div class="divider-vert"></div>
@@ -103,18 +104,18 @@
     </div>
 
     <div id="file-info" class="px-2">          
-      <template v-if="file.id">
-        <div class="dropdown col-12">
-          <span :class="file.pathsInName.length > 1 ? ['dropdown-toggle', 'c-hand', 'tooltip', 'tooltip-bottom'] : ['dropdown-toggle']" tabindex="0" data-tooltip="Show other paths that point to this file">
+      <template v-if="openedFile.id">
+        <div class="dropdown col-12" v-if="openedFile.pathsInName.length > 0">
+          <span :class="openedFile.pathsInName.length > 1 ? ['dropdown-toggle', 'c-hand', 'tooltip', 'tooltip-bottom'] : ['dropdown-toggle']" tabindex="0" data-tooltip="Show other paths that point to this file">
             <ul class="breadcrumb">
-              <li class="breadcrumb-item" v-for="n in file.pathsInName[0].slice().reverse()">
+              <li class="breadcrumb-item" v-for="n in openedFile.pathsInName[0].slice().reverse()">
                 {{ n }}
               </li>
             </ul>
-            <span class="mdi mdi-chevron-down text-right" v-if="file.pathsInName.length > 1"></span>
+            <span class="mdi mdi-chevron-down text-right" v-if="openedFile.pathsInName.length > 1"></span>
           </span>
-          <ul class="menu col-12" v-if="file.pathsInName.length > 1">
-            <template v-for="(p,i) in file.pathsInName.slice(1)">
+          <ul class="menu col-12" v-if="openedFile.pathsInName.length > 1">
+            <template v-for="(p,i) in openedFile.pathsInName.slice(1)">
               <li>
                 <ul class="breadcrumb">
                   <li class="breadcrumb-item" v-for="n in p.slice().reverse()">
@@ -122,13 +123,13 @@
                   </li>
                 </ul>
               </li>
-              <li class="divider" v-if="i !== file.pathsInName.length-2"></li>
+              <li class="divider" v-if="i !== openedFile.pathsInName.length-2"></li>
             </template>
           </ul>
         </div>
       </template>
       <template v-else>
-        {{ file.name }}
+        {{ openedFile.name }}
       </template>
     </div>
 
@@ -146,7 +147,7 @@
           wrapper-id="editor-wrapper"
           :contenteditable="true"
           :hide-sm="false"
-          :content="rawDoc"
+          :content="openedFile.raw"
           @input="updateRaw"
           @addtab="addTab"
           @boldtext="boldText"
