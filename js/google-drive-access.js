@@ -78,6 +78,32 @@
       }
     }
 
+    this.getChildren = (fileId, nextPageToken) => {
+      if (this.accessToken) {
+        let config = {
+          orderBy: "folder,name",
+          q: "'" + fileId + "' in parents" 
+            + " and (mimeType = 'application/vnd.google-apps.folder' or mimeType = 'text/plain' or mimeType = 'text/markdown')"
+        };
+        if (nextPageToken) {
+          config.pageToken = nextPageToken;
+        }
+        return gapi.client.drive.files.list(config);
+      } else {
+        return null;
+      }
+    }
+
+    this.openFile = (fileId) => {
+      if (this.accessToken) {
+        let url = new URL(window.location);
+        url.searchParams.set("action", "open");
+        url.searchParams.set("user", this.getUserId());
+        url.searchParams.set("file", fileId);
+        window.location = url.toString();
+      }
+    }
+
     this.getFileContent = (fileId) => {
       if (this.accessToken) {
         return gapi.client.drive.files.get({

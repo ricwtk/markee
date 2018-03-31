@@ -63,3 +63,58 @@ header {
   width: 100%;
   resize: none;
 }
+
+#modal-file-explorer .modal-body {
+  display: flex;
+  flex-direction: column;
+  height: 50vh;
+}
+
+#modal-file-explorer .file-list {
+  display: flex;
+  flex-wrap: wrap;
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow: auto;
+  align-content: flex-start;
+}
+
+#modal-file-explorer .nav-button:hover {
+  background-color: #efefef;
+}
+
+#modal-file-explorer .file-tile {
+  background-color: #ffffff;
+  cursor: default;
+}
+#modal-file-explorer .file-tile:hover {
+  box-shadow: 0px 0px 1px 1px #78909C;
+}
+
+#modal-file-explorer .file-tile:focus {
+  background-color: #ECEFF1;
+}
+
+#modal-file-explorer .file-tile.selected {
+  background-color: #ECEFF1;
+}
+
+#modal-file-explorer .modal-footer {
+  display: flex;
+}
+
+#modal-file-explorer .modal-footer > *:not(:first-child) {
+  margin-left: 5px;
+}
+
+#modal-file-explorer .selected-file-name {
+  text-align: left;
+  flex-grow: 1;
+  border: 1px solid #ECEFF1;
+  display: flex;
+  align-items: center;
+}
+
+.columns-horizontal {
+  flex-direction: row;
+}

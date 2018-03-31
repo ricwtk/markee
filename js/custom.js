@@ -19,8 +19,12 @@ var openedFile = {
   id: "",
   paths: [],
   pathsInName: [],
+  parents: [],
   raw: "",
   saved: ""
+}
+var fileExplorerOptions = {
+  createNew: true
 }
 
 var mdconverter = new showdown.Converter({
@@ -327,11 +331,13 @@ new Vue({
     },
     createNewFile: function () {
       // check saving status of file
-      let url = new URL(location);
-      url.searchParams.set("action", "create");
-      url.searchParams.set("user", gd.getUserId());
-      url.searchParams.delete("file");
-      window.location = url.toString();
+      // let url = new URL(location);
+      // url.searchParams.set("action", "create");
+      // url.searchParams.set("user", gd.getUserId());
+      // url.searchParams.delete("file");
+      // window.location = url.toString();
+      fileExplorerOptions.createNew = true;
+      modalFileExplorer.toggleModal();
     },
     saveFile: function () {
       this.saving = true;
@@ -345,7 +351,9 @@ new Vue({
       });
     },
     openPicker: function () {
-      gd.openPicker();
+      // gd.openPicker();
+      fileExplorerOptions.createNew = false;
+      modalFileExplorer.toggleModal();
     }
   },
   mounted: function () {
@@ -391,6 +399,99 @@ var modalGuide = new Vue({
   methods: {
     toggleModal: function () {
       this.$el.classList.toggle("active")
+    }
+  }
+})
+
+var modalFileExplorer = new Vue({
+  el: "#modal-file-explorer",
+  data: {
+    options: fileExplorerOptions,
+    list: [],
+    folder: {
+      name: "Folder name",
+      id: ""
+    },
+    nextPageToken: "",
+    loadingNextPage: false,
+    selectedFile: null
+  },
+  computed: {
+    title: function () {
+      return this.options.createNew ? "Create new file" : "Open file";
+    },
+    actionTitle: function () {
+      return this.options.createNew ? "Save here" : "Open";
+    }
+  },
+  mounted: function () {
+    this.$refs.fileList.addEventListener("scroll", (ev) => {
+      if (this.$refs.fileList.scrollTop >= (this.$refs.fileList.scrollHeight - this.$refs.fileList.offsetHeight)) {
+        if (!this.loadingNextPage && this.nextPageToken !== "") {
+          this.loadingNextPage = true;
+          gd.getChildren(this.folder.id, this.nextPageToken)
+            .then((res) => {
+              this.list.push(...res.result.files);
+              if (res.result.nextPageToken) {
+                this.nextPageToken = res.result.nextPageToken;
+              } else {
+                this.nextPageToken = "";
+              }
+              this.loadingNextPage = false;
+            })
+        }
+      }
+    })
+  },
+  methods: {
+    toggleModal: function () {
+      this.$el.classList.toggle("active");
+      if (this.$el.classList.contains("active")) {
+        this.updateFileExplorer(openedFile.parents[0]);
+      }
+    },
+    updateFileExplorer: function (folderId) {
+      gd.getFileMetadata(folderId)
+        .then((res) => {
+          this.folder = res.result;
+        });
+      gd.getChildren(folderId)
+        .then((res) => {
+          this.list = res.result.files;
+          if (res.result.nextPageToken) {
+            this.nextPageToken = res.result.nextPageToken;
+          } else {
+            this.nextPageToken = "";
+          }
+        })
+    },
+    onClickFile: function (file, target) {
+      if (file.mimeType.includes("vnd.google-apps.folder")) {
+        this.selectedFile = null;
+        this.updateFileExplorer(file.id);
+      } else {
+        if (this.options.createNew) {
+
+        } else {
+          this.$el.querySelectorAll(".file-tile.selected").forEach((el) => {
+            el.classList.remove("selected");
+          });
+          this.selectedFile = file;
+          this.$refs[target][0].classList.add("selected");
+        }
+      }
+    },
+    goUpALevel: function () {
+      this.updateFileExplorer(this.folder.parents[0]);
+    },
+    clickAction: function () {
+      if (this.options.createNew) {
+
+      } else {
+        if (this.selectedFile) {
+          gd.openFile(this.selectedFile.id);
+        }
+      }
     }
   }
 })
@@ -541,12 +642,13 @@ function initApis() {
             openedFile.name = res.result.name;
             openedFile.id = res.result.id;
             openedFile.paths = [];
+            openedFile.parents = res.result.parents;
 
             async function findParents(currentPath, currentPathInName, parents) {
               if (!parents) {
                 openedFile.paths.push(currentPath);
                 openedFile.pathsInName.push(currentPathInName);
-                console.log(openedFile.paths, openedFile.pathsInName);
+                // console.log(openedFile.paths, openedFile.pathsInName);
               } else {
                 for (let i = 0; i < parents.length; i++) {
                   gd.getFileMetadata(parents[i]).then((res) => {

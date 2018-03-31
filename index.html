@@ -104,6 +104,59 @@
       </div>
     </div>
 
+    <div class="modal" id="modal-file-explorer">
+      <span class="modal-overlay" aria-label="Close" @click="toggleModal"></span>
+      <div class="modal-container">
+        <div class="modal-header">
+          <a @click="toggleModal" class="btn btn-clear float-right" aria-label="Close"></a>
+          <strong>{{ title }}</strong>
+        </div>
+        <div class="modal-body bg-gray">
+          <div class="navbar">
+            <span class="navbar-section">
+              <span v-if="folder.parents" class="mdi mdi-chevron-left mr-2 px-1 c-hand nav-button" @click="goUpALevel"></span>
+              <span class="navbar-brand">{{ folder.name }}</span>
+            </span>
+          </div>
+          <div class="divider"></div>
+          <div class="col-12 file-list" ref="fileList">
+            <div class="column col-12" v-if="list.length == 0">
+              <div class="tile tile-centered p-2">
+                <div class="tile-icon">
+                  <i class="mdi mdi-24px mdi-file-hidden"></i>
+                </div>
+                <div class="tile-content">
+                  <div class="tile-title">No file</div>
+                </div>
+              </div>
+            </div>
+            <span class="column col-4 col-sm-12 my-1" v-for="(item,i) in list">
+              <div class="tile tile-centered p-2 file-tile my-1" @click="onClickFile(item, 'ft-' + i)" :ref="'ft-' + i">
+                <div class="tile-icon">
+                  <i v-if="item.mimeType == 'application/vnd.google-apps.folder'" class="mdi mdi-24px mdi-folder"></i>
+                  <i v-else-if="item.mimeType == 'text/markdown'" class="mdi mdi-24px mdi-markdown"></i>
+                  <i v-else-if="item.mimeType == 'text/plain' && item.name.endsWith('.md')" class="mdi mdi-24px mdi-markdown"></i>
+                  <i v-else class="mdi mdi-24px mdi-file-document"></i>
+                </div>
+                <div class="tile-content">
+                  <div class="tile-title" :title="item.name">{{item.name}}</div>
+                  <!-- <div class="tile-subtitle text-gray">{{item.mimeType}}</div> -->
+                </div>
+              </div>
+            </span>
+            <div class="column col-12 text-center" v-if="loadingNextPage">
+              <i class="mdi mdi-24px mdi-loading mdi-spin"></i>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer columns">
+          <span class="selected-file-name px-2">{{ selectedFile ? selectedFile.name : "" }}</span>
+          <div class="btn btn-outline" @click="clickAction">{{ actionTitle }}</div>
+          <div class="btn btn-outline" @click="toggleModal">Cancel</div>
+        </div>
+      </div>
+    </div>
+
     <div id="file-info" class="px-2">          
       <template v-if="openedFile.id">
         <div class="dropdown col-12" v-if="openedFile.pathsInName.length > 0">
