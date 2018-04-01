@@ -107,7 +107,7 @@ header {
   margin-left: 5px;
 }
 
-#modal-file-explorer .selected-file-name {
+#modal-file-explorer .file-name {
   text-align: left;
   flex-grow: 1;
   border: 1px solid #ECEFF1;

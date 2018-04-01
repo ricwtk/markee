@@ -150,7 +150,8 @@
           </div>
         </div>
         <div class="modal-footer columns">
-          <span class="selected-file-name px-2">{{ selectedFile ? selectedFile.name : "" }}</span>
+          <span class="save-to-file-name file-name px-2" v-if="options.createNew" contenteditable="true" ref="fileNameToSave">Save file</span>
+          <span class="selected-file-name file-name px-2" v-else>{{ selectedFile ? selectedFile.name : "" }}</span>
           <div class="btn btn-outline" @click="clickAction">{{ actionTitle }}</div>
           <div class="btn btn-outline" @click="toggleModal">Cancel</div>
         </div>

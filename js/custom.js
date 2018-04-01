@@ -451,6 +451,9 @@ var modalFileExplorer = new Vue({
       }
     },
     updateFileExplorer: function (folderId) {
+      this.$el.querySelectorAll(".file-tile.selected").forEach((el) => {
+        el.classList.remove("selected");
+      });
       gd.getFileMetadata(folderId)
         .then((res) => {
           this.folder = res.result;
@@ -466,18 +469,18 @@ var modalFileExplorer = new Vue({
         })
     },
     onClickFile: function (file, target) {
+      this.$el.querySelectorAll(".file-tile.selected").forEach((el) => {
+        el.classList.remove("selected");
+      });
+      this.$refs[target][0].classList.add("selected");
       if (file.mimeType.includes("vnd.google-apps.folder")) {
         this.selectedFile = null;
         this.updateFileExplorer(file.id);
       } else {
         if (this.options.createNew) {
-
+          
         } else {
-          this.$el.querySelectorAll(".file-tile.selected").forEach((el) => {
-            el.classList.remove("selected");
-          });
           this.selectedFile = file;
-          this.$refs[target][0].classList.add("selected");
         }
       }
     },
@@ -486,14 +489,19 @@ var modalFileExplorer = new Vue({
     },
     clickAction: function () {
       if (this.options.createNew) {
-
+        gd.createFile(this.folder.id, this.$refs.fileNameToSave.textContent, initialText)
+          .then((res) => {
+            if (res.status == 200) {
+              gd.openFile(res.result.id);
+            }
+          });
       } else {
         if (this.selectedFile) {
           gd.openFile(this.selectedFile.id);
         }
       }
     }
-  }
+  },
 })
 
 new Vue({

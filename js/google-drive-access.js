@@ -94,6 +94,33 @@
       }
     }
 
+    this.createFile = (folderId, filename, fileContent) => {
+      if (this.accessToken) {
+        return gapi.client.request({
+          path: "/upload/drive/v3/files",
+          method: "POST",
+          params: {
+            uploadType: "multipart"
+          },
+          headers: {
+            "Content-Type": "multipart/related; boundary=bounding"
+          },
+          body: "--bounding\n"
+            + "Content-Type: application/json; charset=UTF-8\n\n"
+            + JSON.stringify({
+                mimeType: "text/markdown",
+                name: filename,
+                parents: [folderId]
+              })
+            + "\n\n"
+            + "--bounding\n"
+            + "Content-Type: text/markdown\n\n"
+            + fileContent + "\n\n"
+            + "--bounding--"
+        })
+      }
+    }
+
     this.openFile = (fileId) => {
       if (this.accessToken) {
         let url = new URL(window.location);
