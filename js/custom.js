@@ -24,7 +24,12 @@ var openedFile = {
   saved: ""
 }
 var fileExplorerOptions = {
-  createNew: true
+  type: 0,
+  TYPE: {
+    CREATENEW: 0,
+    OPENFILE: 1,
+    SAVEAS: 2
+  }
 }
 
 var mdconverter = new showdown.Converter({
@@ -299,7 +304,8 @@ new Vue({
     nguideshown: 3,
     openedFile: openedFile,
     notiObj: notiObj,
-    saving: false
+    saving: false,
+    saveasing: false
   },
   computed: {
     fileDot: function () {
@@ -330,13 +336,7 @@ new Vue({
       modalGuide.toggleModal()
     },
     createNewFile: function () {
-      // check saving status of file
-      // let url = new URL(location);
-      // url.searchParams.set("action", "create");
-      // url.searchParams.set("user", gd.getUserId());
-      // url.searchParams.delete("file");
-      // window.location = url.toString();
-      fileExplorerOptions.createNew = true;
+      fileExplorerOptions.type = fileExplorerOptions.TYPE.CREATENEW;
       modalFileExplorer.toggleModal();
     },
     saveFile: function () {
@@ -350,9 +350,12 @@ new Vue({
         this.saving = false;
       });
     },
-    openPicker: function () {
-      // gd.openPicker();
-      fileExplorerOptions.createNew = false;
+    saveAs: function () {
+      fileExplorerOptions.type = fileExplorerOptions.TYPE.SAVEAS;
+      modalFileExplorer.toggleModal();
+    },
+    openFile: function () {
+      fileExplorerOptions.type = fileExplorerOptions.TYPE.OPENFILE;
       modalFileExplorer.toggleModal();
     }
   },
@@ -418,10 +421,24 @@ var modalFileExplorer = new Vue({
   },
   computed: {
     title: function () {
-      return this.options.createNew ? "Create new file" : "Open file";
+      switch (this.options.type) {
+        case this.options.TYPE.CREATENEW:
+          return "Create new file";
+        case this.options.TYPE.OPENFILE:
+          return "Open file";
+        case this.options.TYPE.SAVEAS:
+          return "Save as";
+      }
     },
     actionTitle: function () {
-      return this.options.createNew ? "Save here" : "Open";
+      switch (this.options.type) {
+        case this.options.TYPE.CREATENEW:
+          return "Save here";
+        case this.options.TYPE.OPENFILE:
+          return "Open";
+        case this.options.TYPE.SAVEAS:
+          return "Save here";
+      }
     }
   },
   mounted: function () {
@@ -477,10 +494,10 @@ var modalFileExplorer = new Vue({
         this.selectedFile = null;
         this.updateFileExplorer(file.id);
       } else {
-        if (this.options.createNew) {
-          
-        } else {
+        if (this.options.type == this.options.TYPE.OPENFILE) {
           this.selectedFile = file;
+        } else {
+          
         }
       }
     },
@@ -488,17 +505,24 @@ var modalFileExplorer = new Vue({
       this.updateFileExplorer(this.folder.parents[0]);
     },
     clickAction: function () {
-      if (this.options.createNew) {
+      if (this.options.type == this.options.TYPE.CREATENEW) {
         gd.createFile(this.folder.id, this.$refs.fileNameToSave.textContent, initialText)
           .then((res) => {
             if (res.status == 200) {
               gd.openFile(res.result.id);
             }
           });
-      } else {
+      } else if (this.options.type == this.options.TYPE.OPENFILE) {
         if (this.selectedFile) {
           gd.openFile(this.selectedFile.id);
         }
+      } else if(this.options.type == this.options.TYPE.SAVEAS) {
+        gd.createFile(this.folder.id, this.$refs.fileNameToSave.textContent, openedFile.raw)
+          .then((res) => {
+            if (res.status == 200) {
+              gd.openFile(res.result.id);
+            }
+          });
       }
     }
   },

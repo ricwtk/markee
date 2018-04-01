@@ -26,7 +26,8 @@
           <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-file" data-tooltip="New file" @click="createNewFile"></span>
           <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-content-save" data-tooltip="Save file" @click="saveFile" v-if="!saving"></span>
           <span class="tooltip tooltip-bottom px-2 mdi mdi-24px mdi-loading mdi-spin" data-tooltip="Saving file" v-if="saving"></span>
-          <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-folder-open" data-tooltip="Open from cloud" @click="openPicker"></span>
+          <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-content-save-settings" data-tooltip="Save as" @click="saveAs"></span>
+          <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-folder-open" data-tooltip="Open from cloud" @click="openFile"></span>
           <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-file-tree" data-tooltip="Organise"></span>
           <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-download" data-tooltip="Download as"></span>
           <div class="divider-vert"></div>
@@ -150,8 +151,8 @@
           </div>
         </div>
         <div class="modal-footer columns">
-          <span class="save-to-file-name file-name px-2" v-if="options.createNew" contenteditable="true" ref="fileNameToSave">Save file</span>
-          <span class="selected-file-name file-name px-2" v-else>{{ selectedFile ? selectedFile.name : "" }}</span>
+          <span class="selected-file-name file-name px-2" v-if="options.type==options.TYPE.OPENFILE">{{ selectedFile ? selectedFile.name : "" }}</span>
+          <span class="save-to-file-name file-name px-2" v-else contenteditable="true" ref="fileNameToSave">Save file</span>
           <div class="btn btn-outline" @click="clickAction">{{ actionTitle }}</div>
           <div class="btn btn-outline" @click="toggleModal">Cancel</div>
         </div>
