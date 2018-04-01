@@ -304,8 +304,7 @@ new Vue({
     nguideshown: 3,
     openedFile: openedFile,
     notiObj: notiObj,
-    saving: false,
-    saveasing: false
+    saving: false
   },
   computed: {
     fileDot: function () {
@@ -544,7 +543,7 @@ new Vue({
 })
 
 var contentContainer = {
-  props: ["contenteditable", "wrapperId", "hideSm", "content", "contentTheme"],
+  props: ["contenteditable", "wrapperId", "hideSm", "content", "contentTheme", "maximisable"],
   data: function () {
     return {
       height: 80,
@@ -586,6 +585,9 @@ var contentContainer = {
     italicText: function (e) {
       e.preventDefault()
       this.$emit("italictext", this.$refs.textarea)
+    },
+    toggleMaximised: function () {
+      this.$refs.maximisedDisplay.classList.toggle("active");
     }
   },
   template: `
@@ -603,9 +605,17 @@ var contentContainer = {
       <div v-else v-html="content" class="p-1">
       </div>
       <span class="controls absolute pr-2">
+        <div v-if="maximisable" class="height-minus mdi mdi-24px mdi-fullscreen c-hand tooltip tooltip-left" data-tooltip="Display this only" @click="toggleMaximised"></div>
         <div class="height-minus mdi mdi-24px mdi-arrow-up-thick c-hand tooltip tooltip-left" data-tooltip="Decrease height" @click="decreaseHeight"></div>
         <div class="height-plus mdi mdi-24px mdi-arrow-down-thick c-hand tooltip tooltip-left" data-tooltip="Increase height" @click="increaseHeight"></div>
       </span>
+      <div class="modal modal-lg active" id="maximised-display" v-if="maximisable" ref="maximisedDisplay">
+        <span class="modal-overlay"></span>
+        <div class="modal-container py-2">
+          <div class="c-hand mdi mdi-24px mdi-fullscreen-exit float-right tooltip tooltip-left" aria-label="Close" data-tooltip="Exit fullscreen" @click="toggleMaximised"></div>
+          <div v-html="content"></div>
+        </div>
+      </div>
     </div>
   </span>
   `

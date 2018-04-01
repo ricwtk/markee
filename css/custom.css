@@ -115,6 +115,12 @@ header {
   align-items: center;
 }
 
+#maximised-display .modal-container {
+  max-width: 100vw;
+  max-height: 100vh;
+  overflow: auto;
+}
+
 .columns-horizontal {
   flex-direction: row;
 }
