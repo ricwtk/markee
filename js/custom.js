@@ -655,51 +655,57 @@ function initApis() {
   gd.signedInFunction = () => {
     signedInStatus.google = true;
     // if no user is provided on url
-    if (!urlParams.get("user")) {
-      let url = new URL(window.location);
-      url.searchParams.set("action", "create");
-      url.searchParams.set("user", gd.getUserId());
-      url.searchParams.delete("file");
-      window.location = url.toString();
-    } else {
+    if (urlParams.get("user")) {
       // check if the signed in user is the same user
       if (gd.getUserId() == urlParams.get("user")) {
         // open file if action is open
         if (urlParams.get("action") == "open") {
-          gd.getFileMetadata(urlParams.get("file")).then((res) => {
-            gd.getFileContent(res.result.id).then((res) => {
-              openedFile.raw = res.body;
-              openedFile.saved = res.body;
-            });
-            openedFile.name = res.result.name;
-            openedFile.id = res.result.id;
-            openedFile.paths = [];
-            openedFile.parents = res.result.parents;
-
-            async function findParents(currentPath, currentPathInName, parents) {
-              if (!parents) {
-                openedFile.paths.push(currentPath);
-                openedFile.pathsInName.push(currentPathInName);
-                // console.log(openedFile.paths, openedFile.pathsInName);
-              } else {
-                for (let i = 0; i < parents.length; i++) {
-                  gd.getFileMetadata(parents[i]).then((res) => {
-                    findParents(currentPath.concat(res.result.id), currentPathInName.concat(res.result.name), res.result.parents);
-                  })
+          if (urlParams.get("file")) {
+            gd.getFileMetadata(urlParams.get("file")).then((res) => {
+              gd.getFileContent(res.result.id).then((res) => {
+                openedFile.raw = res.body;
+                openedFile.saved = res.body;
+              });
+              openedFile.name = res.result.name;
+              openedFile.id = res.result.id;
+              openedFile.paths = [];
+              openedFile.parents = res.result.parents;
+  
+              async function findParents(currentPath, currentPathInName, parents) {
+                if (!parents) {
+                  openedFile.paths.push(currentPath);
+                  openedFile.pathsInName.push(currentPathInName);
+                  // console.log(openedFile.paths, openedFile.pathsInName);
+                } else {
+                  for (let i = 0; i < parents.length; i++) {
+                    gd.getFileMetadata(parents[i]).then((res) => {
+                      findParents(currentPath.concat(res.result.id), currentPathInName.concat(res.result.name), res.result.parents);
+                    })
+                  }
                 }
               }
-            }
-            
-            findParents([res.result.id], [res.result.name], res.result.parents);
-          });
+              
+              findParents([res.result.id], [res.result.name], res.result.parents);
+            });  
+          }
+        } else {  // if action is create
+          if (urlParams.get("folder")) {
+            gd.createFile(urlParams.get("folder"), "Untitled.md", initialText)
+              .then((res) => {
+                if (res.status == 200) {
+                  gd.openFile(res.result.id);
+                }
+              });
+          }
         }
-        // set as it is if action is create
       } else {
         notiObj.notify(`The signed in user is not the same as the user who opened this page. You can solve this by
           (1) signing out and signing in as the user who opened this page, or
           (2) opening a file or creating a new file from this page as the signed in user.
         `, "error");
       }
+    } else { // no user id on url, assuming not landing from google drive using create new or open with
+
     }
   }
   gd.signedOutFunction = () => {
