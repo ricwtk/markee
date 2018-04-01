@@ -340,15 +340,19 @@ new Vue({
       modalFileExplorer.toggleModal();
     },
     saveFile: function () {
-      this.saving = true;
-      gd.updateFileContent(this.openedFile.id, this.openedFile.raw).then((res) => {
-        if (res.status == 200) {
-          this.openedFile.saved = this.openedFile.raw;
-        } else {
-          notiObj.notify(res.body, "error");
-        }
-        this.saving = false;
-      });
+      if (this.openedFile.id) {
+        this.saving = true;
+        gd.updateFileContent(this.openedFile.id, this.openedFile.raw).then((res) => {
+          if (res.status == 200) {
+            this.openedFile.saved = this.openedFile.raw;
+          } else {
+            notiObj.notify(res.body, "error");
+          }
+          this.saving = false;
+        });
+      } else {
+        this.saveAs();
+      }
     },
     saveAs: function () {
       fileExplorerOptions.type = fileExplorerOptions.TYPE.SAVEAS;
@@ -464,7 +468,11 @@ var modalFileExplorer = new Vue({
     toggleModal: function () {
       this.$el.classList.toggle("active");
       if (this.$el.classList.contains("active")) {
-        this.updateFileExplorer(openedFile.parents[0]);
+        if (openedFile.parents.length > 0) {
+          this.updateFileExplorer(openedFile.parents[0]);
+        } else {
+          this.updateFileExplorer("root");
+        }
       }
     },
     updateFileExplorer: function (folderId) {
