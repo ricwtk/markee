@@ -544,35 +544,41 @@ var modalFileExplorer = new Vue({
       this.updateFileExplorer(this.folder.parents[0]);
     },
     clickAction: function () {
-      this.$el.classList.remove("active");
       if (this.options.type == this.options.TYPE.CREATENEW) {
-        modalLoading.loadingText = "Creating file";
-        modalLoading.activate = true;
-        gd.createFile(this.folder.id, this.$refs.fileNameToSave.textContent, initialText)
-          .then((res) => {
-            if (res.status == 200) {
-              modalLoading.loadingText = "Opening file";
-              modalLoading.activate = true;
-              gd.openFile(res.result.id);
-            }
-          });
+        if (this.$refs.fileNameToSave.textContent) {
+          this.$el.classList.remove("active");
+          modalLoading.loadingText = "Creating file";
+          modalLoading.activate = true;
+          gd.createFile(this.folder.id, this.$refs.fileNameToSave.textContent, initialText)
+            .then((res) => {
+              if (res.status == 200) {
+                modalLoading.loadingText = "Opening file";
+                modalLoading.activate = true;
+                gd.openFile(res.result.id);
+              }
+            });
+        }
       } else if (this.options.type == this.options.TYPE.OPENFILE) {
         if (this.selectedFile) {
+          this.$el.classList.remove("active");
           modalLoading.loadingText = "Opening file";
           modalLoading.activate = true;
           gd.openFile(this.selectedFile.id);
         }
       } else if(this.options.type == this.options.TYPE.SAVEAS) {
-        modalLoading.loadingText = "Creating and saving file";
-        modalLoading.activate = true;
-        gd.createFile(this.folder.id, this.$refs.fileNameToSave.textContent, openedFile.raw)
-          .then((res) => {
-            if (res.status == 200) {
-              modalLoading.loadingText = "Opening file";
-              modalLoading.activate = true;
-              gd.openFile(res.result.id);
-            }
-          });
+        if (this.$refs.fileNameToSave.textContent) {
+          this.$el.classList.remove("active");
+          modalLoading.loadingText = "Creating and saving file";
+          modalLoading.activate = true;
+          gd.createFile(this.folder.id, this.$refs.fileNameToSave.textContent, openedFile.raw)
+            .then((res) => {
+              if (res.status == 200) {
+                modalLoading.loadingText = "Opening file";
+                modalLoading.activate = true;
+                gd.openFile(res.result.id);
+              }
+            });
+        }
       }  
     }
   },
