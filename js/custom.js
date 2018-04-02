@@ -777,9 +777,10 @@ function initApis() {
           (1) signing out and signing in as the user who opened this page, or
           (2) opening a file or creating a new file from this page as the signed in user.
         `, "error");
+        modalLoading.activate = false;
       }
     } else { // no user id on url, assuming not landing from google drive using create new or open with
-
+      modalLoading.activate = false;
     }
   }
   gd.signedOutFunction = () => {
