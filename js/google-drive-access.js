@@ -15,7 +15,7 @@
 
     this.init = () => {
       this.initialising = true;
-      gapi.load('client:auth2:picker', this.initClient);
+      gapi.load('client:auth2', this.initClient);
     }
 
     this.initClient = () => {
@@ -157,34 +157,6 @@
         })
       } else {
         return null;
-      }
-    }
-
-    this.openPicker = () => {
-      if (this.accessToken) {
-        var view = new google.picker.View(google.picker.ViewId.DOCS);
-        view.setMimeTypes("text/plain");
-        var picker = new google.picker.PickerBuilder()
-          .enableFeature(google.picker.Feature.NAV_HIDDEN)
-          .setAppId(this.appId)
-          .setOAuthToken(this.accessToken)
-          .addView(view)
-          .addView(new google.picker.DocsUploadView())
-          .setDeveloperKey(this.apiKey)
-          .setCallback(this.pickerCallback)
-          .build();
-        picker.setVisible(true);
-      }
-    }
-
-    this.pickerCallback = (data) => {
-      if (data.action == google.picker.Action.PICKED) {
-        var fileId = data.docs[0].id;
-        var url = new URL(location);
-        url.searchParams.set("user", this.getUserId());
-        url.searchParams.set("file", data.docs[0].id);
-        url.searchParams.set("action", "open");
-        window.location = url.toString();
       }
     }
 
