@@ -446,7 +446,9 @@ var modalFileExplorer = new Vue({
     },
     nextPageToken: "",
     loadingNextPage: false,
-    selectedFile: null
+    selectedFile: null,
+    loadingList: false,
+    loadingFolder: false
   },
   computed: {
     title: function () {
@@ -504,10 +506,13 @@ var modalFileExplorer = new Vue({
       this.$el.querySelectorAll(".file-tile.selected").forEach((el) => {
         el.classList.remove("selected");
       });
+      this.loadingFolder = true;
       gd.getFileMetadata(folderId)
         .then((res) => {
           this.folder = res.result;
+          this.loadingFolder = false;
         });
+      this.loadingList = true;
       gd.getChildren(folderId)
         .then((res) => {
           this.list = res.result.files;
@@ -516,6 +521,7 @@ var modalFileExplorer = new Vue({
           } else {
             this.nextPageToken = "";
           }
+          this.loadingList = false;
         })
     },
     onClickFile: function (file, target) {
