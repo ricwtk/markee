@@ -163,7 +163,7 @@
           </div>
         </div>
         <div class="modal-footer columns">
-          <span class="selected-file-name file-name px-2" v-if="options.type==options.TYPE.OPENFILE">{{ selectedFile ? selectedFile.name : "" }}</span>
+          <span class="selected-file-name file-name px-2" v-if="options.type==options.TYPE.OPENFILE" contenteditable="false">{{ selectedFile ? selectedFile.name : "" }}</span>
           <span class="save-to-file-name file-name px-2" v-else contenteditable="true" ref="fileNameToSave">Save file</span>
           <div class="btn btn-outline" @click="clickAction">{{ actionTitle }}</div>
           <div class="btn btn-outline" @click="toggleModal">Cancel</div>
