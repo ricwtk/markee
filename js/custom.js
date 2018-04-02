@@ -336,7 +336,8 @@ new Vue({
     nguideshown: 3,
     openedFile: openedFile,
     notiObj: notiObj,
-    saving: false
+    saving: false,
+    savingashtml: false
   },
   computed: {
     fileDot: function () {
@@ -392,6 +393,14 @@ new Vue({
     openFile: function () {
       fileExplorerOptions.type = fileExplorerOptions.TYPE.OPENFILE;
       modalFileExplorer.toggleModal();
+    },
+    saveAsHtml: function () {
+      this.savingashtml = true;
+      gd.saveFileAsHtml(openedFile.parents[0], openedFile.name, content.compiledDoc)
+        .then((res) => {
+          notiObj.notify("Compiled HTML is saved in " + res.result.name, "success");
+          this.savingashtml = false;
+        });
     }
   },
   mounted: function () {

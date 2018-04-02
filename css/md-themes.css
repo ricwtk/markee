@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto+Slab');
+@import url('https://fonts.googleapis.com/css?family=Roboto');
 
 .md-default {
-  font-family: inherit;
+  font-family: Roboto;
 }
 
 .md-default a {
@@ -37,6 +37,16 @@
 .md-default td,
 .md-default th {
   padding: 5px;
+}
+
+code {
+  font-family: "SF Mono","Segoe UI Mono","Roboto Mono",Menlo,Courier,monospace;
+  background: #fdf4f4;
+  border-radius: .1rem;
+  color: #e06870;
+  font-size: 85%; 
+  line-height: 1.2;
+  padding: .1rem .15rem;
 }
 
 .md-default pre > code {
