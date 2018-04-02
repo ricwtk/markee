@@ -1,0 +1,59 @@
+\documentclass{article}
+\usepackage[
+  paperheight=10in,
+  paperwidth=10in,
+  margin=0px]{geometry}
+\usepackage{tikz}
+
+\tikzset{
+  cloud/.pic={
+    \coordinate (a) at (0,0);%(13.7,9);
+    \coordinate (b) at ([shift={(-9.1449,-4.8492)}]a);
+
+    \draw[line width=15mm] (a) arc (110:-90:2.5) -- (b) arc (270:70:2) .. controls +(110:6) and +(-110:-5) .. cycle;
+  }
+}
+
+\begin{document}
+  \definecolor{darkcolor}{RGB}{96,125,139}%#607D8B
+  \definecolor{lightcolor}{RGB}{255,255,255}%{237,231,246}%{209,196,233}
+  \centering
+%  %\vspace*{\fill}
+%  \resizebox{\paperwidth}{!}{
+%  \begin{tikzpicture}[line width=5mm,lightcolor]
+%    % y range for cloud: 0 -- 8.2
+%    \draw[darkcolor,fill=darkcolor] (-3,-4.15) rectangle (13.5,12.35);    
+%    \coordinate (a) at (9.1449,4.8492);
+%    \coordinate (b) at (0,0);
+%    \draw (a) arc (110:-90:2.5) -- (b) arc (270:70:2) .. controls +(110:6) and +(-110:-5) .. cycle;
+%    
+%    \draw[] (1.4,0.6) -- ++(7,0) -- ++(0,5.5) -- ++(-7,0) -- ++(0,-5.5) -- cycle;
+%    \draw (1.4,5) -- ++(7,0);
+%    \draw[line width=2mm] (1.8,5.3) -- ++(0,0.4) -- ++(1,0) -- ++(0,-.4);
+%    \draw[line width=2mm] (1.8,5.3)++(1.2,0.4) -- ++(1,0) -- ++(0,-.4);
+%  \end{tikzpicture}
+%  }
+  %\vspace*{\fill}
+%  \newpage
+  \resizebox{\paperwidth}{!}{
+    \begin{tikzpicture}[line width=20mm,darkcolor]
+    \coordinate (a) at (0.5,7);
+    \coordinate (b) at ([shift={(+16,0)}]a);
+    \coordinate (c) at ([shift={(+9.5,+9.5)}]b);
+    \coordinate (d) at ([shift={(-16,+9.5)}]c);
+    \coordinate (e) at ([shift={(-9.5,0)}]d);
+    % y range for cloud: 0 -- 8.2
+    \draw[opacity=0] (0,0) rectangle (26.5,26.5);
+    
+    \draw[fill] (a) -- (b) arc (-90:0:9.5) -- (c)
+    arc (0:90:9.5) -- (d) -- (e) -- cycle;
+    
+    \draw[fill] (2.5,2.5) circle (2);
+    
+    \draw[fill] (26,.5) -- ++(0,8) -- ++(-8,-8) -- cycle;
+    
+    \draw[fill,white,line width=1mm] (12.5,8.5) -- ++(8,7) -- ++(-5,0) -- ++(0,8) -- ++(-6,0) -- ++(0,-8) -- ++(-5,0) -- cycle;
+    
+    \end{tikzpicture}
+  }
+\end{document}
