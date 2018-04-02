@@ -41,9 +41,12 @@
     }
     this.updateSigninStatus = (signedIn) => {
       console.log("signed in status (Google): ", signedIn);
-      this.accessToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse(true).access_token;
-      if (signedIn) this.signedInFunction();
-      else this.signedOutFunction();
+      if (signedIn) {
+        this.accessToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse(true).access_token;
+        this.signedInFunction();
+      } else {
+        this.signedOutFunction();
+      }
     }
 
     this.signedInFunction = () => {}

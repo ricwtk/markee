@@ -297,6 +297,32 @@ Supported markdown syntax can be found on the guide bar.
 `;
 openedFile.raw = initialText;
 
+var modalLoading = new Vue({
+  el: "#modal-loading",
+  data: {
+    activate: false,
+    loadingText: "Loading more words",
+    fontSizeStyle: {
+      "font-size": "1000%"
+    }
+  },
+  mounted: function () {
+    window.addEventListener("resize", this.setFontSize);
+    this.setFontSize();
+  },
+  beforeDestroy: function () {
+    window.removeEventListener("resize", this.setFontSize);
+  },
+  methods: {
+    setFontSize: function () {
+      let fs = parseInt(this.fontSizeStyle["font-size"].match(/\d+/g));
+      let ww = window.innerWidth - 30;
+      let tw = parseInt(window.getComputedStyle(this.$refs.loadingText).width.match(/\d+/g));
+      this.fontSizeStyle["font-size"] = (ww / tw * fs) + "%";
+    }
+  }
+})
+
 new Vue({
   el: "#navbar",
   data: {
@@ -512,25 +538,36 @@ var modalFileExplorer = new Vue({
       this.updateFileExplorer(this.folder.parents[0]);
     },
     clickAction: function () {
+      this.$el.classList.remove("active");
       if (this.options.type == this.options.TYPE.CREATENEW) {
+        modalLoading.loadingText = "Creating file";
+        modalLoading.activate = true;
         gd.createFile(this.folder.id, this.$refs.fileNameToSave.textContent, initialText)
           .then((res) => {
             if (res.status == 200) {
+              modalLoading.loadingText = "Opening file";
+              modalLoading.activate = true;
               gd.openFile(res.result.id);
             }
           });
       } else if (this.options.type == this.options.TYPE.OPENFILE) {
         if (this.selectedFile) {
+          modalLoading.loadingText = "Opening file";
+          modalLoading.activate = true;
           gd.openFile(this.selectedFile.id);
         }
       } else if(this.options.type == this.options.TYPE.SAVEAS) {
+        modalLoading.loadingText = "Creating and saving file";
+        modalLoading.activate = true;
         gd.createFile(this.folder.id, this.$refs.fileNameToSave.textContent, openedFile.raw)
           .then((res) => {
             if (res.status == 200) {
+              modalLoading.loadingText = "Opening file";
+              modalLoading.activate = true;
               gd.openFile(res.result.id);
             }
           });
-      }
+      }  
     }
   },
 })
@@ -609,7 +646,7 @@ var contentContainer = {
         <div class="height-minus mdi mdi-24px mdi-arrow-up-thick c-hand tooltip tooltip-left" data-tooltip="Decrease height" @click="decreaseHeight"></div>
         <div class="height-plus mdi mdi-24px mdi-arrow-down-thick c-hand tooltip tooltip-left" data-tooltip="Increase height" @click="increaseHeight"></div>
       </span>
-      <div class="modal modal-lg active" id="maximised-display" v-if="maximisable" ref="maximisedDisplay">
+      <div class="modal modal-lg" id="maximised-display" v-if="maximisable" ref="maximisedDisplay">
         <span class="modal-overlay"></span>
         <div class="modal-container py-2">
           <div class="c-hand mdi mdi-24px mdi-fullscreen-exit float-right tooltip tooltip-left" aria-label="Close" data-tooltip="Exit fullscreen" @click="toggleMaximised"></div>
@@ -669,6 +706,8 @@ var content = new Vue({
 
 // initiation
 function initApis() {
+  modalLoading.loadingText = "Loading API";
+  modalLoading.activate = true;
   gd = new GDrive();
   gd.signedInFunction = () => {
     signedInStatus.google = true;
@@ -679,10 +718,13 @@ function initApis() {
         // open file if action is open
         if (urlParams.get("action") == "open") {
           if (urlParams.get("file")) {
+            modalLoading.loadingText = "Opening file";
+            modalLoading.activate = true;
             gd.getFileMetadata(urlParams.get("file")).then((res) => {
               gd.getFileContent(res.result.id).then((res) => {
                 openedFile.raw = res.body;
                 openedFile.saved = res.body;
+                modalLoading.activate = false;
               });
               openedFile.name = res.result.name;
               openedFile.id = res.result.id;
@@ -702,16 +744,18 @@ function initApis() {
                   }
                 }
               }
-              
               findParents([res.result.id], [res.result.name], res.result.parents);
             });  
           }
         } else {  // if action is create
           if (urlParams.get("folder")) {
+            modalLoading.loadingText = "Creating file";
+            modalLoading.activate = true;
             gd.createFile(urlParams.get("folder"), "Untitled.md", initialText)
               .then((res) => {
                 if (res.status == 200) {
                   gd.openFile(res.result.id);
+                  modalLoading.activate = false;
                 }
               });
           }
@@ -728,6 +772,7 @@ function initApis() {
   }
   gd.signedOutFunction = () => {
     signedInStatus.google = false;
+    modalLoading.activate = false;
   }
   gd.signedInAtInit = () => {
     document.querySelector("#modal-user").classList.remove("active");
@@ -739,4 +784,4 @@ function initApis() {
 
 // open modal-user to prompt user to sign in
 // document.querySelector("#modal-user").classList.add("active");
-console.log(urlParams.get("user"), urlParams.get("file"), urlParams.get("action"));
+// console.log(urlParams.get("user"), urlParams.get("file"), urlParams.get("action"));

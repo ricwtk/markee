@@ -121,6 +121,27 @@ header {
   overflow: auto;
 }
 
+@keyframes fade-in-out {
+  0%   {opacity: 0.2;}
+  50%  {opacity: 1;}
+  100% {opacity: 0.2;}
+}
+
+#modal-loading .modal-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #607D8B;
+  font-weight: 100;
+}
+
+#modal-loading #loading-text {
+  text-align: center;
+  animation: fade-in-out 3s infinite;
+  white-space: nowrap;
+}
+
 .columns-horizontal {
   flex-direction: row;
 }
