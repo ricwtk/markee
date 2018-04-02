@@ -219,7 +219,7 @@
       <div id="actual-content" class="columns">
         <content-container
           wrapper-id="editor-wrapper"
-          :contenteditable="true"
+          :contenteditable="openedFile.canEdit"
           :hide-sm="false"
           :content="openedFile.raw"
           :maximisable="false"

@@ -74,7 +74,7 @@
       if (this.accessToken) {
         return gapi.client.drive.files.get({
           fileId: fileId,
-          fields: "parents, name, id"
+          fields: "parents, name, id, capabilities"
         });
       } else {
         return null;

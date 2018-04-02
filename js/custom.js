@@ -20,6 +20,7 @@ var openedFile = {
   paths: [],
   pathsInName: [],
   parents: [],
+  canEdit: true,
   raw: "",
   saved: ""
 }
@@ -742,6 +743,11 @@ function initApis() {
               openedFile.id = res.result.id;
               openedFile.paths = [];
               openedFile.parents = res.result.parents;
+              openedFile.canEdit = res.result.capabilities.canEdit;
+
+              if (!openedFile.canEdit) {
+                notiObj.notify("This file is not editable.", "error");
+              }
   
               async function findParents(currentPath, currentPathInName, parents) {
                 if (!parents) {
