@@ -62,9 +62,9 @@
       gapi.auth2.getAuthInstance().signOut();
     }
 
-    this.getUserId = () => {
+    this.getUserProfile = () => {
       if (this.accessToken) {
-        return gapi.auth2.getAuthInstance().currentUser.get().getId();
+        return gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile();
       } else {
         return "";
       }

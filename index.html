@@ -24,7 +24,7 @@
     <header id="navbar">
       <div class="navbar bg-dark px-2">
         <section class="navbar-section">
-          <span class="navbar-brand"><strong>Markee</strong></span>
+          <span class="navbar-brand" style="display: flex"><img src="icons/icon.png" style="height: 24px;">&nbsp;<strong>Markee</strong></span>
           <span>&nbsp;Markdown&nbsp;Editor</span></span>
         </section>
         <section class="navbar-section">
@@ -81,10 +81,10 @@
         <div class="modal-body">
           <div class="card" v-if="(Object.values(signedIn)).some(el => el)">
             <div class="card-header columns">
-              <div class="column col-2 columns"><img src="https://ricwtk.github.io/icons/icon.png" class="img-responsive img-fit-contain"></div>
+              <div class="column col-2 columns"><img :src="signedInUser.profilePic" class="img-responsive img-fit-contain"></div>
               <div class="column columns" style="flex-direction: column; align-items: center; justify-content: center">
-                <div class="card-title h5">Richard Wong</div>
-                <div class="card-subtitle text-gray">ricwtk@gmail.com</div>
+                <div class="card-title h5">{{ signedInUser.name }}</div>
+                <div class="card-subtitle text-gray">{{ signedInUser.email }}</div>
               </div>
             </div>
             <div class="card-footer columns">

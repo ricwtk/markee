@@ -14,6 +14,11 @@ var notiObj = {
     })
   }
 }
+var signedInUser = {
+  name: "",
+  email: "",
+  profilePic: ""
+}
 var openedFile = {
   name: "Unsaved.md",
   id: "",
@@ -401,7 +406,8 @@ new Vue({
 var modalUser = new Vue({
   el: "#modal-user",
   data: {
-    signedIn: signedInStatus
+    signedIn: signedInStatus,
+    signedInUser: signedInUser
   },
   methods: {
     closeModal: function () {
@@ -724,10 +730,14 @@ function initApis() {
   gd = new GDrive();
   gd.signedInFunction = () => {
     signedInStatus.google = true;
+    let gUser = gd.getUserProfile();
+    signedInUser.name = gUser.getName();
+    signedInUser.email = gUser.getEmail();
+    signedInUser.profilePic = gUser.getImageUrl();
     // if no user is provided on url
     if (urlParams.get("user")) {
       // check if the signed in user is the same user
-      if (gd.getUserId() == urlParams.get("user")) {
+      if (gUser.getId() == urlParams.get("user")) {
         // open file if action is open
         if (urlParams.get("action") == "open") {
           if (urlParams.get("file")) {
