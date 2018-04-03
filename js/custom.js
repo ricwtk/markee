@@ -319,12 +319,25 @@ var modalLoading = new Vue({
   beforeDestroy: function () {
     window.removeEventListener("resize", this.setFontSize);
   },
+  watch: {
+    "activate": function (val) {
+      if (val) {
+        this.setFontSize();
+      }
+    },
+    "loadingText": function () {
+      this.setFontSize();
+    }
+  },
   methods: {
     setFontSize: function () {
       let fs = parseInt(this.fontSizeStyle["font-size"].match(/\d+/g));
       let ww = window.innerWidth - 30;
-      let tw = parseInt(window.getComputedStyle(this.$refs.loadingText).width.match(/\d+/g));
-      this.fontSizeStyle["font-size"] = (ww / tw * fs) + "%";
+      let tw = parseInt(window.getComputedStyle(this.$refs.loadingText).getPropertyValue("width").match(/\d+/g));
+      let newfs = ww / tw * fs;
+      if (!isNaN(newfs)) {
+        this.fontSizeStyle["font-size"] = (ww / tw * fs) + "%";
+      }
     }
   }
 })
