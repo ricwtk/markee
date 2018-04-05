@@ -11,7 +11,7 @@
     ].join(" ");
     this.initialised = false;
     this.initialising = false;
-    this.accessToken = "";
+    this.signedIn = false;
 
     this.init = () => {
       this.initialising = true;
@@ -28,7 +28,7 @@
         this.initialised = true;
         this.initialising = false;
         if (gapi.auth2.getAuthInstance().isSignedIn.get()) {
-          this.accessToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse(true).access_token;
+          this.signedIn = true;
           this.signedInAtInit();
         } else {
           this.signedOutAtInit();
@@ -42,9 +42,10 @@
     this.updateSigninStatus = (signedIn) => {
       console.log("signed in status (Google): ", signedIn);
       if (signedIn) {
-        this.accessToken = gapi.auth2.getAuthInstance().currentUser.get().getAuthResponse(true).access_token;
+        this.signedIn = true;
         this.signedInFunction();
       } else {
+        this.signedIn = false;
         this.signedOutFunction();
       }
     }
@@ -63,7 +64,7 @@
     }
 
     this.getUserProfile = () => {
-      if (this.accessToken) {
+      if (this.signedIn) {
         return gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile();
       } else {
         return "";
@@ -71,7 +72,7 @@
     }
 
     this.getFileMetadata = (fileId) => {
-      if (this.accessToken) {
+      if (this.signedIn) {
         return gapi.client.drive.files.get({
           fileId: fileId,
           fields: "parents, name, id, capabilities"
@@ -82,7 +83,7 @@
     }
 
     this.getChildren = (fileId, nextPageToken) => {
-      if (this.accessToken) {
+      if (this.signedIn) {
         let config = {
           orderBy: "folder,name",
           q: "'" + fileId + "' in parents" 
@@ -98,7 +99,7 @@
     }
 
     this.createFile = (folderId, filename, fileContent) => {
-      if (this.accessToken) {
+      if (this.signedIn) {
         return gapi.client.request({
           path: "/upload/drive/v3/files",
           method: "POST",
@@ -125,7 +126,7 @@
     }
 
     this.openFile = (fileId) => {
-      if (this.accessToken) {
+      if (this.signedIn) {
         let url = new URL(window.location);
         url.searchParams.set("action", "open");
         url.searchParams.set("user", this.getUserProfile().getId());
@@ -135,7 +136,7 @@
     }
 
     this.getFileContent = (fileId) => {
-      if (this.accessToken) {
+      if (this.signedIn) {
         return gapi.client.drive.files.get({
           fileId: fileId,
           alt: "media"
@@ -146,7 +147,7 @@
     }
 
     this.updateFileContent = (fileId, newContent) => {
-      if (this.accessToken) {
+      if (this.signedIn) {
         return gapi.client.request({
           path: "/upload/drive/v3/files/" + fileId,
           method: "PATCH",
@@ -161,7 +162,7 @@
     }
 
     this.saveFileAsHtml = (folderId, fileName, content) => {
-      if (this.accessToken) {
+      if (this.signedIn) {
         let htmlfilename = fileName + ".html";
         let cssfilerequest = new Request("css/md-themes.css?version=1.1");
         return fetch(cssfilerequest).then((res) => {
