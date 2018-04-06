@@ -436,6 +436,9 @@ var modalUser = new Vue({
       if (Object.values(signedInStatus).some(el => el))
         this.$el.classList.toggle("active")
     },
+    openPrivacyPolicy: function () {
+      window.location.replace("privacy-policy.html");
+    },
     signInGoogle: function () {
       gd.handleSignInClick();
     },
