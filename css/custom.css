@@ -4,6 +4,10 @@ header {
   z-index: 9;
 }
 
+.full-width-button:hover {
+  background-color: #eee;
+}
+
 #md-guide {
   display: flex;
 }
