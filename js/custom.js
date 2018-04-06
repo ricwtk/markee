@@ -437,7 +437,7 @@ var modalUser = new Vue({
         this.$el.classList.toggle("active")
     },
     openPrivacyPolicy: function () {
-      window.location.replace("privacy-policy.html");
+      window.location = "privacy-policy.html";
     },
     signInGoogle: function () {
       gd.handleSignInClick();
