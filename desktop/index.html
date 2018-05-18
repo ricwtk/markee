@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Markee</title>
+    <meta charset="utf-8">
+    <!-- <link rel="stylesheet" type="text/css" href="./node_modules/bulma/css/bulma.css"> -->
+    <link rel="stylesheet" type="text/css" href="./node_modules/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" type="text/css" href="./main.css">
+  </head>
+
+  <body>
+    <div id="main" class="v-box">
+      <nav class="h-box bg-gray-light p-1">
+        <button class="btn btn-no-border" data-tooltip="Save"><i class="mdi mdi-content-save"></i></button>
+        <button class="btn btn-no-border" data-tooltip="Open"><i class="mdi mdi-folder-open"></i></button>
+        <button class="btn btn-no-border" data-tooltip="New document"><i class="mdi mdi-file-outline"></i></button>
+        <div class="separator-vertical"></div>
+        <button class="btn btn-no-border" data-tooltip="Undo"><i class="mdi mdi-undo"></i></button>
+        <button class="btn btn-no-border" data-tooltip="Redo"><i class="mdi mdi-redo"></i></button>
+        <button class="btn btn-no-border" data-tooltip="Copy"><i class="mdi mdi-content-copy"></i></button>
+        <button class="btn btn-no-border" data-tooltip="Cut"><i class="mdi mdi-content-cut"></i></button>
+        <button class="btn btn-no-border" data-tooltip="Paste"><i class="mdi mdi-content-paste"></i></button>
+        <div class="separator-vertical"></div>
+        <button class="btn btn-no-border" data-tooltip="Preference"><i class="mdi mdi-settings"></i></button>        
+      </nav>
+  
+      <div class="h-box grow">
+        <div class="grow p-1 v-box" id="edit-panel">
+          <textarea class="grow overflow-auto p-1 b-1 bd-gray-light b-solid no-resize" v-model="docContent"></textarea>
+        </div>
+        <div class="grow p-1 v-box" id="display-panel">
+          <div class="grow overflow-auto p-1 bg-gray-lighter md-default" v-html="compiledDocContent"></div>
+        </div>
+      </div>
+  
+      <nav class="h-box bg-gray-light p-1">
+        <div class="grow"></div>
+        <div class="button-group">
+          <button class="btn" data-tooltip="Render as document" data-tooltip-position="top"><i class="mdi mdi-file-document-box"></i></buton>
+          <button class="btn selected" data-tooltip="Render as slides" data-tooltip-position="top"><i class="mdi mdi-file-presentation-box"></i></buton>
+          <button class="btn" data-tooltip="Present" data-tooltip-position="top"><i class="mdi mdi-presentation-play"></i></buton>
+        </div>
+      </nav>
+    </div>
+
+    <div class="modal">
+      <div class="modal-overlay"></div>
+      <div class="modal-container">
+        <div class="modal-title">
+          <div class="grow">title<br>fdsafds</div>
+          <div class="mdi mdi-24px mdi-close"></div>
+        </div>
+        <div class="modal-body">
+          body
+        </div>
+      </div>
+    </div>
+
+    <script src="./js/main.js"></script>
+  </body>
+</html>
