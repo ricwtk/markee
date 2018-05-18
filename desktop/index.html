@@ -21,7 +21,7 @@
         <button class="btn btn-no-border" data-tooltip="Cut"><i class="mdi mdi-content-cut"></i></button>
         <button class="btn btn-no-border" data-tooltip="Paste"><i class="mdi mdi-content-paste"></i></button>
         <div class="separator-vertical"></div>
-        <button class="btn btn-no-border" data-tooltip="Preference"><i class="mdi mdi-settings"></i></button>        
+        <button class="btn btn-no-border" data-tooltip="Preference" @click="$refs.preference.toggle()"><i class="mdi mdi-settings"></i></button>
       </nav>
   
       <div class="h-box grow">
@@ -41,20 +41,11 @@
           <button class="btn" data-tooltip="Present" data-tooltip-position="top"><i class="mdi mdi-presentation-play"></i></buton>
         </div>
       </nav>
+
+      <preference ref="preference"></preference>
+      
     </div>
 
-    <div class="modal">
-      <div class="modal-overlay"></div>
-      <div class="modal-container">
-        <div class="modal-title">
-          <div class="grow">title<br>fdsafds</div>
-          <div class="mdi mdi-24px mdi-close"></div>
-        </div>
-        <div class="modal-body">
-          body
-        </div>
-      </div>
-    </div>
 
     <script src="./js/main.js"></script>
   </body>

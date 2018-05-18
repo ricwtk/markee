@@ -164,6 +164,8 @@ body, html {
 .btn.btn-no-border { border: 0; background-color: transparent; border-radius: 0; }
 .btn.btn-no-border:hover { background-color: var(--gray-lighter-color); }
 
+.form-btn { padding: .5em 1em; }
+
 .button-group > *:first-child {
   border-top-left-radius: var(--border-radius);
   border-bottom-left-radius: var(--border-radius);
@@ -194,28 +196,45 @@ textarea.no-resize { resize: none; }
 .modal.active {
   display: flex;
 }
-.modal-title {
-  display: flex;
-  flex-direction: row;
-}
-.modal-sm .modal-container {
-  flex-grow: 0;
-  align-self: center;
+.modal-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
 }
 .modal-container {
-  background-color: white;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--gray-lighter-color);
   flex-grow: 1;
   align-self: stretch;
   margin: 3em;
   border-radius: var(--border-radius);
   padding: 1em;
+  z-index: 1;
+}
+.modal-sm .modal-container {
+  flex-grow: 0;
+  align-self: center;
 }
 .modal-title {
+  display: flex;
+  flex-direction: row;
   font-weight: bold;
   font-size: 150%;
   margin-bottom: 1em;
 }
+.modal-body {
+  flex-grow: 1;
+}
+.modal-footer {
+  display: flex;
+  flex-direction: row;
+}
 
+
+.c-hand { cursor: pointer; }
 
 
 /* gutter */

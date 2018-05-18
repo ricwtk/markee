@@ -29,6 +29,7 @@ tt({
 });
 
 // vue
+Vue.component("preference", require(path.join(__dirname, "js", "v-pref.js")));
 new Vue({
   el: "#main",
   data: {
@@ -41,5 +42,10 @@ new Vue({
   },
   mounted: function () {
     setSplit();
+  },
+  methods: {
+    test: function () {
+      console.log(this.$refs);
+    }
   }
 })
