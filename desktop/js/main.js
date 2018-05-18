@@ -7,7 +7,11 @@ const {mdconverter, mdguides} = require(path.join(__dirname, "js", "md.js"));
 // split
 var split;
 function setSplit() {
-  var split = Split([
+  if (split) { 
+    split.destroy();
+    split = null; 
+  }
+  split = Split([
     document.querySelector("#edit-panel"),
     document.querySelector("#display-panel")
   ], {
@@ -16,10 +20,31 @@ function setSplit() {
     gutter: (index, direction) => {
       const gutter = document.createElement('div');
       gutter.className = `gutter gutter-${direction} bg-gray-light`;
-      gutter.dataset.tooltip = "Click and drag to change size";
+      // gutter.dataset.tooltip = "Click and drag to change size";
       return gutter;
     }
   });
+}
+
+function changeSplit(target) {
+  if (target.innerWidth < 840) {
+    if (split) {
+      split.destroy();
+      split = null;
+    }
+    [document.querySelector("#edit-panel"),
+    document.querySelector("#display-panel")].forEach(el => {
+      el.classList.add("grow");
+    })
+  } else {
+    [document.querySelector("#edit-panel"),
+    document.querySelector("#display-panel")].forEach(el => {
+      el.classList.remove("grow");
+    })
+    if (!split) {
+      setSplit();
+    }
+  }
 }
 
 // electron-tooltip
@@ -43,15 +68,22 @@ new Vue({
     }
   },
   mounted: function () {
-    setSplit();
+    changeSplit(window);
+    window.addEventListener("resize", (ev) => {
+      changeSplit(ev.currentTarget);
+    });
   },
   methods: {
+    showDisplay: function () {
+      this.$refs.editPanel.classList.add("hide-md");
+      this.$refs.displayPanel.classList.remove("hide-md");
+    },
+    showEdit: function () {
+      this.$refs.editPanel.classList.remove("hide-md");
+      this.$refs.displayPanel.classList.add("hide-md");
+    },
     test: function () {
       console.log(this.$refs);
-    },
-    reloadSplit: function () {
-      split.destroy();
-      setSplit();
     }
   }
 })

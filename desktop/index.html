@@ -24,14 +24,19 @@
         <div class="separator-vertical"></div>
         <button class="btn btn-no-border" data-tooltip="Preference" @click="$refs.preference.toggle()"><i class="mdi mdi-settings"></i></button>
         <button class="btn btn-no-border" data-tooltip="Help" @click="$refs.help.toggle()"><i class="mdi mdi-help-circle"></i></button>
-        <button class="btn btn-no-border" data-tooltip="Reload" @click="reloadSplit"><i class="mdi mdi-reload"></i></button>
       </nav>
   
       <div class="h-box grow">
-        <div class="p-1 v-box" id="edit-panel">
+        <div class="p-1 h-box" id="edit-panel" ref="editPanel">
           <textarea class="grow overflow-auto p-1 b-1 bd-gray-light b-solid no-resize" v-model="docContent"></textarea>
+          <div class="v-box show-md ml-1">
+            <button class="btn btn-no-border mdi mdi-24px mdi-chevron-right c-hand grow" @click="showDisplay"></button>
+          </div>
         </div>
-        <div class="p-1 v-box" id="display-panel">
+        <div class="p-1 h-box hide-md" id="display-panel" ref="displayPanel">
+          <div class="v-box show-md mr-1">
+            <button class="btn btn-no-border mdi mdi-24px mdi-chevron-left c-hand grow" @click="showEdit"></button>
+          </div>
           <div class="grow overflow-auto p-1 bg-gray-lighter md-default" v-html="compiledDocContent"></div>
         </div>
       </div>
