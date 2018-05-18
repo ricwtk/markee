@@ -1,5 +1,6 @@
 const path = require("path");
 const showdown = require("showdown");
+const emojiList = require(path.join(__dirname, "emoji.js"));
 
 function generateRandomId(n, except) {
   let rand;
@@ -264,11 +265,11 @@ const mdguides = [{
   guide: "HTML tags are supported. To parse text inside an HTML tag with markdown, use the HTML attribute `markdown`, `markdown='1'`, or `data-markdown='1'`.\n\n" +
     "**Result**: <div markdown>~~strike through~~</div>\n\n" +
     "**Code**: `<div markdown>~~strike through~~</div>`\n\n"
-// }, {
-//   icon: "mdi-emoticon",
-//   tooltip: "Emoji",
-//   guide: "Supported emoji:\n\n| Emoji | Code |\n|---:|:---|\n" + emojiList.map((el) => "| " + el + " | `" + el + "` |\n").join("") +
-//     "\n\nBased on [emojis in Showdown](https://github.com/showdownjs/showdown/wiki/emojis)"
+}, {
+  icon: "mdi-emoticon",
+  tooltip: "Emoji",
+  guide: "Supported emoji:\n\n| Emoji | Code |\n|---:|:---|\n" + emojiList.map((el) => "| " + el + " | `" + el + "` |\n").join("") +
+    "\n\nBased on [emojis in Showdown](https://github.com/showdownjs/showdown/wiki/emojis)"
 }, {
   icon: "mdi-at",
   tooltip: "Github mentions",

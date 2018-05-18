@@ -33,6 +33,8 @@ Vue.component("help", require(path.join(__dirname, "js", "v-help.js")));
 new Vue({
   el: "#main",
   data: {
+    mdguides: mdguides,
+    mdconverter: mdconverter,
     docContent: ""
   },
   computed: {
