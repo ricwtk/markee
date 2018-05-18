@@ -74,13 +74,27 @@ body, html {
   display: flex;
   flex-direction: row;
 }
-
 .v-box {
   display: flex;
   flex-direction: column;
 }
-
 .grow { flex-grow: 1; }
+
+.h-center { text-align: center; }
+.h-box.h-center { justify-content: center; }
+.v-box.h-center { align-items: center; }
+.h-box.v-center { align-items: center; }
+.v-box.v-center { justify-content: center; }
+
+.tab > * {
+  border-bottom: 1px solid var(--gray-color);
+  padding: 1em;
+  color: var(--gray-color);
+}
+.tab > *.selected {
+  border-bottom-color: var(--primary-color-dark);
+  color: var(--primary-color-dark);
+}
 
 .overflow-auto { 
   flex-basis: 0;

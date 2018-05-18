@@ -2,8 +2,7 @@ const path = require("path");
 const Vue = require(path.join(__dirname, "js", "vue.js"));
 const Split = require("split.js");
 const tt = require('electron-tooltip');
-const showdown = require("showdown");
-const mdconv = new showdown.Converter();
+const {mdconverter, mdguides} = require(path.join(__dirname, "js", "md.js"));
 
 // split
 var split;
@@ -30,6 +29,7 @@ tt({
 
 // vue
 Vue.component("preference", require(path.join(__dirname, "js", "v-pref.js")));
+Vue.component("help", require(path.join(__dirname, "js", "v-help.js")));
 new Vue({
   el: "#main",
   data: {
@@ -37,7 +37,7 @@ new Vue({
   },
   computed: {
     compiledDocContent: function () {
-      return mdconv.makeHtml(this.docContent);
+      return mdconverter.makeHtml(this.docContent);
     }
   },
   mounted: function () {
