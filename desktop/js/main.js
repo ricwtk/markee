@@ -48,6 +48,10 @@ new Vue({
   methods: {
     test: function () {
       console.log(this.$refs);
+    },
+    reloadSplit: function () {
+      split.destroy();
+      setSplit();
     }
   }
 })

@@ -19,7 +19,7 @@ var timelineExt = {
   type: 'lang',
   filter: (text, converter, opt) => {
     let tlstr = [];
-    let regexG = /(?:^|\r\n|\r|\n)\^\^\^timeline(?: |\r\n|\r|\n)+([\s\S]*?)\^\^\^(?:$|\r\n|\r|\n)/g;
+    let regexG = /(?:^|\r\n\r\n|\r\r|\n\n)\^\^\^timeline(?: |\r\n|\r|\n)+([\s\S]*?)\^\^\^(?:$|\r\n|\r|\n)/g;
     let regexS = /(?:^|\r\n|\r|\n)\[([\s\S]*?)\](?:\r\n|\r|\n)+\[([\s\S]*?)\](?:\r\n|\r|\n)+\[([\s\S]*?)\](?:\r\n|\r|\n)+\[([\s\S]*?)\](?:\r\n|\r|\n)/g;
     while ((match = regexG.exec(text)) !== null) {
       tlstr.push(match);
@@ -293,6 +293,11 @@ const mdguides = [{
     "|\-      |`\\-`         |minus sign (hyphen)|\n" +
     "|\.      |`\\.`         |dot                |\n" +
     "|\!      |`\\!`         |exclamation mark   |\n"
+}, {
+  icon: "mdi-chart-gantt",
+  tooltip: "Timeline",
+  guide: "**Result:** \n\n^^^timeline \n[date (click for detail)]\n[date detail]\n[title (click for desc)]\n[desc]\n^^^\n\n" +
+    "**Code:** \n\n```\n^^^timeline \n[date (click for detail)]\n[date detail]\n[title (click for desc)]\n[desc]\n^^^\n```"
 }]
 
 
