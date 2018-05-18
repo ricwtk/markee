@@ -236,6 +236,41 @@ textarea.no-resize { resize: none; }
 
 .c-hand { cursor: pointer; }
 
+.hide-xs { display: flex; }
+.hide-sm { display: flex; }
+.hide-md { display: flex; }
+.hide-lg { display: flex; }
+.hide-xl { display: flex; }
+.show-xs { display: none; }
+.show-sm { display: none; }
+.show-md { display: none; }
+.show-lg { display: none; }
+.show-xl { display: none; }
+
+@media (max-width: 480px) {
+  .hide-xs { display: none; }
+  .show-xs { display: flex; }
+}
+
+@media (max-width: 600px) {
+  .hide-sm { display: none; }
+  .show-sm { display: flex; }
+}
+
+@media (max-width: 840px) {
+  .hide-md { display: none; }
+  .show-md { display: flex; }
+}
+
+@media (max-width: 960px) {
+  .hide-lg { display: none; }
+  .show-lg { display: flex; }
+}
+
+@media (max-width: 1280px) {
+  .hide-xl { display: none; }
+  .show-xl { display: flex; }
+}
 
 /* gutter */
 .gutter {
