@@ -2,6 +2,7 @@
 
 .md-default {
   font-family: Roboto;
+  line-height: 1.5;
 }
 
 .md-default a {
@@ -41,16 +42,129 @@
 
 code {
   font-family: "SF Mono","Segoe UI Mono","Roboto Mono",Menlo,Courier,monospace;
-  background: #fdf4f4;
+  /* background: #fdf4f4; */
+  background: #f8f8f8;
   border-radius: .1rem;
-  color: #e06870;
+  /* color: #e06870; */
+  color: #888;
   font-size: 85%; 
   line-height: 1.2;
   padding: .1rem .15rem;
+  border: 1px solid #ddd;
 }
 
 .md-default pre > code {
   display: block;
   margin: 10px;
   overflow: auto;
+}
+
+.md-default .task-list-item input {
+  margin: 0 0.35em 0 -.5em!important;
+}
+
+.md-default ul {
+  margin: .8rem 0 .8rem .8rem
+}
+
+.md-default p {
+  margin: 0;
+  margin-bottom: .5em;
+}
+
+.md-default li {
+  margin-top: 0;
+}
+
+.md-default li p {
+  display: inline;
+  /* margin-bottom: 0; */
+}
+
+.md-default .timeline {
+  position: relative;
+}
+
+.md-default .timeline p {
+  margin: 0;
+}
+
+.md-default .timeline .entry {
+  display: flex;
+  flex-direction: row;
+}
+
+.md-default .timeline .entry .title {
+  flex-shrink: 0;
+}
+
+.md-default .timeline .entry .title {
+  width: 25%;
+  border-right: 2px solid #ddd;
+}
+
+.md-default .timeline .entry .title,
+.md-default .timeline .entry .body {
+  padding: 2rem 0 0 0;
+}
+
+.md-default .timeline .entry:last-child .title,
+.md-default .timeline .entry:last-child .body {
+  padding-bottom: 2rem;
+}
+
+.md-default .timeline .entry .title {
+  text-align: right;
+  padding-right: 2rem;
+}
+
+.md-default .timeline .entry .body {
+  text-align: left;
+  padding-left: 2rem;
+  flex-grow: 1;
+  height: auto;
+}
+
+.md-default .timeline .entry:before {
+  content: "";
+  position: relative;
+  left: calc(25% + 5px);
+  top: 2.75em;
+   /* calc(2em + 5px); */
+  border: 3px solid salmon;
+  background-color: salmon;
+  width: 12px;
+  height: 12px;
+  border-radius: 100%;
+}
+
+.md-default .timeline .entry:hover:before {
+  background-color: white;
+}
+/* 
+.md-default .timeline .head {
+  font-size: 120%;
+} */
+
+.md-default .timeline .content {
+  color: #999999;
+}
+
+.md-default .timeline .body .content {
+  padding-left: 1em;
+}
+
+.md-default .timeline .title > input[type="checkbox"],
+.md-default .timeline .body > input[type="checkbox"] {
+  display: none;
+}
+
+.md-default .timeline .title > input[type="checkbox"] + .content,
+.md-default .timeline .body > input[type="checkbox"] + .content {
+  display: none;
+}
+
+.md-default .timeline .title > input[type="checkbox"]:checked + .content,
+.md-default .timeline .body > input[type="checkbox"]:checked + .content {
+  display: block;
 }
