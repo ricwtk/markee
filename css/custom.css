@@ -1,3 +1,7 @@
+html, body {
+  height: 100%;
+}
+
 header {
   top: 0;
   position: sticky;
@@ -63,8 +67,6 @@ header {
 
 .actual > *:first-child {
   overflow: auto;
-  height: 100%;
-  width: 100%;
   resize: none;
 }
 
@@ -149,3 +151,25 @@ header {
 .columns-horizontal {
   flex-direction: row;
 }
+
+.hide {
+  display: none!important;
+}
+
+.h-box {
+  display: flex;
+  flex-direction: row;
+}
+
+.v-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.grow {
+  flex-grow: 1;
+  flex-basis: 0;
+}
+
+.h-box.v-center { align-items: center; }
+.v-box.v-center { justify-content: center; }

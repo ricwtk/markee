@@ -1,6 +1,7 @@
 (function (window) {
   function GDrive () {
-    this.clientId = "623667008977-hsdjgfsve1cj8m19traqm3hshh8o995s.apps.googleusercontent.com";
+    // this.clientId = "623667008977-hsdjgfsve1cj8m19traqm3hshh8o995s.apps.googleusercontent.com";
+    this.clientId = "623667008977-9p8cr2149qjbv5bjo2rbeunp59r1mcat.apps.googleusercontent.com"; // testing key
     this.apiKey = "AIzaSyDMQVW72MRoWlANqcx0CjbFzeIKisRuAhc";
     this.appId = "623667008977";
     this.discoveryDocs = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];

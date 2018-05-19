@@ -123,6 +123,16 @@ new Vue({
     clickUser: function () {
       document.querySelector("#modal-user").classList.toggle("active")
     },
+    hideHeader: function () {
+      this.$refs.titleBar.classList.add("hide");
+      this.$refs.guideBar.classList.add("hide");
+      this.$refs.showHeaderBar.classList.remove("hide");
+    },
+    showHeader: function () {
+      this.$refs.titleBar.classList.remove("hide");
+      this.$refs.guideBar.classList.remove("hide");
+      this.$refs.showHeaderBar.classList.add("hide");
+    },
     getN: function (str) {
       if (str == "") return 0
       return parseInt(str.match(/\d+/g))
@@ -381,17 +391,20 @@ new Vue({
 })
 
 var contentContainer = {
-  props: ["contenteditable", "wrapperId", "hideSm", "content", "contentTheme", "maximisable"],
+  props: ["contenteditable", "wrapperId", "hideMd", "content", "contentTheme", "maximisable", "actionLocation"],
   data: function () {
     return {
       height: 80,
       heightd: 3,
       heightmin: 30,
       wrapperClass: {
-        "column": true,
-        "col-6": true,
-        "col-sm-12": true,
-        "hide-sm": this.hideSm
+        "h-box": true,
+        "grow": true,
+        "p-1": true,
+        // "column": true,
+        // "col-6": true,
+        // "col-sm-12": true,
+        "hide-md": this.hideMd
       }
     }
   },
@@ -403,12 +416,6 @@ var contentContainer = {
     }
   },
   methods: {
-    decreaseHeight: function () {
-      this.height = Math.max(this.height - this.heightd, this.heightmin)
-    },
-    increaseHeight: function () {
-      this.height += this.heightd
-    },
     sendEditedContent: function (ev) {
       this.$emit("input", ev.target.value)
     },
@@ -426,12 +433,16 @@ var contentContainer = {
     },
     toggleMaximised: function () {
       this.$refs.maximisedDisplay.classList.toggle("active");
+    },
+    emitAction: function () {
+      this.$emit("action");
     }
   },
   template: `
   <span :id="wrapperId" :class="wrapperClass">
-    <div :class="['actual', 'col-12', 'relative', 'md-'+contentTheme]" :style="style">
-      <textarea v-if="contenteditable" class="p-1" ref="textarea" 
+    <div class="h-box v-center c-hand mdi mdi-chevron-left show-md px-1" v-if="actionLocation=='left'" @click="emitAction"></div>
+    <div :class="['actual', 'grow', 'relative', 'md-'+contentTheme, 'v-box']">
+      <textarea v-if="contenteditable" class="p-1 grow" ref="textarea" 
         :value="content" 
         @input="sendEditedContent" 
         @keydown.tab="addTab"
@@ -440,12 +451,10 @@ var contentContainer = {
         @keyup.ctrl.73.exact="italicText"
         @keydown.ctrl.73.exact="e => e.preventDefault()">
       </textarea>
-      <div v-else v-html="content" class="p-1">
+      <div v-else v-html="content" class="p-1 grow" style="overflow-y: scroll">
       </div>
-      <span class="controls absolute pr-2">
-        <div v-if="maximisable" class="height-minus mdi mdi-24px mdi-fullscreen c-hand tooltip tooltip-left" data-tooltip="Display this only" @click="toggleMaximised"></div>
-        <div class="height-minus mdi mdi-24px mdi-arrow-up-thick c-hand tooltip tooltip-left" data-tooltip="Decrease height" @click="decreaseHeight"></div>
-        <div class="height-plus mdi mdi-24px mdi-arrow-down-thick c-hand tooltip tooltip-left" data-tooltip="Increase height" @click="increaseHeight"></div>
+      <span class="controls absolute pr-2 mr-2">
+        <div v-if="maximisable" class="height-minus mdi mdi-24px mdi-fullscreen c-hand tooltip tooltip-left pr-2" data-tooltip="Display this only" @click="toggleMaximised"></div>
       </span>
       <div class="modal modal-lg" id="maximised-display" v-if="maximisable" ref="maximisedDisplay">
         <span class="modal-overlay"></span>
@@ -455,6 +464,7 @@ var contentContainer = {
         </div>
       </div>
     </div>
+    <div class="h-box v-center c-hand mdi mdi-chevron-right show-md px-1" v-if="actionLocation=='right'" @click="emitAction"></div>
   </span>
   `
 }
@@ -473,15 +483,11 @@ var content = new Vue({
     "content-container": contentContainer
   },
   methods: {
-    switchTo: function (ev) {
-      document.querySelectorAll("#content-tabs a").forEach((el) => {
-        if (el == ev.target) el.classList.add("active")
-        else el.classList.remove("active")
-      })
+    switchTo: function (target) {
       let allChildren = document.querySelector("#content #actual-content").children
       for (let i = 0; i < allChildren.length; i++) {
-        if (allChildren[i].id == ev.target.dataset.target) allChildren[i].classList.remove("hide-sm")
-        else allChildren[i].classList.add("hide-sm")
+        if (allChildren[i].id == target) allChildren[i].classList.remove("hide-md")
+        else allChildren[i].classList.add("hide-md")
       }
     },
     updateRaw: function (raw) {

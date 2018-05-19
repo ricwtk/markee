@@ -29,9 +29,9 @@
     <script src="js/md.js"></script>
   </head>
 
-  <body>
+  <body class="v-box">
     <header id="navbar">
-      <div class="navbar bg-dark px-2">
+      <div class="navbar bg-dark px-2" ref="titleBar">
         <section class="navbar-section">
           <span class="navbar-brand" style="display: flex"><img src="icons/icon.png" style="height: 24px;">&nbsp;<strong>Markee</strong></span>
           <span>&nbsp;Markdown&nbsp;Editor</span></span>
@@ -47,9 +47,10 @@
           <span class="tooltip tooltip-bottom px-2 mdi mdi-24px mdi-loading mdi-spin" data-tooltip="Saving as html file" v-if="savingashtml"></span>
           <div class="divider-vert"></div>
           <span id="user" class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-account-circle" data-tooltip="User" @click="clickUser"></span>
+          <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-chevron-up" data-tooltip="Hide header" @click="hideHeader"></span>
         </section>
       </div>
-      <div id="md-guide" class="col-12 bg-secondary px-2">
+      <div id="md-guide" class="col-12 bg-secondary px-2" ref="guideBar">
         <div id="guide-items">
           <span v-for="g in guides.slice(0, nguideshown)"
             :class="['c-hand', 'px-1', 'mdi', 'mdi-24px', 'tooltip', 'tooltip-bottom', g.icon]"
@@ -65,6 +66,10 @@
             </li>
           </ul>
         </div>
+      </div>
+      <div class="navbar col-12 px-2 hide" ref="showHeaderBar">
+        <div class="navbar-section"></div>
+        <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-chevron-down" data-tooltip="Show header" @click="showHeader"></span>
       </div>
       <div id="notifications" class="col-12 bg-secondary p-2" v-if="notiObj.notifications.length > 0">
         <div v-for="(noti, index) in notiObj.notifications" :class="['toast', noti.statusClass]">
@@ -222,34 +227,30 @@
       </template>
     </div>
 
-    <div id="content" class="p-2 relative">
-      <ul class="tab tab-block show-sm" id="content-tabs">
-        <li class="tab-item">
-          <a class="c-hand active" @click="switchTo" data-target="editor-wrapper">Editor</a>
-        </li>
-        <li class="tab-item">
-          <a class="c-hand" @click="switchTo" data-target="display-wrapper">Display</a>
-        </li>
-      </ul>
-      <div id="actual-content" class="columns">
+    <div id="content" class="px-1 grow v-box">
+      <div id="actual-content" class="grow h-box">
         <content-container
           wrapper-id="editor-wrapper"
           :contenteditable="openedFile.canEdit"
-          :hide-sm="false"
+          :hide-md="false"
           :content="openedFile.raw"
           :maximisable="false"
+          action-location="right"
           @input="updateRaw"
           @addtab="addTab"
           @boldtext="boldText"
           @italictext="italicText"
+          @action="switchTo('display-wrapper')"
         ></content-container>
         <content-container
           wrapper-id="display-wrapper"
           :contenteditable="false"
-          :hide-sm="true"
+          :hide-md="true"
           :content="compiledDoc"
           content-theme="default"
           :maximisable="true"
+          action-location="left"
+          @action="switchTo('editor-wrapper')"          
         ></content-container>
       </div>
     </div>
