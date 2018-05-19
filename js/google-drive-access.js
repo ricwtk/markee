@@ -113,7 +113,7 @@
             + "Content-Type: application/json; charset=UTF-8\n\n"
             + JSON.stringify({
                 mimeType: "text/markdown",
-                name: filename,
+                name: filename.endsWith(".md") ? filename : filename + ".md",
                 parents: [folderId]
               })
             + "\n\n"
