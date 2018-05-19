@@ -1,14 +1,3 @@
-function generateRandomId(n, except) {
-  let rand;
-  do {
-    rand = Math.random().toString(36).substr(2);
-    while (rand.length < n) {
-      rand += Math.random().toString(36).substr(2);
-    }
-  } while (except.includes(rand))
-  return rand;
-}
-
 var ids = [];
 
 var timelineExt = {
@@ -288,6 +277,6 @@ const mdguides = [{
 }, {
   icon: "mdi-chart-gantt",
   tooltip: "Timeline",
-  guide: "**Result:** \n\n^^^timeline \n[date (click for detail)]\n[date detail]\n[title (click for desc)]\n[desc]\n^^^\n\n" +
-    "**Code:** \n\n```\n^^^timeline \n[date (click for detail)]\n[date detail]\n[title (click for desc)]\n[desc]\n^^^\n```"
+  guide: "**Result:** \n\n^^^timeline \n[date]\n[date detail]\n[title]\n[desc]\n^^^\n\n" +
+    "**Code:** \n\n```\n^^^timeline \n[date]\n[date detail]\n[title]\n[desc]\n^^^\n```"
 }]
