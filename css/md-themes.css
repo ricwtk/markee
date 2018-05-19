@@ -3,6 +3,15 @@
 .md-default {
   font-family: Roboto;
   line-height: 1.5;
+  font-size: .8rem;
+  text-rendering: optimizeLegibility;
+  color: #50596c;
+}
+
+.md-default *,
+.md-default *:before,
+.md-default *:after {
+  box-sizing: border-box;
 }
 
 .md-default a {
@@ -83,6 +92,8 @@ code {
 
 .md-default .timeline {
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .md-default .timeline p {
@@ -90,22 +101,33 @@ code {
 }
 
 .md-default .timeline .entry {
+  flex-grow: 1;
   display: flex;
   flex-direction: row;
 }
 
 .md-default .timeline .entry .title {
   flex-shrink: 0;
+  flex-grow: 1;
+  flex-basis: 0;
+  border-right: 2px solid #ddd;
+  text-align: right;
+  padding-right: 2rem;
+  position: relative;
 }
 
-.md-default .timeline .entry .title {
-  width: 25%;
-  border-right: 2px solid #ddd;
+.md-default .timeline .entry .body {
+  text-align: left;
+  padding-left: 2rem;
+  flex-shrink: 0;
+  flex-grow: 3;
+  flex-basis: 0;
+  height: auto;
 }
 
 .md-default .timeline .entry .title,
 .md-default .timeline .entry .body {
-  padding: 2rem 0 0 0;
+  padding-top: 2rem;
 }
 
 .md-default .timeline .entry:last-child .title,
@@ -113,24 +135,16 @@ code {
   padding-bottom: 2rem;
 }
 
-.md-default .timeline .entry .title {
-  text-align: right;
-  padding-right: 2rem;
+.md-default .timeline .title .head {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
-.md-default .timeline .entry .body {
-  text-align: left;
-  padding-left: 2rem;
-  flex-grow: 1;
-  height: auto;
-}
-
-.md-default .timeline .entry:before {
+.md-default .timeline .title .head::after {
   content: "";
-  position: relative;
-  left: calc(25% + 5px);
-  top: 2.75em;
-   /* calc(2em + 5px); */
+  position: absolute;
+  right: -7px;
   border: 3px solid salmon;
   background-color: salmon;
   width: 12px;
@@ -138,13 +152,9 @@ code {
   border-radius: 100%;
 }
 
-.md-default .timeline .entry:hover:before {
+.md-default .timeline .entry:hover .title .head::after {
   background-color: white;
 }
-/* 
-.md-default .timeline .head {
-  font-size: 120%;
-} */
 
 .md-default .timeline .content {
   color: #999999;
