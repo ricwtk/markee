@@ -27,15 +27,11 @@ var timelineExt = {
           let [y0,y1,y2,y3,y4] = match;
           replacement += "<div class='entry'>";
           replacement += "<div class='title'>";
-          ids.push(generateRandomId(10, ids));
-          replacement += "<label for='" + ids[ids.length-1] + "' class='head'>" + converter.makeHtml(y1) + "</label>";
-          replacement += "<input type='checkbox' id='" + ids[ids.length-1] + "'>"
+          replacement += "<div class='head'>" + converter.makeHtml(y1) + "</label>";
           replacement += "<div class='content'>" + converter.makeHtml(y2) + "</div>";
           replacement += "</div>";
           replacement += "<div class='body'>";
-          ids.push(generateRandomId(10, ids));
-          replacement += "<label for='" + ids[ids.length-1] + "' class='head'>" + converter.makeHtml(y3) + "</label>";
-          replacement += "<input type='checkbox' id='" + ids[ids.length-1] + "'>"
+          replacement += "<div class='head'>" + converter.makeHtml(y3) + "</label>";
           replacement += "<div class='content'>" + converter.makeHtml(y4) + "</div>";
           replacement += "</div>";
           replacement += "</div>";

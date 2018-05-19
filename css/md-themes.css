@@ -154,7 +154,7 @@ code {
   padding-left: 1em;
 }
 
-.md-default .timeline .title > input[type="checkbox"],
+/* .md-default .timeline .title > input[type="checkbox"],
 .md-default .timeline .body > input[type="checkbox"] {
   display: none;
 }
@@ -167,4 +167,4 @@ code {
 .md-default .timeline .title > input[type="checkbox"]:checked + .content,
 .md-default .timeline .body > input[type="checkbox"]:checked + .content {
   display: block;
-}
+} */
