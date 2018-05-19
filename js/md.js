@@ -4,7 +4,7 @@ var timelineExt = {
   type: 'lang',
   filter: (text, converter, opt) => {
     let tlstr = [];
-    let regexG = /(?:^|\r\n\r\n|\r\r|\n\n)\^\^\^timeline(?: |\r\n|\r|\n)+([\s\S]*?)\^\^\^(?:$|\r\n\r\n|\r\r|\n\n)/g;
+    let regexG = /(?:^|\r\n\r\n|\r\r|\n\n)\^\^\^timeline(?: |\r\n|\r|\n)+([\s\S]*?)\^\^\^(?:$|\r\n|\r|\n)/g;
     let regexS = /(?:^|\r\n|\r|\n)\[([\s\S]*?)\](?:\r\n|\r|\n)+\[([\s\S]*?)\](?:\r\n|\r|\n)+\[([\s\S]*?)\](?:\r\n|\r|\n)+\[([\s\S]*?)\](?:\r\n|\r|\n)/g;
     while ((match = regexG.exec(text)) !== null) {
       tlstr.push(match);
@@ -16,11 +16,11 @@ var timelineExt = {
           let [y0,y1,y2,y3,y4] = match;
           replacement += "<div class='entry'>";
           replacement += "<div class='title'>";
-          replacement += "<div class='head'>" + converter.makeHtml(y1) + "</label>";
+          replacement += "<div class='head'>" + converter.makeHtml(y1) + "</div>";
           replacement += "<div class='content'>" + converter.makeHtml(y2) + "</div>";
           replacement += "</div>";
           replacement += "<div class='body'>";
-          replacement += "<div class='head'>" + converter.makeHtml(y3) + "</label>";
+          replacement += "<div class='head'>" + converter.makeHtml(y3) + "</div>";
           replacement += "<div class='content'>" + converter.makeHtml(y4) + "</div>";
           replacement += "</div>";
           replacement += "</div>";
