@@ -126,12 +126,14 @@ new Vue({
     hideHeader: function () {
       this.$refs.titleBar.classList.add("hide");
       this.$refs.guideBar.classList.add("hide");
-      this.$refs.showHeaderBar.classList.remove("hide");
+      this.$refs.hideHeaderAction.classList.add("hide");
+      this.$refs.showHeaderAction.classList.remove("hide");
     },
     showHeader: function () {
       this.$refs.titleBar.classList.remove("hide");
       this.$refs.guideBar.classList.remove("hide");
-      this.$refs.showHeaderBar.classList.add("hide");
+      this.$refs.hideHeaderAction.classList.remove("hide");
+      this.$refs.showHeaderAction.classList.add("hide");
     },
     getN: function (str) {
       if (str == "") return 0
@@ -381,13 +383,6 @@ var modalFileExplorer = new Vue({
       }  
     }
   },
-})
-
-new Vue({
-  el: "#file-info",
-  data: {
-    openedFile: openedFile
-  }
 })
 
 var contentContainer = {

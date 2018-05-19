@@ -47,7 +47,6 @@
           <span class="tooltip tooltip-bottom px-2 mdi mdi-24px mdi-loading mdi-spin" data-tooltip="Saving as html file" v-if="savingashtml"></span>
           <div class="divider-vert"></div>
           <span id="user" class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-account-circle" data-tooltip="User" @click="clickUser"></span>
-          <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-chevron-up" data-tooltip="Hide header" @click="hideHeader"></span>
         </section>
       </div>
       <div id="md-guide" class="col-12 bg-secondary px-2" ref="guideBar">
@@ -67,9 +66,36 @@
           </ul>
         </div>
       </div>
-      <div class="navbar col-12 px-2 hide" ref="showHeaderBar">
-        <div class="navbar-section"></div>
-        <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-chevron-down" data-tooltip="Show header" @click="showHeader"></span>
+      <div id="file-info" class="px-2 h-box" ref="fileInfoBar">          
+        <template v-if="openedFile.id">
+          <div class="dropdown grow" v-if="openedFile.pathsInName.length > 0">
+            <span :class="openedFile.pathsInName.length > 1 ? ['dropdown-toggle', 'c-hand', 'tooltip', 'tooltip-bottom'] : ['dropdown-toggle']" tabindex="0" data-tooltip="Show other paths that point to this file">
+              <ul class="breadcrumb">
+                <li class="breadcrumb-item" v-for="n in openedFile.pathsInName[0].slice().reverse()">
+                  {{ n }}
+                </li>
+              </ul>
+              <span class="mdi mdi-chevron-down text-right" v-if="openedFile.pathsInName.length > 1"></span>
+            </span>
+            <ul class="menu grow" v-if="openedFile.pathsInName.length > 1">
+              <template v-for="(p,i) in openedFile.pathsInName.slice(1)">
+                <li>
+                  <ul class="breadcrumb">
+                    <li class="breadcrumb-item" v-for="n in p.slice().reverse()">
+                      {{ n }}
+                    </li>
+                  </ul>
+                </li>
+                <li class="divider" v-if="i !== openedFile.pathsInName.length-2"></li>
+              </template>
+            </ul>
+          </div>
+        </template>
+        <template v-else>
+          <div class="grow">{{ openedFile.name }}</div>
+        </template>
+        <div class="mdi mdi-chevron-up tooltip tooltip-left" @click="hideHeader" data-tooltip="Hide header" ref="hideHeaderAction"></div>
+        <div class="mdi mdi-chevron-down tooltip tooltip-left hide" @click="showHeader" data-tooltip="Show header" ref="showHeaderAction"></div>
       </div>
       <div id="notifications" class="col-12 bg-secondary p-2" v-if="notiObj.notifications.length > 0">
         <div v-for="(noti, index) in notiObj.notifications" :class="['toast', noti.statusClass]">
@@ -195,36 +221,6 @@
           <div class="btn btn-outline" @click="toggleModal">Cancel</div>
         </div>
       </div>
-    </div>
-
-    <div id="file-info" class="px-2">          
-      <template v-if="openedFile.id">
-        <div class="dropdown col-12" v-if="openedFile.pathsInName.length > 0">
-          <span :class="openedFile.pathsInName.length > 1 ? ['dropdown-toggle', 'c-hand', 'tooltip', 'tooltip-bottom'] : ['dropdown-toggle']" tabindex="0" data-tooltip="Show other paths that point to this file">
-            <ul class="breadcrumb">
-              <li class="breadcrumb-item" v-for="n in openedFile.pathsInName[0].slice().reverse()">
-                {{ n }}
-              </li>
-            </ul>
-            <span class="mdi mdi-chevron-down text-right" v-if="openedFile.pathsInName.length > 1"></span>
-          </span>
-          <ul class="menu col-12" v-if="openedFile.pathsInName.length > 1">
-            <template v-for="(p,i) in openedFile.pathsInName.slice(1)">
-              <li>
-                <ul class="breadcrumb">
-                  <li class="breadcrumb-item" v-for="n in p.slice().reverse()">
-                    {{ n }}
-                  </li>
-                </ul>
-              </li>
-              <li class="divider" v-if="i !== openedFile.pathsInName.length-2"></li>
-            </template>
-          </ul>
-        </div>
-      </template>
-      <template v-else>
-        {{ openedFile.name }}
-      </template>
     </div>
 
     <div id="content" class="px-1 grow v-box">
