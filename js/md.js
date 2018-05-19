@@ -4,7 +4,7 @@ var timelineExt = {
   type: 'lang',
   filter: (text, converter, opt) => {
     let tlstr = [];
-    let regexG = /(?:^|\r\n\r\n|\r\r|\n\n)\^\^\^timeline(?: |\r\n|\r|\n)+([\s\S]*?)\^\^\^(?:$|\r\n|\r|\n)/g;
+    let regexG = /(?:^|\r\n\r\n|\r\r|\n\n)\^\^\^timeline(?: |\r\n|\r|\n)+([\s\S]*?)\^\^\^(?:$|\r\n\r\n|\r\r|\n\n)/g;
     let regexS = /(?:^|\r\n|\r|\n)\[([\s\S]*?)\](?:\r\n|\r|\n)+\[([\s\S]*?)\](?:\r\n|\r|\n)+\[([\s\S]*?)\](?:\r\n|\r|\n)+\[([\s\S]*?)\](?:\r\n|\r|\n)/g;
     while ((match = regexG.exec(text)) !== null) {
       tlstr.push(match);
