@@ -231,12 +231,12 @@
           :hide-md="false"
           :content="openedFile.raw"
           :maximisable="false"
-          action-location="right"
+          :actions="[{ 'class': ['mdi-eye', 'show-md'], 'emit': 'toggle-view' }]"
           @input="updateRaw"
           @addtab="addTab"
           @boldtext="boldText"
           @italictext="italicText"
-          @action="switchTo('display-wrapper')"
+          @toggle-view="switchTo('display-wrapper')"
         ></content-container>
         <content-container
           wrapper-id="display-wrapper"
@@ -245,8 +245,8 @@
           :content="compiledDoc"
           content-theme="default"
           :maximisable="true"
-          action-location="left"
-          @action="switchTo('editor-wrapper')"          
+          :actions="[{ 'class': ['mdi-lead-pencil', 'show-md'], 'emit': 'toggle-view' }]"
+          @toggle-view="switchTo('editor-wrapper')"          
         ></content-container>
       </div>
     </div>

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono');
+
 html, body {
   height: 100%;
 }
@@ -50,12 +52,13 @@ header {
 #editor-wrapper .controls,
 #display-wrapper .controls,
 #content > .controls {
-  bottom: 0px;
-  right: 0px;
+  border-top: 1px solid #ddd;
+  justify-content: flex-end;
 }
 
 #editor-wrapper .actual {
-  font-family: 'Courier New', Courier, monospace;
+  font-family: 'Roboto Mono', Courier, monospace;
+  font-size: .8em;
   border: 1px solid;
   overflow: hidden;
 }

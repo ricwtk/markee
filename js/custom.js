@@ -386,7 +386,7 @@ var modalFileExplorer = new Vue({
 })
 
 var contentContainer = {
-  props: ["contenteditable", "wrapperId", "hideMd", "content", "contentTheme", "maximisable", "actionLocation"],
+  props: ["contenteditable", "wrapperId", "hideMd", "content", "contentTheme", "maximisable", "actions"],
   data: function () {
     return {
       height: 80,
@@ -396,9 +396,6 @@ var contentContainer = {
         "h-box": true,
         "grow": true,
         "p-1": true,
-        // "column": true,
-        // "col-6": true,
-        // "col-sm-12": true,
         "hide-md": this.hideMd
       }
     }
@@ -431,11 +428,13 @@ var contentContainer = {
     },
     emitAction: function () {
       this.$emit("action");
+    },
+    customEmit: function (msg) {
+      this.$emit(msg);
     }
   },
   template: `
   <span :id="wrapperId" :class="wrapperClass">
-    <div class="h-box v-center c-hand mdi mdi-chevron-left show-md px-1" v-if="actionLocation=='left'" @click="emitAction"></div>
     <div :class="['actual', 'grow', 'relative', 'md-'+contentTheme, 'v-box']">
       <textarea v-if="contenteditable" class="p-1 grow" ref="textarea" 
         :value="content" 
@@ -448,9 +447,10 @@ var contentContainer = {
       </textarea>
       <div v-else v-html="content" class="p-1 grow" style="overflow-y: scroll">
       </div>
-      <span class="controls absolute pr-2 mr-2">
-        <div v-if="maximisable" class="height-minus mdi mdi-24px mdi-fullscreen c-hand tooltip tooltip-left pr-2" data-tooltip="Display this only" @click="toggleMaximised"></div>
-      </span>
+      <div class="h-box controls px-2">
+        <div v-if="maximisable" class="mdi mdi-24px mdi-fullscreen c-hand" @click="toggleMaximised"></div>
+        <div v-for="a in actions" :class="['mdi', 'mdi-24px', 'c-hand'].concat(a.class)" @click="customEmit(a.emit)"></div>
+      </div>
       <div class="modal modal-lg" id="maximised-display" v-if="maximisable" ref="maximisedDisplay">
         <span class="modal-overlay"></span>
         <div class="modal-container py-2">
@@ -459,7 +459,6 @@ var contentContainer = {
         </div>
       </div>
     </div>
-    <div class="h-box v-center c-hand mdi mdi-chevron-right show-md px-1" v-if="actionLocation=='right'" @click="emitAction"></div>
   </span>
   `
 }
