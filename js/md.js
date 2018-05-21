@@ -1,39 +1,21 @@
-var ids = [];
-
-var timelineExt = {
-  type: 'lang',
-  filter: (text, converter, opt) => {
-    let tlstr = [];
-    let regexG = /(?:^|\r\n\r\n|\r\r|\n\n)\^\^\^timeline(?: |\r\n|\r|\n)+([\s\S]*?)\^\^\^(?:$|\r\n|\r|\n)/g;
-    let regexS = /(?:^|\r\n|\r|\n)\[([\s\S]*?)\](?:\r\n|\r|\n)+\[([\s\S]*?)\](?:\r\n|\r|\n)+\[([\s\S]*?)\](?:\r\n|\r|\n)+\[([\s\S]*?)\](?:\r\n|\r|\n)/g;
-    while ((match = regexG.exec(text)) !== null) {
-      tlstr.push(match);
-    }
-    if (tlstr.length > 0) {
-      tlstr.forEach(tl => {
-        let replacement = "<div class='timeline'>";
-        while ((match = regexS.exec(tl[1])) !== null) {
-          let [y0,y1,y2,y3,y4] = match;
-          replacement += "<div class='entry'>";
-          replacement += "<div class='title'>";
-          replacement += "<div class='head'>" + converter.makeHtml(y1) + "</div>";
-          replacement += "<div class='content'>" + converter.makeHtml(y2) + "</div>";
-          replacement += "</div>";
-          replacement += "<div class='body'>";
-          replacement += "<div class='head'>" + converter.makeHtml(y3) + "</div>";
-          replacement += "<div class='content'>" + converter.makeHtml(y4) + "</div>";
-          replacement += "</div>";
-          replacement += "</div>";
-        }
-        replacement += "</div>";
-        text = text.replace(tl[0], replacement);
-      })
-    }
-    return text;
+var timeLine = {
+  type: "lang",
+  regex: /^- \[tl\](?: |\n)*\[((?:[\s\S]*?)(?:[^\\]))\](?: |\n)*\[((?:[\s\S]*?)(?:[^\\]))\](?: |\n)*\[((?:[\s\S]*?)(?:[^\\]))\](?: |\n)*\[((?:[\s\S]*?)(?:[^\\]))\]/gm,
+  replace: function (match, p1, p2, p3, p4) {
+    return '<div class="timeline">'
+      + '<div class="title">'
+      + '<div class="head">' + p1 + '</div>'
+      + '<div class="content">' + p2 + '</div>'
+      + '</div>'
+      + '<div class="body">'
+      + '<div class="head">' + p3 + '</div>'
+      + '<div class="content">' + p4 + '</div>'
+      + '</div>'
+      + '</div>';
   }
 }
 
-showdown.extension("timeline", timelineExt);
+showdown.extension("timeline", timeline);
 
 const mdconverter = new showdown.Converter({
   tasklists: true,
@@ -277,6 +259,6 @@ const mdguides = [{
 }, {
   icon: "mdi-chart-gantt",
   tooltip: "Timeline",
-  guide: "**Result:** \n\n^^^timeline \n[date]\n[date detail]\n[title]\n[desc]\n^^^\n\n" +
-    "**Code:** \n\n```\n^^^timeline \n[date]\n[date detail]\n[title]\n[desc]\n^^^\n```"
+  guide: "**Result:** \n- [tl] [date] [time] [title] [description]\n\n" +
+    "**Code:** \n\n`- [tl] [date] [time] [title] [description]`"
 }]

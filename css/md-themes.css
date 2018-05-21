@@ -94,20 +94,20 @@ code {
 .md-default .timeline {
   position: relative;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
 }
 
 .md-default .timeline p {
   margin: 0;
 }
-
+/* 
 .md-default .timeline .entry {
   flex-grow: 1;
   display: flex;
   flex-direction: row;
-}
+} */
 
-.md-default .timeline .entry .title {
+.md-default .timeline .title {
   flex-shrink: 0;
   flex-grow: 1;
   flex-basis: 0;
@@ -117,7 +117,7 @@ code {
   position: relative;
 }
 
-.md-default .timeline .entry .body {
+.md-default .timeline .body {
   text-align: left;
   padding-left: 2rem;
   flex-shrink: 0;
@@ -126,14 +126,15 @@ code {
   height: auto;
 }
 
-.md-default .timeline .entry .title,
-.md-default .timeline .entry .body {
+.md-default .timeline .title,
+.md-default .timeline .body {
   padding-top: 2rem;
+  padding-bottom: 2rem;
 }
 
-.md-default .timeline .entry:last-child .title,
-.md-default .timeline .entry:last-child .body {
-  padding-bottom: 2rem;
+.md-default .timeline + .timeline .title,
+.md-default .timeline + .timeline .body {
+  padding-top: 0rem;
 }
 
 .md-default .timeline .title .head {
@@ -153,7 +154,7 @@ code {
   border-radius: 100%;
 }
 
-.md-default .timeline .entry:hover .title .head::after {
+.md-default .timeline:hover .title .head::after {
   background-color: white;
 }
 

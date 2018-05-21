@@ -471,7 +471,7 @@ var content = new Vue({
   },
   computed: {
     compiledDoc: function () {
-      return mdconverter.makeHtml(this.openedFile.raw)
+      return mdconverter.makeHtml(this.openedFile.raw);
     }
   },
   components: {
