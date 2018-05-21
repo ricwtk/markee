@@ -72,9 +72,25 @@ code {
   margin: 0 0.35em 0 -.5em!important;
 }
 
+.md-default ul,
+.md-default ol {
+  margin: .8rem 0 .8rem 1.5rem;
+}
+
 .md-default ul {
-  margin: .8rem 0 .8rem 2rem;
   list-style: disc outside;
+}
+
+.md-default ul ul {  
+  list-style-type: circle;
+}
+
+.md-default ol {
+  list-style: decimal outside;
+}
+
+.md-default ol ol {
+  list-style-type: lower-alpha;
 }
 
 .md-default p {
@@ -84,11 +100,6 @@ code {
 
 .md-default li {
   margin-top: 0;
-}
-
-.md-default li p {
-  display: block;
-  /* margin-bottom: 0; */
 }
 
 .md-default .timeline {
