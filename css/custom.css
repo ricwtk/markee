@@ -64,7 +64,7 @@ header {
 }
 
 #display-wrapper .actual {
-  border: 1px dashed;
+  border: 1px dotted;
   overflow: hidden;
 }
 
