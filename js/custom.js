@@ -1,3 +1,37 @@
+var split;
+
+function updateSplit(target) {
+  if (target.innerWidth < 840) {
+    if (split) {
+      split.destroy();
+      split = null;
+    }
+    [document.querySelector("#editor-wrapper"),
+    document.querySelector("#display-wrapper")].forEach(el => {
+      el.classList.add("grow");
+    })
+  } else {
+    [document.querySelector("#editor-wrapper"),
+    document.querySelector("#display-wrapper")].forEach(el => {
+      el.classList.remove("grow");
+    })
+    if (!split) {
+      split = Split([
+        document.querySelector("#editor-wrapper"),
+        document.querySelector("#display-wrapper")
+      ], {
+        sizes: [50,50],
+        gutterSize: 5,
+        gutter: (index, direction) => {
+          const gutter = document.createElement('div');
+          gutter.className = `gutter gutter-${direction}`;
+          return gutter;
+        }
+      });
+    }
+  }
+}
+
 var gd;
 var signedInStatus = {
   google: false,
@@ -484,6 +518,14 @@ var content = new Vue({
   },
   components: {
     "content-container": contentContainer
+  },
+  mounted: function () {
+    this.$nextTick(() => {
+      updateSplit(window);
+      window.addEventListener("resize", (ev) => {
+        updateSplit(ev.currentTarget);
+      });
+    })
   },
   methods: {
     switchTo: function (target) {

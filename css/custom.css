@@ -176,3 +176,24 @@ header {
 
 .h-box.v-center { align-items: center; }
 .v-box.v-center { justify-content: center; }
+
+/* gutter */
+.gutter {
+  --gutter-size: 5px;
+  position: relative;
+}
+
+.gutter::before {
+  --size: 6px;
+  content: "";
+  display: block;
+  position: absolute;
+  background-color: #607D8B;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 100%;
+}
+.gutter.gutter-horizontal::before { top: 50%; left: calc(.5 * (var(--gutter-size) - var(--size))); }
+.gutter.gutter-horizontal { cursor: ew-resize; }
+.gutter.gutter-vertical::before { left: 50%; top: calc(.5 * (var(--gutter-size) - var(--size))); }
+.gutter.gutter-vertical { cursor: ns-resize; }
