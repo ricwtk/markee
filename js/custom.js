@@ -110,9 +110,9 @@ new Vue({
     savingashtml: false
   },
   computed: {
-    fileDot: function () {
+    fileBar: function () {
       return {
-        color: this.openedFile.raw == this.openedFile.saved ? "#8BC34A" : "#F44336"
+        "background-color": this.openedFile.raw == this.openedFile.saved ? "#8BC34A" : "#F44336"
       }
     },
     fileSavedString: function () {

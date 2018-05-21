@@ -37,7 +37,7 @@
           <span>&nbsp;Markdown&nbsp;Editor</span></span>
         </section>
         <section class="navbar-section">
-          <span class="tooltip tooltip-bottom px-2 mdi mdi-24px mdi-circle " :style="fileDot" :data-tooltip="fileSavedString"></span>
+          <!-- <span class="tooltip tooltip-bottom px-2 mdi mdi-24px mdi-circle " :style="fileDot" :data-tooltip="fileSavedString"></span> -->
           <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-file" data-tooltip="New file" @click="createNewFile"></span>
           <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-content-save" data-tooltip="Save file" @click="saveFile" v-if="!saving"></span>
           <span class="tooltip tooltip-bottom px-2 mdi mdi-24px mdi-loading mdi-spin" data-tooltip="Saving file" v-if="saving"></span>
@@ -66,6 +66,7 @@
           </ul>
         </div>
       </div>
+      <div class="pt-1" :style="fileBar"></div>
       <div id="file-info" class="px-2 h-box" ref="fileInfoBar">          
         <template v-if="openedFile.id">
           <div class="dropdown grow" v-if="openedFile.pathsInName.length > 0">
