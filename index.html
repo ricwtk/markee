@@ -198,7 +198,7 @@
                 <div class="tile tile-centered p-2 file-tile my-1" @click="onClickFile(item, 'ft-' + i)" :ref="'ft-' + i">
                   <div class="tile-icon">
                     <i v-if="item.mimeType == 'application/vnd.google-apps.folder'" class="mdi mdi-24px mdi-folder"></i>
-                    <i v-else-if="item.mimeType == 'text/markdown'" class="mdi mdi-24px mdi-markdown"></i>
+                    <i v-else-if="item.mimeType == 'text/markdown' || item.name.endsWith('.md')" class="mdi mdi-24px mdi-markdown"></i>
                     <i v-else-if="item.mimeType == 'text/plain' && item.name.endsWith('.md')" class="mdi mdi-24px mdi-markdown"></i>
                     <i v-else class="mdi mdi-24px mdi-file-document"></i>
                   </div>

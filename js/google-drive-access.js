@@ -87,7 +87,10 @@
         let config = {
           orderBy: "folder,name",
           q: "'" + fileId + "' in parents" 
-            + " and (mimeType = 'application/vnd.google-apps.folder' or mimeType = 'text/plain' or mimeType = 'text/markdown')"
+            + " and ("
+            + "(mimeType = 'application/vnd.google-apps.folder' or mimeType = 'text/plain' or mimeType = 'text/markdown')"
+            + " or (name contains '.md' and not name contains '.md.html')"
+            + ")"
         };
         if (nextPageToken) {
           config.pageToken = nextPageToken;
