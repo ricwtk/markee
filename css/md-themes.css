@@ -73,7 +73,8 @@ code {
 }
 
 .md-default ul {
-  margin: .8rem 0 .8rem .8rem
+  margin: .8rem 0 .8rem 2rem;
+  list-style: disc outside;
 }
 
 .md-default p {
@@ -86,7 +87,7 @@ code {
 }
 
 .md-default li p {
-  display: inline;
+  display: block;
   /* margin-bottom: 0; */
 }
 
