@@ -15,7 +15,7 @@ var timeLine = {
   }
 }
 
-showdown.extension("timeline", timeline);
+showdown.extension("timeline", timeLine);
 
 const mdconverter = new showdown.Converter({
   tasklists: true,
