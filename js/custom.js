@@ -183,12 +183,21 @@ new Vue({
           notiObj.notify("Compiled HTML is saved in " + res.result.name, "success");
           this.savingashtml = false;
         });
+    },
+    autosave: function () {
+      setTimeout(() => {
+        if (this.openedFile.id && this.openedFile.raw !== this.openedFile.saved) {
+          this.saveFile();
+        }
+        this.autosave();
+      }, 30000);
     }
   },
   mounted: function () {
     Vue.nextTick(() => {
-      window.addEventListener("resize", this.updateNGuideShown)
-      this.updateNGuideShown()
+      window.addEventListener("resize", this.updateNGuideShown);
+      this.updateNGuideShown();
+      this.autosave();
     })
   }
 })
