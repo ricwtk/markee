@@ -507,7 +507,7 @@ var content = new Vue({
   data: {
     openedFile: openedFile,
     docOrPres: 0,
-    slideshow: null
+    slideshow: null,
   },
   computed: {
     compiledDoc: function () {
@@ -515,6 +515,10 @@ var content = new Vue({
         return mdconverter.makeHtml(this.openedFile.raw);
       } else {
         this.$nextTick(() => {
+          let slideIdx;
+          if (this.slideshow !== null) {
+            slideIdx = this.slideshow.getCurrentSlideIndex();
+          }
           let outer = document.querySelector("#display-wrapper .presentation-display");
           while (outer.firstChild) outer.removeChild(outer.firstChild);
           outer.classList.remove("remark-container");
@@ -523,6 +527,9 @@ var content = new Vue({
             source: this.openedFile.raw,
             converter: mdconverter
           });
+          if (slideIdx) {
+            this.slideshow.gotoSlideNumber(this.slideshow.getSlides()[slideIdx].getSlideNumber());
+          }
         })
         return this.openedFile.raw;
       }
@@ -574,16 +581,6 @@ var content = new Vue({
     toggleRender: function () {
       this.docOrPres = (this.docOrPres + 1) % 2;
     },
-    // updateRaw: function (raw) {
-      // this.openedFile.raw = raw;
-      // if (this.docOrPres == 1) {
-      //   slideshow = remark.create({
-      //     container: document.querySelector("#display-wrapper #contentDisplay"),
-      //     source: document.querySelector("#editor-wrapper textarea").textContent,
-      //     converter: mdconverter
-      //   });
-      // } 
-    // },
     addTab: function (ta) {
       this.openedFile.raw = this.openedFile.raw.slice(0, ta.selectionStart+1) + "    " + this.openedFile.raw.slice(ta.selectionEnd)
       ta.selectionStart += 4;
