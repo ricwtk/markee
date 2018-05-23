@@ -26,6 +26,11 @@ function updateSplit(target) {
           const gutter = document.createElement('div');
           gutter.className = `gutter gutter-${direction}`;
           return gutter;
+        },
+        onDrag: () => {
+          if (content.slideshow !== null) {
+            content.slideshow.events.emit("resize");
+          }
         }
       });
     }
@@ -568,6 +573,9 @@ var content = new Vue({
       window.addEventListener("resize", (ev) => {
         updateSplit(ev.currentTarget);
       });
+      window.addEventListener("message", (msg) => { 
+        if (this.slideshow !== null) this.slideshow.events.emit("message", msg);
+      }, false);
     })
   },
   methods: {
@@ -580,6 +588,11 @@ var content = new Vue({
     },
     toggleRender: function () {
       this.docOrPres = (this.docOrPres + 1) % 2;
+    },
+    togglePresentation: function () {
+      if (this.slideshow !== null) {
+        this.slideshow.toggleFullscreen();
+      }
     },
     addTab: function (ta) {
       this.openedFile.raw = this.openedFile.raw.slice(0, ta.selectionStart+1) + "    " + this.openedFile.raw.slice(ta.selectionEnd)
