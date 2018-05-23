@@ -146,7 +146,7 @@ new Vue({
   computed: {
     fileBar: function () {
       return {
-        "background-color": this.openedFile.raw == this.openedFile.saved ? "#8BC34A" : "#F44336"
+        "background-color": this.openedFile.raw == this.openedFile.saved && this.openedFile.id ? "#8BC34A" : "#F44336"
       }
     },
     fileSavedString: function () {
@@ -429,7 +429,7 @@ var modalFileExplorer = new Vue({
 })
 
 var contentContainer = {
-  props: ["contenteditable", "wrapperId", "hideMd", "content", "contentTheme", "maximisable", "actions"],
+  props: ["contenteditable", "wrapperId", "hideMd", "value", "contentTheme", "maximisable", "actions", "docOrPres"],
   data: function () {
     return {
       height: 80,
@@ -440,13 +440,6 @@ var contentContainer = {
         "grow": true,
         "p-1": true,
         "hide-md": this.hideMd
-      }
-    }
-  },
-  computed: {
-    style: function () {
-      return {
-        height: this.height + "vh"
       }
     }
   },
@@ -480,7 +473,7 @@ var contentContainer = {
   <span :id="wrapperId" :class="wrapperClass">
     <div :class="['actual', 'grow', 'relative', 'md-'+contentTheme, 'v-box']">
       <textarea v-if="contenteditable" class="p-1 grow" ref="textarea" 
-        :value="content" 
+        :value="value" 
         @input="sendEditedContent" 
         @keydown.tab="addTab"
         @keyup.ctrl.66.exact="boldText"
@@ -488,7 +481,10 @@ var contentContainer = {
         @keyup.ctrl.73.exact="italicText"
         @keydown.ctrl.73.exact="e => e.preventDefault()">
       </textarea>
-      <div v-else v-html="content" class="p-1 grow" style="overflow-y: scroll">
+      <div v-else-if="docOrPres == 0" v-html="value" class="p-1 grow content-display" style="overflow-y: scroll">
+      </div>
+      <div v-else class="presentation-wrapper grow relative">
+        <div class="presentation-display"></div>
       </div>
       <div class="h-box controls px-2">
         <div v-if="maximisable" class="mdi mdi-24px mdi-fullscreen c-hand" @click="toggleMaximised"></div>
@@ -498,7 +494,7 @@ var contentContainer = {
         <span class="modal-overlay"></span>
         <div class="modal-container py-2">
           <div class="c-hand mdi mdi-24px mdi-fullscreen-exit float-right tooltip tooltip-left" aria-label="Close" data-tooltip="Exit fullscreen" @click="toggleMaximised"></div>
-          <div v-html="content"></div>
+          <div v-html="value"></div>
         </div>
       </div>
     </div>
@@ -510,10 +506,50 @@ var content = new Vue({
   el: "#content",
   data: {
     openedFile: openedFile,
+    docOrPres: 0,
+    slideshow: null
   },
   computed: {
     compiledDoc: function () {
-      return mdconverter.makeHtml(this.openedFile.raw);
+      if (this.docOrPres == 0) {
+        return mdconverter.makeHtml(this.openedFile.raw);
+      } else {
+        this.$nextTick(() => {
+          let outer = document.querySelector("#display-wrapper .presentation-display");
+          while (outer.firstChild) outer.removeChild(outer.firstChild);
+          outer.classList.remove("remark-container");
+          this.slideshow = remark.create({
+            container: outer,
+            source: this.openedFile.raw,
+            converter: mdconverter
+          });
+        })
+        return this.openedFile.raw;
+      }
+    },
+    editorActions: function () {
+      return [{
+        class: ['mdi-eye', 'show-md'], 
+        emit: 'toggle-view' 
+      }];
+    },
+    displayActions: function () {
+      let actions = [];
+      actions.push({ 
+        class: [ this.docOrPres == 0 ? 'mdi-file-document' : 'mdi-file-powerpoint'],
+        emit: "toggle-render"
+      });
+      if (this.docOrPres == 1) {
+        actions.push({
+          class: ["mdi-file-presentation-box"],
+          emit: "toggle-presentation"
+        })
+      }
+      actions.push({ 
+        class: ['mdi-lead-pencil', 'show-md'], 
+        emit: 'toggle-view' 
+      });
+      return actions;
     }
   },
   components: {
@@ -535,9 +571,19 @@ var content = new Vue({
         else allChildren[i].classList.add("hide-md")
       }
     },
-    updateRaw: function (raw) {
-      this.openedFile.raw = raw
+    toggleRender: function () {
+      this.docOrPres = (this.docOrPres + 1) % 2;
     },
+    // updateRaw: function (raw) {
+      // this.openedFile.raw = raw;
+      // if (this.docOrPres == 1) {
+      //   slideshow = remark.create({
+      //     container: document.querySelector("#display-wrapper #contentDisplay"),
+      //     source: document.querySelector("#editor-wrapper textarea").textContent,
+      //     converter: mdconverter
+      //   });
+      // } 
+    // },
     addTab: function (ta) {
       this.openedFile.raw = this.openedFile.raw.slice(0, ta.selectionStart+1) + "    " + this.openedFile.raw.slice(ta.selectionEnd)
       ta.selectionStart += 4;

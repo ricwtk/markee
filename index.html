@@ -23,11 +23,14 @@
     <link rel="stylesheet" href="css/spectre.min.css">
     <link rel="stylesheet" href="css/spectre-icons.min.css">
     <link rel="stylesheet" href="css/materialdesignicons.min.css">
-    <script src="js/showdown.js"></script>
     <script src="js/vue.min.js"></script>
+    <script src="js/showdown.js"></script>
+    <script src="js/showdown-timeline-ext.js"></script>
     <script src="js/emoji.js"></script>
     <script src="js/md.js"></script>
+    <script src="js/remark.min.js"></script>
     <script src="js/split.min.js"></script>
+    <script src="js/remark.min.js"></script>
   </head>
 
   <body class="v-box">
@@ -231,10 +234,9 @@
           wrapper-id="editor-wrapper"
           :contenteditable="openedFile.canEdit"
           :hide-md="false"
-          :content="openedFile.raw"
+          v-model="openedFile.raw"
           :maximisable="false"
-          :actions="[{ 'class': ['mdi-eye', 'show-md'], 'emit': 'toggle-view' }]"
-          @input="updateRaw"
+          :actions="editorActions"
           @addtab="addTab"
           @boldtext="boldText"
           @italictext="italicText"
@@ -244,11 +246,13 @@
           wrapper-id="display-wrapper"
           :contenteditable="false"
           :hide-md="true"
-          :content="compiledDoc"
+          :value="compiledDoc"
           content-theme="default"
           :maximisable="true"
-          :actions="[{ 'class': ['mdi-lead-pencil', 'show-md'], 'emit': 'toggle-view' }]"
-          @toggle-view="switchTo('editor-wrapper')"          
+          :actions="displayActions"
+          :doc-or-pres="docOrPres"
+          @toggle-view="switchTo('editor-wrapper')"      
+          @toggle-render="toggleRender"    
         ></content-container>
       </div>
     </div>
