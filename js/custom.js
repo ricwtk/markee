@@ -557,13 +557,25 @@ var content = new Vue({
             externalHighlighter: true
           });
           this.slidesName = this.slideshow.getSlides().map(s => s.properties.name);
-          let slidesChanged = this.slideshow.events._events.slidesChanged;
-          this.slideshow.events._events.slidesChanged = () => {
-            slidesChanged.forEach(f => { f(); });
-            this.$nextTick(() => {
-              this.currentSlideNumber = this.slideshow.getCurrentSlideIndex() + 1;
-            })
+
+          function addCallback(ss, eventName, callback) {
+            let orig = ss.events._events[eventName];
+            if (orig) {
+              ss.events._events[eventName] = () => {
+                if (Array.isArray(orig)) {
+                  orig.forEach(f => { f(); });
+                } else {
+                  orig();
+                }
+                callback();
+              }
+            }
           }
+
+          addCallback(this.slideshow, "slidesChanged", () => {
+            this.currentSlideNumber = this.slideshow.getCurrentSlideIndex() + 1;
+          });
+          
           if (slideIdx) {
             this.slideshow.gotoSlideNumber(this.slideshow.getSlides()[slideIdx].getSlideNumber());
           }
@@ -587,7 +599,7 @@ var content = new Vue({
       if (this.docOrPres == 1) {
         actions.push({
           class: ["mdi-file-presentation-box"],
-          emit: "toggle-presentation"
+          emit: "toggle-presenter-mode"
         })
       }
       actions.push({ 

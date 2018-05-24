@@ -259,6 +259,7 @@
           @toggle-view="switchTo('editor-wrapper')"      
           @toggle-render="toggleRender"
           @toggle-presentation="togglePresentation"
+          @toggle-presenter-mode="slideshow.togglePresenterMode()"
           @p-lc="slideshow.gotoNextSlide()"
           @p-rc="slideshow.gotoPreviousSlide()"
           @p-wh="wheelEventHandler"
