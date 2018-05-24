@@ -18,7 +18,7 @@
     filter: function (text, converter) {
       let rgx = /^- \[tl\](?: |\n)*\[((?:[\s\S]*?)(?:[^\\]))\](?: |\n)*\[((?:[\s\S]*?)(?:[^\\]))\](?: |\n)*\[((?:[\s\S]*?)(?:[^\\]))\](?: |\n)*\[((?:[\s\S]*?)(?:[^\\]))\]/gm;
       return text.replace(rgx, (match, p1, p2, p3, p4) => {
-        return '<div class="timeline">'
+        return '<blockquote class="timeline">'
         + '<div class="title">'
         + '<div class="head">' + converter.makeHtml(p1) + '</div>'
         + '<div class="content">' + converter.makeHtml(p2) + '</div>'
@@ -27,7 +27,7 @@
         + '<div class="head">' + converter.makeHtml(p3) + '</div>'
         + '<div class="content">' + converter.makeHtml(p4) + '</div>'
         + '</div>'
-        + '</div>';
+        + '</blockquote>';
       })
     }
   });
