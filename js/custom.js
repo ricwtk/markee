@@ -472,6 +472,11 @@ var contentContainer = {
     },
     customEmit: function (msg) {
       this.$emit(msg);
+    },
+    test: function (ev) {
+      // console.log(ev);
+      console.log(ev.shiftKey, ev);
+      if (ev.shiftKey) { ev.preventDefault(); }
     }
   },
   template: `
@@ -488,12 +493,16 @@ var contentContainer = {
       </textarea>
       <div v-else-if="docOrPres == 0" v-html="value" class="p-1 grow content-display" style="overflow-y: scroll">
       </div>
-      <div v-else class="presentation-wrapper grow relative">
+      <div v-else class="presentation-wrapper grow relative" 
+        @click.left.prevent="$emit('p-lc')"
+        @click.right.prevent="$emit('p-rc')"
+        @wheel.prevent="$emit('p-wh', $event.deltaY)"
+      >
         <div class="presentation-display"></div>
       </div>
       <div class="h-box controls px-2">
         <div v-if="maximisable" class="mdi mdi-24px mdi-fullscreen c-hand" @click="toggleMaximised"></div>
-        <div v-for="a in actions" :class="['mdi', 'mdi-24px', 'c-hand'].concat(a.class)" @click="customEmit(a.emit)"></div>
+        <div v-for="a in actions" :class="['mdi', 'mdi-24px', 'c-hand'].concat(a.class)" @click="$emit(a.emit)"></div>
       </div>
       <div class="modal modal-lg" id="maximised-display" v-if="maximisable" ref="maximisedDisplay">
         <span class="modal-overlay"></span>
@@ -593,6 +602,14 @@ var content = new Vue({
     togglePresentation: function () {
       if (this.slideshow !== null) {
         this.slideshow.toggleFullscreen();
+      }
+    },
+    wheelEventHandler: function (deltaY) {
+      console.log(deltaY);
+      if (deltaY > 0) {
+        this.slideshow.gotoNextSlide();
+      } else if (deltaY < 0) {
+        this.slideshow.gotoPreviousSlide();        
       }
     },
     addTab: function (ta) {

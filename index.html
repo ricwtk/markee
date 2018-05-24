@@ -257,6 +257,9 @@
           @toggle-view="switchTo('editor-wrapper')"      
           @toggle-render="toggleRender"
           @toggle-presentation="togglePresentation"
+          @p-lc="slideshow.gotoNextSlide()"
+          @p-rc="slideshow.gotoPreviousSlide()"
+          @p-wh="wheelEventHandler"
         ></content-container>
       </div>
     </div>
