@@ -260,10 +260,11 @@
           @toggle-render="toggleRender"
           @toggle-presentation="togglePresentation"
           @toggle-presenter-mode="slideshow.togglePresenterMode()"
-          @p-lc="slideshow.gotoNextSlide()"
-          @p-rc="slideshow.gotoPreviousSlide()"
+          @next-slide="slideshow.gotoNextSlide()"
+          @previous-slide="slideshow.gotoPreviousSlide()"
           @p-wh="wheelEventHandler"
           @change-slide="slideshow.gotoSlideNumber($event)"
+          @clone-presentation="slideshow.createClone()"
         ></content-container>
       </div>
     </div>

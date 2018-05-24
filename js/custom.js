@@ -1,38 +1,41 @@
 var split;
+var presentationView;
 
 function updateSplit(target) {
-  if (target.innerWidth < 840) {
-    if (split) {
-      split.destroy();
-      split = null;
-    }
-    [document.querySelector("#editor-wrapper"),
-    document.querySelector("#display-wrapper")].forEach(el => {
-      el.classList.add("grow");
-    })
-  } else {
-    [document.querySelector("#editor-wrapper"),
-    document.querySelector("#display-wrapper")].forEach(el => {
-      el.classList.remove("grow");
-    })
-    if (!split) {
-      split = Split([
-        document.querySelector("#editor-wrapper"),
-        document.querySelector("#display-wrapper")
-      ], {
-        sizes: [50,50],
-        gutterSize: 5,
-        gutter: (index, direction) => {
-          const gutter = document.createElement('div');
-          gutter.className = `gutter gutter-${direction}`;
-          return gutter;
-        },
-        onDrag: () => {
-          if (content.slideshow !== null) {
-            content.slideshow.events.emit("resize");
+  if (!presentationView) {
+    if (target.innerWidth < 840) {
+      if (split) {
+        split.destroy();
+        split = null;
+      }
+      [document.querySelector("#editor-wrapper"),
+      document.querySelector("#display-wrapper")].forEach(el => {
+        el.classList.add("grow");
+      })
+    } else {
+      [document.querySelector("#editor-wrapper"),
+      document.querySelector("#display-wrapper")].forEach(el => {
+        el.classList.remove("grow");
+      })
+      if (!split) {
+        split = Split([
+          document.querySelector("#editor-wrapper"),
+          document.querySelector("#display-wrapper")
+        ], {
+          sizes: [50,50],
+          gutterSize: 5,
+          gutter: (index, direction) => {
+            const gutter = document.createElement('div');
+            gutter.className = `gutter gutter-${direction}`;
+            return gutter;
+          },
+          onDrag: () => {
+            if (content.slideshow !== null) {
+              content.slideshow.events.emit("resize");
+            }
           }
-        }
-      });
+        });
+      }
     }
   }
 }
@@ -502,26 +505,28 @@ var contentContainer = {
       <div v-else-if="docOrPres == 0" v-html="value" class="p-1 grow content-display" style="overflow-y: scroll; background-color: white;" ref="docDisplay">
       </div>
       <div v-else class="presentation-wrapper grow relative" 
-        @click.left.prevent="$emit('p-lc')"
-        @click.right.prevent="$emit('p-rc')"
         @wheel.prevent="$emit('p-wh', $event.deltaY)"
       >
         <div class="presentation-display"></div>
       </div>
       <div class="h-box px-2 v-center">
         <template v-if="!contenteditable && docOrPres == 1">
-          <div class="mdi mdi-triangle mdi-rotate-270" @click="$emit('p-rc')"></div>
+          <div class="mdi mdi-triangle mdi-rotate-270 c-hand" @click="$emit('previous-slide')"></div>
           <div class="h-box v-center px-1">
             <select class="form-select select-sm" :value="currentSlide" @change="$emit('change-slide', $event.target.value)">
               <option v-for="(n, idx) in slidesName" :value="idx+1">{{ idx+1 }}{{ n ? ': ' + n : '' }}</option>
             </select>
             <span>&nbsp;of&nbsp;{{ slidesName.length }}</span>
           </div>
-          <div class="mdi mdi-triangle mdi-rotate-90" @click="$emit('p-lc')"></div>
+          <div class="mdi mdi-triangle mdi-rotate-90 c-hand" @click="$emit('next-slide')"></div>
         </template>
         <div class="grow"></div>
-        <div v-if="maximisable" class="mdi mdi-24px mdi-fullscreen c-hand" @click="toggleMaximised"></div>
-        <div v-for="a in actions" :class="['mdi', 'mdi-24px', 'c-hand'].concat(a.class)" @click="$emit(a.emit)"></div>
+        <div v-if="maximisable" class="mdi mdi-24px mdi-fullscreen c-hand tooltip tooltip-left" @click="toggleMaximised"
+          data-tooltip="toggle fullscreen"
+        ></div>
+        <div v-for="a in actions" :class="['mdi', 'mdi-24px', 'c-hand'].concat(a.class).concat(a.tooltip ? ['tooltip', 'tooltip-left'] : '')" @click="$emit(a.emit)"
+          :data-tooltip="a.tooltip ? a.tooltip : ''"
+        ></div>
       </div>
     </div>
   </span>
@@ -575,37 +580,59 @@ var content = new Vue({
           addCallback(this.slideshow, "slidesChanged", () => {
             this.currentSlideNumber = this.slideshow.getCurrentSlideIndex() + 1;
           });
+          addCallback(this.slideshow, "createClone", () => {
+            let clone = this.slideshow.clone;
+            clone.presentationView = true;
+            clone.addEventListener("load", () => {
+              clone.switchToDisplay();
+              clone.renderAsSlides();
+              clone.hideEditor();
+              clone.hideHeader();
+            }, true);
+          })
           
-          if (slideIdx) {
-            this.slideshow.gotoSlideNumber(this.slideshow.getSlides()[slideIdx].getSlideNumber());
-          }
+          if (slideIdx) { this.slideshow.gotoSlideNumber(this.slideshow.getSlides()[slideIdx].getSlideNumber()); }
           this.currentSlideNumber = this.slideshow.getCurrentSlideIndex() + 1;
         })
         return this.openedFile.raw;
       }
     },
     editorActions: function () {
-      return [{
-        class: ['mdi-eye', 'show-md'], 
-        emit: 'toggle-view' 
-      }];
+      if (!presentationView) {
+        return [{
+          class: ['mdi-eye', 'show-md'], 
+          emit: 'toggle-view' 
+        }];
+      } else {
+        return [];
+      }
     },
     displayActions: function () {
       let actions = [];
-      actions.push({ 
-        class: [ this.docOrPres == 0 ? 'mdi-file-document' : 'mdi-file-powerpoint'],
-        emit: "toggle-render"
-      });
-      if (this.docOrPres == 1) {
-        actions.push({
-          class: ["mdi-file-presentation-box"],
-          emit: "toggle-presenter-mode"
-        })
+      if (!presentationView) {
+        actions.push({ 
+          class: [ this.docOrPres == 0 ? 'mdi-file-document' : 'mdi-file-powerpoint'],
+          emit: "toggle-render",
+          tooltip: "render as document/slides"
+        });
       }
-      actions.push({ 
-        class: ['mdi-lead-pencil', 'show-md'], 
-        emit: 'toggle-view' 
-      });
+      if (this.docOrPres == 1) {
+        actions = actions.concat([{
+          class: ["mdi-file-presentation-box"],
+          emit: "toggle-presenter-mode",
+          tooltip: "toggle presenter mode (p)"
+        }, {
+          class: ["mdi-content-duplicate"],
+          emit: "clone-presentation",
+          tooltip: "clone presentation (c)"
+        }]);
+      }
+      if (!presentationView) {
+        actions.push({ 
+          class: ['mdi-lead-pencil', 'show-md'], 
+          emit: 'toggle-view' 
+        });
+      }
       return actions;
     }
   },
@@ -630,6 +657,7 @@ var content = new Vue({
         if (allChildren[i].id == target) allChildren[i].classList.remove("hide-md")
         else allChildren[i].classList.add("hide-md")
       }
+      if (this.slideshow !== null) this.slideshow.events.emit("resize");
     },
     toggleRender: function () {
       this.docOrPres = (this.docOrPres + 1) % 2;
@@ -755,3 +783,21 @@ function initApis() {
 // open modal-user to prompt user to sign in
 // document.querySelector("#modal-user").classList.add("active");
 // console.log(urlParams.get("user"), urlParams.get("file"), urlParams.get("action"));
+
+function switchToDisplay() {
+  content.switchTo("display-wrapper");
+}
+
+function renderAsSlides() {
+  content.docOrPres = 1;
+}
+
+function hideEditor() {
+  let el = document.querySelector("#editor-wrapper");
+  if (el) el.style.display = "none";
+}
+
+function hideHeader() {
+  let el = document.querySelector("header#navbar");
+  if (el) el.style.display = "none";
+}
