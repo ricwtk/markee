@@ -49,13 +49,15 @@
   padding: 5px;
 }
 
-code {
-  font-family: "SF Mono","Segoe UI Mono","Roboto Mono",Menlo,Courier,monospace;
-  /* background: #fdf4f4; */
-  background: #f8f8f8;
+.md-default code, 
+.md-default kbd, 
+.md-default pre, 
+.md-default samp {
+	font-family: "SF Mono","Segoe UI Mono","Roboto Mono",Menlo,Courier,monospace;
+}
+
+.md-default code {
   border-radius: .1rem;
-  /* color: #e06870; */
-  color: #888;
   font-size: 85%; 
   line-height: 1.2;
   padding: .1rem .15rem;
@@ -66,6 +68,15 @@ code {
   display: block;
   margin: 10px;
   overflow: auto;
+}
+
+.md-default kbd {
+	background: #454d5d;
+	border-radius: .1rem;
+	color: #fff;
+	font-size: .7rem;
+	line-height: 1.2;
+	padding: .1rem .15rem;
 }
 
 .md-default blockquote {

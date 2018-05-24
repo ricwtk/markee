@@ -23,7 +23,7 @@
     underline: true,
     tables: true,
     ghMentions: true,
-    extensions: ["timeline"]
+    extensions: ["timeline", "highlightjs"]
   });
 
   // function .convertMarkdown for remarkjs-mod

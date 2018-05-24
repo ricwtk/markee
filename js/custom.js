@@ -530,7 +530,8 @@ var content = new Vue({
           this.slideshow = remark.create({
             container: outer,
             source: this.openedFile.raw,
-            converter: mdconverter
+            converter: mdconverter,
+            externalHighlighter: true
           });
           if (slideIdx) {
             this.slideshow.gotoSlideNumber(this.slideshow.getSlides()[slideIdx].getSlideNumber());
