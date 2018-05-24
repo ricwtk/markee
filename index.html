@@ -254,12 +254,15 @@
           :maximisable="true"
           :actions="displayActions"
           :doc-or-pres="docOrPres"
+          :current-slide="currentSlideNumber"
+          :slides-name="slidesName"
           @toggle-view="switchTo('editor-wrapper')"      
           @toggle-render="toggleRender"
           @toggle-presentation="togglePresentation"
           @p-lc="slideshow.gotoNextSlide()"
           @p-rc="slideshow.gotoPreviousSlide()"
           @p-wh="wheelEventHandler"
+          @change-slide="slideshow.gotoSlideNumber($event)"
         ></content-container>
       </div>
     </div>

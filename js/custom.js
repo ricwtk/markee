@@ -434,7 +434,7 @@ var modalFileExplorer = new Vue({
 })
 
 var contentContainer = {
-  props: ["contenteditable", "wrapperId", "hideMd", "value", "contentTheme", "maximisable", "actions", "docOrPres"],
+  props: ["contenteditable", "wrapperId", "hideMd", "value", "contentTheme", "maximisable", "actions", "docOrPres", "currentSlide", "slidesName"],
   data: function () {
     return {
       height: 80,
@@ -465,7 +465,11 @@ var contentContainer = {
       this.$emit("italictext", this.$refs.textarea)
     },
     toggleMaximised: function () {
-      this.$refs.maximisedDisplay.classList.toggle("active");
+      if (this.docOrPres == 0) {
+        this.$refs.maximisedDisplay.classList.toggle("active");
+      } else {
+        this.$emit("toggle-presentation");
+      }
     },
     emitAction: function () {
       this.$emit("action");
@@ -473,11 +477,6 @@ var contentContainer = {
     customEmit: function (msg) {
       this.$emit(msg);
     },
-    test: function (ev) {
-      // console.log(ev);
-      console.log(ev.shiftKey, ev);
-      if (ev.shiftKey) { ev.preventDefault(); }
-    }
   },
   template: `
   <span :id="wrapperId" :class="wrapperClass">
@@ -500,7 +499,18 @@ var contentContainer = {
       >
         <div class="presentation-display"></div>
       </div>
-      <div class="h-box controls px-2">
+      <div class="h-box px-2 v-center">
+        <template v-if="!contenteditable && docOrPres == 1">
+          <div class="mdi mdi-triangle mdi-rotate-270" @click="$emit('p-rc')"></div>
+          <div class="h-box v-center px-1">
+            <select class="form-select select-sm" :value="currentSlide" @change="$emit('change-slide', $event.target.value)">
+              <option v-for="(n, idx) in slidesName" :value="idx+1">{{ idx+1 }}{{ n ? ': ' + n : '' }}</option>
+            </select>
+            <span>&nbsp;of&nbsp;{{ slidesName.length }}</span>
+          </div>
+          <div class="mdi mdi-triangle mdi-rotate-90" @click="$emit('p-lc')"></div>
+        </template>
+        <div class="grow"></div>
         <div v-if="maximisable" class="mdi mdi-24px mdi-fullscreen c-hand" @click="toggleMaximised"></div>
         <div v-for="a in actions" :class="['mdi', 'mdi-24px', 'c-hand'].concat(a.class)" @click="$emit(a.emit)"></div>
       </div>
@@ -522,6 +532,8 @@ var content = new Vue({
     openedFile: openedFile,
     docOrPres: 0,
     slideshow: null,
+    currentSlideNumber: 0,
+    slidesName: []
   },
   computed: {
     compiledDoc: function () {
@@ -542,9 +554,18 @@ var content = new Vue({
             converter: mdconverter,
             externalHighlighter: true
           });
+          this.slidesName = this.slideshow.getSlides().map(s => s.properties.name);
+          let slidesChanged = this.slideshow.events._events.slidesChanged;
+          this.slideshow.events._events.slidesChanged = () => {
+            slidesChanged.forEach(f => { f(); });
+            this.$nextTick(() => {
+              this.currentSlideNumber = this.slideshow.getCurrentSlideIndex() + 1;
+            })
+          }
           if (slideIdx) {
             this.slideshow.gotoSlideNumber(this.slideshow.getSlides()[slideIdx].getSlideNumber());
           }
+          this.currentSlideNumber = this.slideshow.getCurrentSlideIndex() + 1;
         })
         return this.openedFile.raw;
       }
@@ -605,7 +626,6 @@ var content = new Vue({
       }
     },
     wheelEventHandler: function (deltaY) {
-      console.log(deltaY);
       if (deltaY > 0) {
         this.slideshow.gotoNextSlide();
       } else if (deltaY < 0) {
