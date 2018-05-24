@@ -466,7 +466,16 @@ var contentContainer = {
     },
     toggleMaximised: function () {
       if (this.docOrPres == 0) {
-        this.$refs.maximisedDisplay.classList.toggle("active");
+        let el = this.$refs.docDisplay;
+        if (el.requestFullscreen) {
+          el.requestFullscreen();
+        } else if (el.mozRequestFullScreen) {
+          el.mozRequestFullScreen();
+        } else if (el.webkitRequestFullScreen) {
+          el.webkitRequestFullScreen();
+        } else if (el.msRequestFullscreen) {
+          el.msRequestFullscreen();
+        }
       } else {
         this.$emit("toggle-presentation");
       }
@@ -480,7 +489,7 @@ var contentContainer = {
   },
   template: `
   <span :id="wrapperId" :class="wrapperClass">
-    <div :class="['actual', 'grow', 'relative', 'md-'+contentTheme, 'v-box']">
+    <div :class="['actual', 'grow', 'relative', 'md-'+contentTheme, 'v-box']" ref="innerWrapper">
       <textarea v-if="contenteditable" class="p-1 grow" ref="textarea" 
         :value="value" 
         @input="sendEditedContent" 
@@ -490,7 +499,7 @@ var contentContainer = {
         @keyup.ctrl.73.exact="italicText"
         @keydown.ctrl.73.exact="e => e.preventDefault()">
       </textarea>
-      <div v-else-if="docOrPres == 0" v-html="value" class="p-1 grow content-display" style="overflow-y: scroll">
+      <div v-else-if="docOrPres == 0" v-html="value" class="p-1 grow content-display" style="overflow-y: scroll; background-color: white;" ref="docDisplay">
       </div>
       <div v-else class="presentation-wrapper grow relative" 
         @click.left.prevent="$emit('p-lc')"
@@ -513,13 +522,6 @@ var contentContainer = {
         <div class="grow"></div>
         <div v-if="maximisable" class="mdi mdi-24px mdi-fullscreen c-hand" @click="toggleMaximised"></div>
         <div v-for="a in actions" :class="['mdi', 'mdi-24px', 'c-hand'].concat(a.class)" @click="$emit(a.emit)"></div>
-      </div>
-      <div class="modal modal-lg" id="maximised-display" v-if="maximisable" ref="maximisedDisplay">
-        <span class="modal-overlay"></span>
-        <div class="modal-container py-2">
-          <div class="c-hand mdi mdi-24px mdi-fullscreen-exit float-right tooltip tooltip-left" aria-label="Close" data-tooltip="Exit fullscreen" @click="toggleMaximised"></div>
-          <div v-html="value"></div>
-        </div>
       </div>
     </div>
   </span>
