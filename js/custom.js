@@ -801,3 +801,15 @@ function hideHeader() {
   let el = document.querySelector("header#navbar");
   if (el) el.style.display = "none";
 }
+
+var hlthemes = ['agate','androidstudio','arduino-light','arta','ascetic','atelier-cave-dark','atelier-cave-light','atelier-dune-dark','atelier-dune-light','atelier-estuary-dark','atelier-estuary-light','atelier-forest-dark','atelier-forest-light','atelier-heath-dark','atelier-heath-light','atelier-lakeside-dark','atelier-lakeside-light','atelier-plateau-dark','atelier-plateau-light','atelier-savanna-dark','atelier-savanna-light','atelier-seaside-dark','atelier-seaside-light','atelier-sulphurpool-dark','atelier-sulphurpool-light','atom-one-dark','atom-one-light','brown-paper','brown-papersq','codepen-embed','color-brewer','darcula','dark','darkula','default','docco','dracula','far','foundation','github','github-gist','googlecode','grayscale','gruvbox-dark','gruvbox-light','hopscotch','hybrid','idea','ir-black','kimbie','kimbie','magula','mono-blue','monokai','monokai-sublime','obsidian','ocean','paraiso-dark','paraiso-light','pojoaque','pojoaque','purebasic','qtcreator_dark','qtcreator_light','railscasts','rainbow','routeros','school-book','school-book','solarized-dark','solarized-light','sunburst','tomorrow','tomorrow-night-blue','tomorrow-night-bright','tomorrow-night','tomorrow-night-eighties','vs2015','vs','xcode','xt256','zenburn']
+function changeHltheme(theme) {
+  if (hlthemes.includes(theme)) {
+    document.querySelectorAll("link").filter(el => el.href.includes("css/highlight"))[0].outerHTML = "";
+    let el = document.createElement("link");
+    el.rel = "stylesheet";
+    el.href = "css/highlight/" + theme + ".css";
+    document.querySelector("head").appendChild(el);
+    return el;
+  }
+}
