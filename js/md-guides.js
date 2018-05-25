@@ -1,5 +1,5 @@
 (function (window) {
-  if (typeof(window.mdconverter) !== "undefined" && typeof(window.emojiList) !== "undefined") {
+  if (typeof(window.mdconverter) !== "undefined" && typeof(window.emojiList) !== "undefined" && typeof(window.hljs) !== "undefined") {
     // markdown guides
     var showdownOpt = "| **Key** | **Value** |" + "\n" 
                     + "|--------:|:----------|" + "\n";
@@ -7,6 +7,9 @@
     for (let key in opt) {
       showdownOpt += "| `" + key + "` | `" + opt[key] + "` |\n";
     }
+
+    let hljsLang = hljs.listLanguages();
+    hljsLang.sort();
 
     const mdguides = [{
       icon: "mdi-information",
@@ -146,7 +149,15 @@
         "**Code:** Indent by 4 spaces\n\n        <multiple lines code>\n        <line 2>\n\n" +
         "---\n\n" +
         "**Result:**\n\n```\n<multiple lines code>\n<line 2>\n```\n\n" +
-        "**Code:** nest with ````\n\n    ```\n    <multiple lines code>\n    <line 2>\n    ```\n\n"
+        "**Code:** nest with ```\n\n    ```\n    <multiple lines code>\n    <line 2>\n    ```\n\n" +
+        "---\n\n" +
+        "**Result:**\n\n```html\n<div class=\"center\">\n  <span class=\"new\">abc</span>\n</div>\n```\n\n" +
+        "**Code:** define language for syntax highlight\n\n    ```html\n    <div class=\"center\">\n      <span class=\"new\">abc</span>\n    </div>\n    ```\n\n" +
+        "Syntax highlight is supported using the [highlightjs](https://highlightjs.org/) library\n" +
+        "| Supported languages |\n" +
+        "|:--------------------|\n" +
+        hljsLang.map(e => "| `" + e + "` |").join("\n") +
+        "\n\n"
     }, {
       icon: "mdi-format-quote-open",
       tooltip: "Quote",
@@ -232,8 +243,107 @@
       tooltip: "Timeline",
       guide: "**Result:** \n- [tl] [date] [time] [title] [description]\n\n" +
         "**Code:** \n\n`- [tl] [date] [time] [title] [description]`"
+    }, {
+      icon: "mdi-file-powerpoint",
+      tooltip: "Presentation",
+      guide: "To render the text as slides, click <i class='mdi mdi-file-document'></i> at the bottom of the display panel. "
+        + "To render it as document, click <i class='mdi mdi-file-powerpoint'></i>.\n\n"
+        + "**Buttons** \n"
+        + "| Button | Function |\n"
+        + "|:------:|:---------|\n"
+        + "| <i class='mdi mdi-triangle mdi-rotate-270'></i> | Go to previous slide            |\n"
+        + "| <i class='mdi mdi-triangle mdi-rotate-90'></i>  | Go to next slide                |\n"
+        + "| <i class='mdi mdi-fullscreen'></i>              | Fullscreen view                 |\n"
+        + "| <i class='mdi mdi-file-powerpoint'></i>         | Render as document              |\n"
+        + "| <i class='mdi mdi-file-presentation-box'></i>   | Toggle presenter mode           |\n"
+        + "| <i class='mdi mdi-content-duplicate'></i>       | Clone slides in separate window |\n"
+        + "\n"
+        + "**Keyboard shortcuts** \n"
+        + "| Shortcut | Function |\n"
+        + "|:--------:|:---------|\n"
+        + "| <kbd class='mdi mdi-triangle mdi-rotate-270'></kbd> / <kbd class='mdi mdi-triangle'></kbd> / <kbd>PgUp</kbd> / <kbd>k</kbd>               | Go to previous slide |\n"
+        + "| <kbd class='mdi mdi-triangle mdi-rotate-90'></kbd> / <kbd class='mdi mdi-triangle mdi-rotate-180'></kbd> / <kbd>PgDn</kbd> / <kbd>j</kbd> | Go to next slide     |\n"
+        + "| <kbd>Home</kbd> | Go to first slide |\n"
+        + "| <kbd>End</kbd> | Go to last slide |\n"
+        + "| Number (<kbd>1</kbd>, <kbd>2</kbd>...) + <kbd>Return</kbd> | Go to specific slide |\n"
+        + "| <kbd>b</kbd> | Toggle blackout mode |\n"
+        + "| <kbd>m</kbd> | Toggle mirrored mode |\n"
+        + "| <kbd>f</kbd> | Toggle fullscreen mode |\n"
+        + "| <kbd>c</kbd> | Clone slides in separate window |\n"
+        + "| <kbd>p</kbd> | Toggle presenter mode |\n"
+        + "| <kbd>t</kbd> | Restart presentation timer |\n"
+        + "| <kbd>?</kbd> / <kbd>h</kbd> | Toggle help |\n"
+        + "\n"
+        + "**Remark**\n"
+        + "The slideshow in the cloned window is attached to the main window. That means when the slides are changed in either of the windows, the other one will follow. This does not apply to modification of slide content. The slides need to be re-cloned if the contents are modified."
+    }, {
+      icon: "mdi-file-powerpoint-box",
+      tooltip: "Slides syntax",
+      guide: "The parser for slides are forked from [remarkjs](https://github.com/gnab/remark). "
+        + "It is modified to use external Markdown converter to support the same Markdown syntax when the text is rendered as document."
+        + "Slide specific syntax are explained in the following sections."
+        + "\n\n---\n\n"
+        + "##### Slide separators\n"
+        + "A single line with three dashes `---` represents a slide separator. This will render as two slides: \n"
+        + "```markdown\n# First slide\n---\n# Second slide\n```\n"
+        + "To create a horizontal rule, normally you can use three dashes. But when render as slides, use more than three dashes `----` to create a horizontal rule.\n"
+        + "\n\n---\n\n"
+        + "##### Incremental slides\n"
+        + "To increment content from one slide to another without copying the whole slide text, a line with two dashed `--` can be used. This code: \n"
+        + "```markdown\n# Slide title\n- bullet 1\n--\n\n- bullet 2\n```\n"
+        + "will expand to:\n"
+        + "```\n# Slide title\n- bullet 1\n---\n# Slide title\n- bullet 1\n- bullet 2\n```\n"
+        + "\n\n---\n\n"
+        + "##### Slide notes\n"
+        + "A line with three question marks `???` separates the slide content and the slide note.\n"
+        + "```markdown\n# Slide title\nContent\n\n???\nnotes...\n```\n"
+        + "\n\n---\n\n"
+        + "##### Comments\n"
+        + "Two types of comment are available:\n"
+        + "```markdown\n<!--\nComments\n-->\n```\n"
+        + "```markdown\n[//]: # (Comments)\n```\n"
+        + "\n\n---\n\n"
+        + "##### Slide properties\n"
+        + "Slide properties are defined at the beginning of a slide. They include `name`, `class`, `background-image`, `count`, `template`, `layout`, and `exclude`.\n"
+        + "\n"
+        + "**name: string**\n\n"
+        + "The name will be used as the HTML element id of the current slide.\n"
+        + "\n"
+        + "**class: string1, string2**\n\n"
+        + "The classes specified will be added to the HTML element class of the current slide. "
+        + "Built-in classes (`left`, `center`, `right`, `top`, `middle`, `bottom`) can be used to align the entire slide.\n"
+        + "\n"
+        + "**background-image: url(image.location)**\n\n"
+        + "This property maps directly to the CSS `background-image` property of the current slide.\n"
+        + "\n"
+        + "**count: true**\n\n"
+        + "This is a boolean property which takes either `true` or `false` as property value. It will include or exclude the slide in the slide count.\n"
+        + "\n"
+        + "**template: name-of-a-slide**\n\n"
+        + "The content of the template slide (in this case, slide with the name `name-of-a-slide`) will be prepended to the current slide."
+        + "`name` and `layout` are not inherited, `class` are merged.\n"
+        + "\nTemplate slides may also contain a special `{{content}}` expression to explicitly position the content of derived slides, instead of having it implicitly appended.\n"
+        + "\n"
+        + "**layout: true**\n\n"
+        + "`layout` property is a boolean property, which takes `true` or `false` as value. The `layout` property, when defined as `true`, makes the current slide a layout slide, which is omitted from the slideshow and serves as the default template used for all subsequent slides."
+        + "When defined as `false`, it reverts to using no default template.\n"
+        + "\n"
+        + "**exclude: true**\n\n"
+        + "The `exclude` property, when set to true, hides a slide.\n"
+        + "\n\n---\n\n"
+        + "##### Content classes\n"
+        + "```markdown\n.footnote.red[.bold[a] b]\n```\n"
+        + "will render as\n"
+        + "```html\n<span class=\"footnote red\">\n  <span class=\"bold\">a</span> b\n</span>\n```\n"
+        + "Built-in content classes include `left`, `center`, and `right` can be used to align text blocks.\n"
+        + "\nIf content is on a new line, it will be rendered as `div` instead of `span`.\n"
+        + "```markdown\n.footnote.red[.bold[a]\nb\n]\n```\n"
+        + "will render as\n"
+        + "```html\n<div class=\"footnote red\">\n  <p>\n    <span class=\"bold\">a</span>\n    b\n  </p>\n</div>\n```\n"
+        + "If a square bracket is needed in the content, you can use [HTML code](https://www.ascii.cl/htmlcodes.htm) (`&#91;` for `[`, `&#93;` for `]`).\n\n"
+        + "```markdown\n.footnote.red[.bold[a] b &#91; &#93;]\n```\n will render as \n```html\n<span class=\"footnote red\">\n  <span class=\"bold\">a</span> b [ ]\n</span>\n```\n"
     }];
-    
+
     if (typeof(window.mdguides) === "undefined") {
       window.mdguides = mdguides;
     }
