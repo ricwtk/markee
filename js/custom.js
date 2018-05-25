@@ -653,13 +653,6 @@ var content = new Vue({
     },
     displayActions: function () {
       let actions = [];
-      if (!presentationView) {
-        actions.push({ 
-          class: [ this.docOrPres == 0 ? 'mdi-file-document' : 'mdi-file-powerpoint'],
-          emit: "toggle-render",
-          tooltip: "render as document/slides"
-        });
-      }
       if (this.docOrPres == 1) {
         actions = actions.concat([{
           class: ["mdi-file-presentation-box"],
@@ -672,10 +665,14 @@ var content = new Vue({
         }]);
       }
       if (!presentationView) {
-        actions.push({ 
+        actions = actions.concat([{ 
+          class: [ this.docOrPres == 0 ? 'mdi-file-document' : 'mdi-file-powerpoint'],
+          emit: "toggle-render",
+          tooltip: "render as document/slides"
+        }, { 
           class: ['mdi-lead-pencil', 'show-md'], 
           emit: 'toggle-view' 
-        });
+        }]);
       }
       return actions;
     }
