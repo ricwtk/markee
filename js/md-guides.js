@@ -342,6 +342,10 @@
         + "```html\n<div class=\"footnote red\">\n  <p>\n    <span class=\"bold\">a</span>\n    b\n  </p>\n</div>\n```\n"
         + "If a square bracket is needed in the content, you can use [HTML code](https://www.ascii.cl/htmlcodes.htm) (`&#91;` for `[`, `&#93;` for `]`).\n\n"
         + "```markdown\n.footnote.red[.bold[a] b &#91; &#93;]\n```\n will render as \n```html\n<span class=\"footnote red\">\n  <span class=\"bold\">a</span> b [ ]\n</span>\n```\n"
+        + "\n\n---\n\n"
+        + "##### Jump to slide\n"
+        + "To create link to a specific slide with the slide number, use the following format:\n"
+        + "```html\n<a href=\"javascript:window.postMessage('gotoSlide:1', '*')\">link to slide 1</a>\n```"
     }];
 
     if (typeof(window.mdguides) === "undefined") {
