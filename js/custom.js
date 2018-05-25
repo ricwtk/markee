@@ -220,11 +220,24 @@ new Vue({
     },
     saveAsHtml: function () {
       this.savingashtml = true;
-      gd.saveFileAsHtml(openedFile.parents[0], openedFile.name, content.compiledDoc)
-        .then((res) => {
+      let mdcss = new Request("css/md-themes.css?version=1.1");
+      let hlcss = new Request(hltheme.getThemeLocation() + "?version=1.1");
+      Promise.all([fetch(mdcss), fetch(hlcss)]).then(res => Promise.all(res.map(r => r.text()))).then(t => {
+        return ["<html>\n<head>\n",
+          "<meta charset='utf-8'>\n",
+          "<meta name='viewport' content='width=device-width, initial-scale=1'>\n",
+          "<style>\n",
+          t.join("\n"),
+          "\n</style>\n</head>\n<body class='md-default'>",
+          content.compiledDoc,
+          "\n</body>\n</html>"
+        ].join("");
+      }).then(c => {
+        return gd.saveFileAsHtml(openedFile.parents[0], openedFile.name, c).then((res) => {
           notiObj.notify("Compiled HTML is saved in " + res.result.name, "success");
           this.savingashtml = false;
         });
+      });
     },
     autosave: function () {
       setTimeout(() => {
@@ -802,28 +815,35 @@ function hideHeader() {
   if (el) el.style.display = "none";
 }
 
-var hlthemes = [];
-getAllHlthemes();
-function changeHltheme(theme) {
-  if (hlthemes.includes(theme)) {
-    document.querySelectorAll("link").filter(el => el.href.includes("css/highlight"))[0].outerHTML = "";
-    let el = document.createElement("link");
-    el.rel = "stylesheet";
-    el.href = "css/highlight/" + theme + ".css";
-    document.querySelector("head").appendChild(el);
-    return el;
-  }
-}
-
-function getAllHlthemes() {
-  let req = new Request("css/highlight");
-  return fetch(req).then(res => res.text())
-    .then(t => {
+var hltheme = {
+  list: [],
+  theme: "default",
+  themeDirectory: "css/highlight/",
+  getAllHlthemes: function () {
+    let req = new Request(this.themeDirectory + "?version=1.1");
+    return fetch(req).then(res => res.text()).then(t => {
       let rex = /<a\b[^>]*>([\s\S]*?)<\/a>/g;
       while ((res = rex.exec(t)) !== null) {
         if (res[1].endsWith(".css")) {
-          hlthemes.push(res[1].slice(0,-4));
+          this.list.push(res[1].slice(0,-4));
         }
       }
     });
-}
+  },
+  changeHltheme: function (theme) {
+    if (this.list.includes(theme)) {
+      document.querySelectorAll("link").filter(el => el.href.includes(this.themeDirectory))[0].outerHTML = "";
+      let el = document.createElement("link");
+      el.rel = "stylesheet";
+      el.href = this.themeDirectory + theme + ".css";
+      document.querySelector("head").appendChild(el);
+      this.theme = theme;
+      return el;
+    }
+  },
+  getThemeLocation: function () {
+    return this.themeDirectory + this.theme + ".css";
+  }
+};
+
+hltheme.getAllHlthemes();
