@@ -268,10 +268,22 @@ new Vue({
     }
   },
   mounted: function () {
-    Vue.nextTick(() => {
+    this.$nextTick(() => {
       window.addEventListener("resize", this.updateNGuideShown);
       this.updateNGuideShown();
       this.autosave();
+      window.addEventListener("keypress", (ev) => {
+        if (ev.ctrlKey && !ev.shiftKey && !ev.altKey && !ev.metaKey && !ev.repeat && ev.key == "s") {
+          this.saveFile();
+          ev.preventDefault();
+        } else if (ev.ctrlKey && ev.shiftKey && !ev.altKey && !ev.metaKey && !ev.repeat && ev.key == "S") {
+          this.saveAs();
+          ev.preventDefault();
+        } else if (ev.ctrlKey && !ev.shiftKey && !ev.altKey && !ev.metaKey && !ev.repeat && ev.key == "o") {
+          this.openFile();
+          ev.preventDefault();
+        }
+      });
     })
   }
 })
@@ -707,19 +719,31 @@ var content = new Vue({
       }
     },
     addTab: function (ta) {
-      this.openedFile.raw = this.openedFile.raw.slice(0, ta.selectionStart+1) + "    " + this.openedFile.raw.slice(ta.selectionEnd)
-      ta.selectionStart += 4;
-      ta.selectionEnd += 4;
+      let tStart = ta.selectionStart, 
+          tEnd = ta.selectionEnd;
+      this.openedFile.raw = this.openedFile.raw.slice(0, tStart) + "    " + this.openedFile.raw.slice(tEnd);
+      this.$nextTick(() => {
+        ta.selectionStart = tStart + 4;
+        ta.selectionEnd = tStart + 4;
+      });
     },
     boldText: function (ta) {
-      this.openedFile.raw = this.openedFile.raw.slice(0, ta.selectionStart) + "**" + this.openedFile.raw.slice(ta.selectionStart, ta.selectionEnd+1) + "**" + this.openedFile.raw.slice(ta.selectionEnd)
-      ta.selectionStart += 2;
-      ta.selectionEnd += 2;
+      let tStart = ta.selectionStart, 
+          tEnd = ta.selectionEnd;
+      this.openedFile.raw = this.openedFile.raw.slice(0, tStart) + "**" + this.openedFile.raw.slice(tStart, tEnd) + "**" + this.openedFile.raw.slice(tEnd);
+      this.$nextTick(() => {
+        ta.selectionStart = tStart + 2;
+        ta.selectionEnd = tEnd + 2;
+      });
     },
     italicText: function (ta) {
-      this.openedFile.raw = this.openedFile.raw.slice(0, ta.selectionStart) + "*" + this.openedFile.raw.slice(ta.selectionStart, ta.selectionEnd+1) + "*" + this.openedFile.raw.slice(ta.selectionEnd)
-      ta.selectionStart += 1;
-      ta.selectionEnd += 1;
+      let tStart = ta.selectionStart, 
+          tEnd = ta.selectionEnd;
+      this.openedFile.raw = this.openedFile.raw.slice(0, tStart) + "*" + this.openedFile.raw.slice(tStart, tEnd) + "*" + this.openedFile.raw.slice(tEnd);
+      this.$nextTick(() => {
+        ta.selectionStart = tStart + 1;
+        ta.selectionEnd = tEnd + 1;
+      });
     }
   }
 })
