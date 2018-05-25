@@ -802,7 +802,8 @@ function hideHeader() {
   if (el) el.style.display = "none";
 }
 
-var hlthemes = ['agate','androidstudio','arduino-light','arta','ascetic','atelier-cave-dark','atelier-cave-light','atelier-dune-dark','atelier-dune-light','atelier-estuary-dark','atelier-estuary-light','atelier-forest-dark','atelier-forest-light','atelier-heath-dark','atelier-heath-light','atelier-lakeside-dark','atelier-lakeside-light','atelier-plateau-dark','atelier-plateau-light','atelier-savanna-dark','atelier-savanna-light','atelier-seaside-dark','atelier-seaside-light','atelier-sulphurpool-dark','atelier-sulphurpool-light','atom-one-dark','atom-one-light','brown-paper','brown-papersq','codepen-embed','color-brewer','darcula','dark','darkula','default','docco','dracula','far','foundation','github','github-gist','googlecode','grayscale','gruvbox-dark','gruvbox-light','hopscotch','hybrid','idea','ir-black','kimbie','kimbie','magula','mono-blue','monokai','monokai-sublime','obsidian','ocean','paraiso-dark','paraiso-light','pojoaque','pojoaque','purebasic','qtcreator_dark','qtcreator_light','railscasts','rainbow','routeros','school-book','school-book','solarized-dark','solarized-light','sunburst','tomorrow','tomorrow-night-blue','tomorrow-night-bright','tomorrow-night','tomorrow-night-eighties','vs2015','vs','xcode','xt256','zenburn']
+var hlthemes = [];
+getAllHlthemes();
 function changeHltheme(theme) {
   if (hlthemes.includes(theme)) {
     document.querySelectorAll("link").filter(el => el.href.includes("css/highlight"))[0].outerHTML = "";
@@ -812,4 +813,17 @@ function changeHltheme(theme) {
     document.querySelector("head").appendChild(el);
     return el;
   }
+}
+
+function getAllHlthemes() {
+  let req = new Request("css/highlight");
+  return fetch(req).then(res => res.text())
+    .then(t => {
+      let rex = /<a\b[^>]*>([\s\S]*?)<\/a>/g;
+      while ((res = rex.exec(t)) !== null) {
+        if (res[1].endsWith(".css")) {
+          hlthemes.push(res[1].slice(0,-4));
+        }
+      }
+    });
 }
