@@ -32,7 +32,7 @@
     if (left.includes("class")) {
       left = left.replace("class=\"", "class=\"hljs ");
     } else {
-      left = left.slice(0,-1) + " class=\"hljs\"";
+      left = left.slice(0,-1) + " class=\"hljs\">";
     }
     return left + hljs.highlightAuto(match).value + right;
   };
