@@ -167,35 +167,28 @@
     this.saveFileAsHtml = (folderId, fileName, content) => {
       if (this.signedIn) {
         let htmlfilename = fileName + ".html";
-        let cssfilerequest = new Request("css/md-themes.css?version=1.1");
-        return fetch(cssfilerequest).then((res) => {
-          return res.text().then((csstext) => {
-            let htmlcontent = "<html>\n<head>\n<style>\n" + csstext + "\n</style>\n</head>\n<body class='md-default'>" 
-              + content + "\n</body>\n</html>";
-            return gapi.client.request({
-              path: "/upload/drive/v3/files",
-              method: "POST",
-              params: {
-                uploadType: "multipart"
-              },
-              headers: {
-                "Content-Type": "multipart/related; boundary=bounding"
-              },
-              body: "--bounding\n"
-                + "Content-Type: application/json; charset=UTF-8\n\n"
-                + JSON.stringify({
-                    mimeType: "text/html",
-                    name: htmlfilename,
-                    parents: [folderId]
-                  })
-                + "\n\n"
-                + "--bounding\n"
-                + "Content-Type: text/html\n\n"
-                + htmlcontent + "\n\n"
-                + "--bounding--"
-            });
-          });
-        })
+        return gapi.client.request({
+          path: "/upload/drive/v3/files",
+          method: "POST",
+          params: {
+            uploadType: "multipart"
+          },
+          headers: {
+            "Content-Type": "multipart/related; boundary=bounding"
+          },
+          body: "--bounding\n"
+            + "Content-Type: application/json; charset=UTF-8\n\n"
+            + JSON.stringify({
+                mimeType: "text/html",
+                name: htmlfilename,
+                parents: [folderId]
+              })
+            + "\n\n"
+            + "--bounding\n"
+            + "Content-Type: text/html\n\n"
+            + content + "\n\n"
+            + "--bounding--"
+        });
       }
     }
 

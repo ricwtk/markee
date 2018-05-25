@@ -220,18 +220,37 @@ new Vue({
     },
     saveAsHtml: function () {
       this.savingashtml = true;
-      let mdcss = new Request("css/md-themes.css?version=1.1");
-      let hlcss = new Request(hltheme.getThemeLocation() + "?version=1.1");
-      Promise.all([fetch(mdcss), fetch(hlcss)]).then(res => Promise.all(res.map(r => r.text()))).then(t => {
-        return ["<html>\n<head>\n",
-          "<meta charset='utf-8'>\n",
-          "<meta name='viewport' content='width=device-width, initial-scale=1'>\n",
-          "<style>\n",
-          t.join("\n"),
-          "\n</style>\n</head>\n<body class='md-default'>",
-          content.compiledDoc,
-          "\n</body>\n</html>"
-        ].join("");
+      let mdcss = new Request("css/md-themes.css");
+      let hlcss = new Request(hltheme.getThemeLocation());
+
+      let filesToFetch = [mdcss, hlcss];
+
+      Promise.all(filesToFetch.map(f => fetch(f))).then(res => 
+        Promise.all(res.map(r => r.text()))
+      ).then(t => {
+        if (content.docOrPres == 0) // document
+          return ["<!DOCTYPE html>\n<html>\n<head>\n",
+            "<meta charset='utf-8'>\n",
+            "<meta name='viewport' content='width=device-width, initial-scale=1'>\n",
+            "<style>\n",
+            t.join("\n"),
+            "\n</style>\n</head>\n<body class='md-default'>\n",
+            content.compiledDoc,
+            "\n</body>\n</html>"
+          ].join("");
+        else // slide
+          return ["<!DOCTYPE html>\n<html>\n<head>\n",
+            "<meta charset='utf-8'>\n",
+            "<meta name='viewport' content='width=device-width, initial-scale=1'>\n",
+            "<style>\n",
+            t.join("\n"),
+            "\n</style>\n</head>\n<body class='md-default'>\n",
+            "<textarea id='source'>", content.compiledDoc, "</textarea>\n",
+            "<script>", jsForHtml, "\n",
+            "var slideshow = remark.create({ converter: mdconverter, externalHighlighter: true });\n",
+            "</script>\n",
+            "</body>\n</html>"
+          ].join("");
       }).then(c => {
         return gd.saveFileAsHtml(openedFile.parents[0], openedFile.name, c).then((res) => {
           notiObj.notify("Compiled HTML is saved in " + res.result.name, "success");
@@ -847,3 +866,22 @@ var hltheme = {
 };
 
 hltheme.getAllHlthemes();
+
+var jsForHtml;
+compileJsForHtml();
+
+function compileJsForHtml() {
+  let filesToFetch = [
+    "js/remark.min.js",
+    "js/highlight.pack.js",
+    "js/showdown.min.js",
+    "js/showdown-highlightjs-ext.js",
+    "js/showdown-timeline-ext.js",
+    "js/md-converter.js"
+  ]
+  Promise.all(filesToFetch.map(f => fetch(new Request(f)))).then(res => 
+    Promise.all(res.map(r => r.text()))
+  ).then(t => {
+    jsForHtml = t.map(x => x.replace("</script>", "</scr\"+\"ipt>")).join("\n")
+  });
+}
