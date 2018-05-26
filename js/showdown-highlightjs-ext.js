@@ -13,6 +13,11 @@
     throw Error('Could not find showdown and/or highlight.js libraries');
   }
 }(function (showdown, hljs) {
+  var langList = hljs.listLanguages().map(l => {
+    let lObj = hljs.getLanguage(l);
+    if (lObj.aliases) return [l, ...lObj.aliases];
+    else return [l];
+  }).reduce((a,i) => [...a, ...i], []);
   // adapt from https://github.com/unional/showdown-highlightjs-extension/
   function htmlunencode(text) {
     return (
@@ -27,14 +32,19 @@
   const right = '</code></pre>'
   const flags = 'g'
   function replacement(_wholeMatch, match, left, right) {
-    // unescape match to prevent double escaping
-    match = htmlunencode(match);
+    let lang;
     if (left.includes("class")) {
       left = left.replace("class=\"", "class=\"hljs ");
+      lang = left.match(/language-(.*)\b/);
     } else {
       left = left.slice(0,-1) + " class=\"hljs\">";
     }
-    return left + hljs.highlightAuto(match).value + right;
+    if (lang && langList.includes(lang[1])) {
+      // unescape match to prevent double escaping
+      return left + hljs.highlight(lang[1], htmlunencode(match)).value + right;
+    }  else {
+      return left + match + right;
+    }
   };
 
   showdown.extension("highlightjs", {
