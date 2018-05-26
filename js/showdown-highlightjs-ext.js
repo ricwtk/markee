@@ -31,14 +31,10 @@
   const left = '<pre><code\\b[^>]*>'
   const right = '</code></pre>'
   const flags = 'g'
+
   function replacement(_wholeMatch, match, left, right) {
     let lang;
-    if (left.includes("class")) {
-      left = left.replace("class=\"", "class=\"hljs ");
-      lang = left.match(/language-(.*)\b/);
-    } else {
-      left = left.slice(0,-1) + " class=\"hljs\">";
-    }
+    lang = left.match(/language-(.*)\b/);
     if (lang && langList.includes(lang[1])) {
       // unescape match to prevent double escaping
       return left + hljs.highlight(lang[1], htmlunencode(match)).value + right;
@@ -47,10 +43,30 @@
     }
   };
 
-  showdown.extension("highlightjs", {
-    type: "output",
-    filter: function (text, converter) {
-      return showdown.helper.replaceRecursiveRegExp(text, replacement, left, right, flags);
+  const cdleft = "<code\\b[^>]*>";
+  const cdright = "</code>";
+  const cdflags = "g";
+
+  function cdreplacement(_wholeMatch, match, left, right) {
+    if (left.includes("class")) {
+      left = left.replace("class=\"", "class=\"hljs ");
+    } else {
+      left = left.slice(0,-1) + " class=\"hljs\">";
     }
+    return left + match + right;
+  }
+
+  showdown.extension("highlightjs", function () {
+    return [{
+      type: "output",
+      filter: function (text, converter) {
+        return showdown.helper.replaceRecursiveRegExp(text, replacement, left, right, flags);
+      }
+    }, {
+      type: "output",
+      filter: function (text, converter) {
+        return showdown.helper.replaceRecursiveRegExp(text, cdreplacement, cdleft, cdright, cdflags);
+      }
+    }]
   });
 }));

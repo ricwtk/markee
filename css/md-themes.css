@@ -57,7 +57,8 @@
 }
 
 .md-default code {
-  border-radius: .1rem;
+  display: initial;
+  border-radius: .15rem;
   font-size: 85%; 
   line-height: 1.2;
   padding: .1rem .15rem;
