@@ -154,9 +154,12 @@
         "**Result:**\n\n```html\n<div class=\"center\">\n  <span class=\"new\">abc</span>\n</div>\n```\n\n" +
         "**Code:** define language for syntax highlight\n\n    ```html\n    <div class=\"center\">\n      <span class=\"new\">abc</span>\n    </div>\n    ```\n\n" +
         "Syntax highlight is supported using the [highlightjs](https://highlightjs.org/) library\n" +
-        "| Supported languages |\n" +
-        "|:--------------------|\n" +
-        hljsLang.map(e => "| `" + e + "` |").join("\n") +
+        "| Supported languages | Aliases |\n" +
+        "|:--------------------|:--------|\n" +
+        hljsLang.map(e => {
+          let l = hljs.getLanguage(e);
+          return "| `" + e + "` |" + (l.aliases ? l.aliases.map(a => "`" + a + "`").join(" ") : "") + " |"
+        }).join("\n") +
         "\n\n"
     }, {
       icon: "mdi-format-quote-open",
