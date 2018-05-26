@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono:400,700|Roboto:400,700');
 
 .md-default {
-  font-family: Roboto;
+  font-family: Roboto,Arial,"sans serif";
   line-height: 1.5;
   font-size: .8rem;
   text-rendering: optimizeLegibility;
@@ -53,7 +53,7 @@
 .md-default kbd, 
 .md-default pre, 
 .md-default samp {
-	font-family: "SF Mono","Segoe UI Mono","Roboto Mono",Menlo,Courier,monospace;
+	font-family: "Roboto Mono","SF Mono","Segoe UI Mono",Menlo,Courier,monospace;
 }
 
 .md-default code {
