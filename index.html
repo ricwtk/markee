@@ -52,6 +52,7 @@
           <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-folder-open" data-tooltip="Open from cloud" @click="openFile"></span>
           <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-download" data-tooltip="Save as html file" @click="saveAsHtml" v-if="!savingashtml && openedFile.parents.length > 0"></span>
           <span class="tooltip tooltip-bottom px-2 mdi mdi-24px mdi-loading mdi-spin" data-tooltip="Saving as html file" v-if="savingashtml"></span>
+          <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-settings" data-tooltip="Preferences" @click="openPreferences"></span>
           <div class="divider-vert"></div>
           <span id="user" class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-account-circle" data-tooltip="User" @click="clickUser"></span>
         </section>
@@ -156,6 +157,22 @@
         </div>
         <div class="modal-footer">
           <small>This site is powered by <a href="https://picturepan2.github.io/spectre/">Spectre</a>, <a href="https://materialdesignicons.com/">Material Design Icons</a>, <a href="https://github.com/showdownjs/showdown">Showdown</a>, and <a href="https://vuejs.org/">Vue</a></small>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="modal-preferences">
+      <span class="modal-overlay" aria-label="Close" @click="toggleModal"></span>
+      <div class="modal-container">
+        <div class="modal-header">
+          <a @click="toggleModal" class="btn btn-clear float-right" aria-label="Close"></a>
+          <strong>Preferences</strong>
+        </div>
+        <div class="modal-body v-box">
+          <div class="divider" data-content="Syntax theme"></div>
+          <select class="form-select" v-model="hltheme.theme" @change="selectHltheme">
+            <option v-for="hlt in hltheme.list" :value="hlt">{{ hlt }}</option>
+          </select>
         </div>
       </div>
     </div>

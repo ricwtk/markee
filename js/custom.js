@@ -40,6 +40,37 @@ function updateSplit(target) {
   }
 }
 
+var hltheme = {
+  list: [],
+  theme: "default",
+  themeDirectory: "css/highlight/",
+  getAllHlthemes: function () {
+    let req = new Request(this.themeDirectory + "?version=1.1");
+    return fetch(req).then(res => res.text()).then(t => {
+      let rex = /<a\b[^>]*>([\s\S]*?)<\/a>/g;
+      while ((res = rex.exec(t)) !== null) {
+        if (res[1].endsWith(".css")) {
+          this.list.push(res[1].slice(0,-4));
+        }
+      }
+    });
+  },
+  changeHltheme: function (theme) {
+    if (this.list.includes(theme)) {
+      document.querySelectorAll("link").filter(el => el.href.includes(this.themeDirectory))[0].outerHTML = "";
+      let el = document.createElement("link");
+      el.rel = "stylesheet";
+      el.href = this.themeDirectory + theme + ".css";
+      document.querySelector("head").appendChild(el);
+      this.theme = theme;
+      return el;
+    }
+  },
+  getThemeLocation: function () {
+    return this.themeDirectory + this.theme + ".css";
+  }
+};
+
 var gd;
 var signedInStatus = {
   google: false,
@@ -265,6 +296,9 @@ new Vue({
         }
         this.autosave();
       }, 30000);
+    },
+    openPreferences: function () {
+      modalPreferences.toggleModal();
     }
   },
   mounted: function () {
@@ -311,6 +345,24 @@ var modalUser = new Vue({
     }
   }
 })
+
+var modalPreferences = new Vue({
+  el: "#modal-preferences",
+  data: {
+    hltheme: hltheme
+  },
+  mounted: function () {
+    console.log(this.hltheme.theme);
+  },
+  methods: {
+    toggleModal: function () {
+      this.$el.classList.toggle("active");
+    },
+    selectHltheme: function (ev) {
+      this.hltheme.changeHltheme(ev.target.value);
+    }
+  }
+});
 
 var modalGuide = new Vue({
   el: "#modal-guide",
@@ -854,37 +906,6 @@ function hideHeader() {
   let el = document.querySelector("header#navbar");
   if (el) el.style.display = "none";
 }
-
-var hltheme = {
-  list: [],
-  theme: "default",
-  themeDirectory: "css/highlight/",
-  getAllHlthemes: function () {
-    let req = new Request(this.themeDirectory + "?version=1.1");
-    return fetch(req).then(res => res.text()).then(t => {
-      let rex = /<a\b[^>]*>([\s\S]*?)<\/a>/g;
-      while ((res = rex.exec(t)) !== null) {
-        if (res[1].endsWith(".css")) {
-          this.list.push(res[1].slice(0,-4));
-        }
-      }
-    });
-  },
-  changeHltheme: function (theme) {
-    if (this.list.includes(theme)) {
-      document.querySelectorAll("link").filter(el => el.href.includes(this.themeDirectory))[0].outerHTML = "";
-      let el = document.createElement("link");
-      el.rel = "stylesheet";
-      el.href = this.themeDirectory + theme + ".css";
-      document.querySelector("head").appendChild(el);
-      this.theme = theme;
-      return el;
-    }
-  },
-  getThemeLocation: function () {
-    return this.themeDirectory + this.theme + ".css";
-  }
-};
 
 hltheme.getAllHlthemes();
 
