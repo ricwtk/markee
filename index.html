@@ -169,10 +169,23 @@
           <strong>Preferences</strong>
         </div>
         <div class="modal-body v-box">
-          <div class="divider" data-content="Syntax theme"></div>
-          <select class="form-select" v-model="hltheme.theme" @change="selectHltheme">
-            <option v-for="hlt in hltheme.list" :value="hlt">{{ hlt }}</option>
-          </select>
+          <h5>Syntax theme</h5>
+          <div class="divider"></div>
+          <div class="v-box">
+            <div class="form-label">Default</div>
+            <select class="form-select" v-model="defaultSyntaxTheme">
+              <option v-for="hlt in hltheme.list" :value="hlt">{{ hlt }}</option>
+            </select>
+          </div>
+          <div class="v-box" v-if="hasLocation">
+            <div class="h-box">
+              <div class="form-label mr-2">This document</div>
+              <label class="form-switch"><input type="checkbox" v-model="useSeparateSyntaxTheme"><i class="form-icon"></i></label>
+            </div>
+            <select class="form-select" v-model="documentSyntaxTheme" :disabled="!useSeparateSyntaxTheme">
+              <option v-for="hlt in hltheme.list" :value="hlt">{{ hlt }}</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>

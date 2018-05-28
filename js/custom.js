@@ -71,6 +71,12 @@ var hltheme = {
   }
 };
 
+function updateSyntaxTheme() {
+  let defaultTheme = signedInUser.preferences.defaultSyntaxTheme || "default";
+  let documentTheme = signedInUser.preferences.documentSyntaxTheme ? signedInUser.preferences.documentSyntaxTheme[openedFile.id] || defaultTheme : defaultTheme;
+  hltheme.changeHltheme(documentTheme);
+}
+
 var gd;
 var signedInStatus = {
   google: false,
@@ -90,7 +96,8 @@ var notiObj = {
 var signedInUser = {
   name: "",
   email: "",
-  profilePic: ""
+  profilePic: "",
+  preferences: {}
 }
 var openedFile = {
   name: "Unsaved.md",
@@ -349,17 +356,66 @@ var modalUser = new Vue({
 var modalPreferences = new Vue({
   el: "#modal-preferences",
   data: {
-    hltheme: hltheme
+    hltheme: hltheme,
+    savedDocumentSyntaxTheme: null
   },
-  mounted: function () {
-    console.log(this.hltheme.theme);
+  computed: {
+    defaultSyntaxTheme: {
+      get: function () {
+        return signedInUser.preferences.defaultSyntaxTheme || "default";
+      },
+      set: function (theme) {
+        this.$set(signedInUser.preferences, "defaultSyntaxTheme", theme);
+        gd.prefSetDefaultSyntaxTheme(theme);
+        updateSyntaxTheme();
+      }
+    },
+    useSeparateSyntaxTheme: {
+      get: function () {
+        return signedInUser.preferences.documentSyntaxTheme ? Object.keys(signedInUser.preferences.documentSyntaxTheme).includes(openedFile.id) : false;
+      },
+      set: function (tOf) {
+        if (tOf) {
+          if (!signedInUser.preferences.documentSyntaxTheme) signedInUser.preferences.documentSyntaxTheme = {};
+          this.$set(signedInUser.preferences.documentSyntaxTheme, openedFile.id, this.savedDocumentSyntaxTheme);
+          gd.prefSetDocumentSyntaxTheme(openedFile.id, this.savedDocumentSyntaxTheme);
+        } else {
+          if (signedInUser.preferences.documentSyntaxTheme && signedInUser.preferences.documentSyntaxTheme[openedFile.id]) { 
+            this.$delete(signedInUser.preferences.documentSyntaxTheme, openedFile.id);
+          }
+          gd.prefUnsetDocumentSyntaxTheme(openedFile.id);
+        }
+        updateSyntaxTheme();
+      }
+    },
+    documentSyntaxTheme: {
+      get: function () {
+        if (signedInUser.preferences.documentSyntaxTheme && signedInUser.preferences.documentSyntaxTheme[openedFile.id]) {
+          return signedInUser.preferences.documentSyntaxTheme[openedFile.id];
+        } else {
+          return this.savedDocumentSyntaxTheme;
+        }
+      },
+      set: function (theme) {
+        this.savedDocumentSyntaxTheme = theme;
+        if (!signedInUser.preferences.documentSyntaxTheme) signedInUser.preferences.documentSyntaxTheme = {};
+        this.$set(signedInUser.preferences.documentSyntaxTheme, openedFile.id, theme);
+        gd.prefSetDocumentSyntaxTheme(openedFile.id, theme);
+        updateSyntaxTheme();
+      }
+    },
+    hasLocation: function () {
+      return openedFile.id ? true : false;
+    }
   },
   methods: {
     toggleModal: function () {
+      if (!this.savedDocumentSyntaxTheme) {
+        if (signedInUser.preferences.documentSyntaxTheme && signedInUser.preferences.documentSyntaxTheme[openedFile.id]) {
+          this.documentSyntaxTheme = signedInUser.preferences.documentSyntaxTheme[openedFile.id];
+        }
+      }
       this.$el.classList.toggle("active");
-    },
-    selectHltheme: function (ev) {
-      this.hltheme.changeHltheme(ev.target.value);
     }
   }
 });
@@ -754,6 +810,11 @@ var content = new Vue({
     },
     toggleRender: function () {
       this.docOrPres = (this.docOrPres + 1) % 2;
+      if (this.docOrPres == 0) {
+        gd.prefUnsetRenderAsPresentation(this.openedFile.id);
+      } else {
+        gd.prefSetRenderAsPresentation(this.openedFile.id);
+      }
     },
     togglePresentation: function () {
       if (this.slideshow !== null) {
@@ -862,6 +923,13 @@ function initApis() {
               });
           }
         }
+        gd.getPreferences().then(pref => {
+          signedInUser.preferences = pref;
+          if (pref.renderAsPresentation && pref.renderAsPresentation.includes(openedFile.id)) {
+            renderAsSlides();
+          }
+          updateSyntaxTheme();
+        });
       } else {
         notiObj.notify(`The signed in user is not the same as the user who opened this page. You can solve this by
           (1) signing out and signing in as the user who opened this page, or
@@ -908,6 +976,7 @@ function hideHeader() {
 }
 
 hltheme.getAllHlthemes();
+updateSyntaxTheme();
 
 var jsForHtml;
 compileJsForHtml();

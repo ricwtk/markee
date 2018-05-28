@@ -7,11 +7,13 @@
     this.scopes = [
       "https://www.googleapis.com/auth/drive.install",
       "https://www.googleapis.com/auth/drive.file",
-      "https://www.googleapis.com/auth/drive.readonly"
+      "https://www.googleapis.com/auth/drive.readonly",
+      "https://www.googleapis.com/auth/drive.appfolder"
     ].join(" ");
     this.initialised = false;
     this.initialising = false;
     this.signedIn = false;
+    this.fileId = {};
 
     this.init = () => {
       this.initialising = true;
@@ -47,6 +49,7 @@
       } else {
         this.signedIn = false;
         this.signedOutFunction();
+        this.fileId = {};
       }
     }
 
@@ -189,6 +192,108 @@
             + content + "\n\n"
             + "--bounding--"
         });
+      }
+    }
+
+    this.createPreferencesFile = () => {
+      if (this.signedIn) {
+        return gapi.client.drive.files.create({
+          resource: {
+            name: "preferences",
+            mimeType: "text/plain",
+            parents: ["appDataFolder"]
+          }
+        })
+      }
+    }
+
+    this.getPreferencesFile = () => {
+      if (this.signedIn) {
+        if (this.fileId.preferences) {
+          return Promise.resolve(this.fileId.preferences);
+        } else {
+          return gapi.client.drive.files.list({
+            spaces: "appDataFolder",
+            q: "name='preferences'"
+          }).then(res => {
+            if (res.result.files.length > 0) {
+              this.fileId.preferences = res.result.files[0].id;
+              return this.fileId.preferences;
+            } else {
+              return this.createPreferencesFile().then(res => {
+                this.fileId.preferences = res.result.id;
+                return this.updateFileContent(this.fileId.preferences, "{}").then(() => this.fileId.preferences);
+              });
+            }
+          });
+        }
+      } else {
+        return Promise.resolve();
+      }
+    }
+
+    this.getPreferences = () => {
+      if (this.signedIn) {
+        return this.getPreferencesFile().then(fid => this.getFileContent(fid)).then(res => res.result);
+      }
+    }
+
+    this.savePreferences = (pref) => {
+      if (this.signedIn) {
+        return this.getPreferencesFile().then(fid => {
+          return this.updateFileContent(fid, JSON.stringify(pref)).then(() => pref);
+        });
+      }
+    }
+
+    this.prefSetDefaultSyntaxTheme = (syntaxTheme) => {
+      if (this.signedIn) {
+        return this.getPreferences().then(pref => {
+          pref.defaultSyntaxTheme = syntaxTheme;
+          return this.savePreferences(pref);
+        });
+      }
+    }
+
+    this.prefSetDocumentSyntaxTheme = (fileId, syntaxTheme) => {
+      if (this.signedIn) {
+        return this.getPreferences().then(pref => {
+          if (!pref.documentSyntaxTheme) pref.documentSyntaxTheme = {};
+          pref.documentSyntaxTheme[fileId] = syntaxTheme;
+          return this.savePreferences(pref);
+        })
+      }
+    }
+
+    this.prefUnsetDocumentSyntaxTheme = (fileId) => {
+      if (this.signedIn) {
+        return this.getPreferences().then(pref => {
+          if (pref.documentSyntaxTheme && pref.documentSyntaxTheme[fileId]) {
+            delete pref.documentSyntaxTheme[fileId];
+            return this.savePreferences(pref);
+          }
+        })
+      }
+    }
+
+    this.prefSetRenderAsPresentation = (fileId) => {
+      if (this.signedIn) {
+        return this.getPreferences().then(pref => {
+          if (!pref.renderAsPresentation) pref.renderAsPresentation = [];
+          if (!pref.renderAsPresentation.includes(fileId)) pref.renderAsPresentation.push(fileId);
+          return this.savePreferences(pref);
+        })
+      }
+    }
+
+    this.prefUnsetRenderAsPresentation = (fileId) => {
+      if (this.signedIn) {
+        return this.getPreferences().then(pref => {
+          if (pref.renderAsPresentation && pref.renderAsPresentation.includes(fileId)) {
+            pref.renderAsPresentation.splice(pref.renderAsPresentation.indexOf(fileId), 1);
+            return this.savePreferences(pref);
+          }
+        })
       }
     }
 
