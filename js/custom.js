@@ -413,6 +413,8 @@ var modalPreferences = new Vue({
       if (!this.savedDocumentSyntaxTheme) {
         if (signedInUser.preferences.documentSyntaxTheme && signedInUser.preferences.documentSyntaxTheme[openedFile.id]) {
           this.documentSyntaxTheme = signedInUser.preferences.documentSyntaxTheme[openedFile.id];
+        } else {
+          this.savedDocumentSyntaxTheme = hltheme.theme;
         }
       }
       this.$el.classList.toggle("active");
