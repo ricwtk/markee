@@ -45,7 +45,7 @@ var hltheme = {
   theme: "default",
   themeDirectory: "css/highlight/",
   getAllHlthemes: function () {
-    let req = new Request(this.themeDirectory + "?version=1.1");
+    let req = new Request(this.themeDirectory);
     return fetch(req).then(res => res.text()).then(t => {
       let rex = /<a\b[^>]*>([\s\S]*?)<\/a>/g;
       while ((res = rex.exec(t)) !== null) {
