@@ -760,8 +760,7 @@ var content = new Vue({
             clone.addEventListener("load", () => {
               clone.switchToDisplay();
               clone.renderAsSlides();
-              clone.hideEditor();
-              clone.hideHeader();
+              clone.showDisplayOnly();
             }, true);
           })
           
@@ -793,15 +792,18 @@ var content = new Vue({
     },
     displayActions: function () {
       let actions = [];
-      actions = actions.concat([{
-        class: this.distractFree.display ? ['mdi-arrow-collapse'] : ['mdi-arrow-expand'],
-        emit: 'toggle-distract-free',
-        tooltip: "toggle distraction free"
-      }, {
+      if (!presentationView) {
+        actions.push({
+          class: this.distractFree.display ? ['mdi-arrow-collapse'] : ['mdi-arrow-expand'],
+          emit: 'toggle-distract-free',
+          tooltip: "toggle distraction free"
+        });
+      }
+      actions.push({
         class: ['mdi-fullscreen'],
         emit: 'toggle-fullscreen',
         tooltip: "toggle fullscreen"
-      }]);
+      });
       if (this.docOrPres == 1) {
         actions = actions.concat([{
           class: ["mdi-file-presentation-box"],
@@ -867,6 +869,11 @@ var content = new Vue({
     toggleDistractFree: function (role) {
       this.$refs[role + "Wrapper"].toggleDistractFree();
       this.distractFree[role] = !this.distractFree[role];
+      this.$nextTick(() => {
+        if (this.slideshow !== null) {
+          this.slideshow.events.emit("resize");
+        }
+      });
     },
     addTab: function (ta) {
       let tStart = ta.selectionStart, 
@@ -1005,14 +1012,8 @@ function renderAsSlides() {
   content.docOrPres = 1;
 }
 
-function hideEditor() {
-  let el = document.querySelector("#editor-wrapper");
-  if (el) el.style.display = "none";
-}
-
-function hideHeader() {
-  let el = document.querySelector("header#navbar");
-  if (el) el.style.display = "none";
+function showDisplayOnly() {
+  content.toggleDistractFree("display");
 }
 
 hltheme.getAllHlthemes();
