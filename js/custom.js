@@ -622,22 +622,6 @@ var contentContainer = {
       e.preventDefault()
       this.$emit("italictext", this.$refs.textarea)
     },
-    toggleMaximised: function () {
-      if (this.docOrPres == 0) {
-        let el = this.$refs.docDisplay;
-        if (el.requestFullscreen) {
-          el.requestFullscreen();
-        } else if (el.mozRequestFullScreen) {
-          el.mozRequestFullScreen();
-        } else if (el.webkitRequestFullScreen) {
-          el.webkitRequestFullScreen();
-        } else if (el.msRequestFullscreen) {
-          el.msRequestFullscreen();
-        }
-      } else {
-        this.$emit("toggle-presentation");
-      }
-    },
     toggleDistractFree: function () {
       if (Object.keys(this.innerWrapperStyle).length == 0)
         this.innerWrapperStyle = {
@@ -650,6 +634,27 @@ var contentContainer = {
           border: "0px"
         };
       else this.innerWrapperStyle = {};
+    },
+    toggleFullscreen: function () {
+      let el;
+      if (this.contenteditable) {
+        el = this.$refs.textarea;
+      } else if (this.docOrPres == 0) {
+        el = this.$refs.docDisplay;
+      } else {
+        this.$emit("toggle-presentation");
+      }
+      if (el) {
+        if (el.requestFullscreen) {
+          el.requestFullscreen();
+        } else if (el.mozRequestFullScreen) {
+          el.mozRequestFullScreen();
+        } else if (el.webkitRequestFullScreen) {
+          el.webkitRequestFullScreen();
+        } else if (el.msRequestFullscreen) {
+          el.msRequestFullscreen();
+        }
+      }
     },
     emitAction: function () {
       this.$emit("action");
@@ -689,9 +694,6 @@ var contentContainer = {
           <div class="mdi mdi-triangle mdi-rotate-90 c-hand" @click="$emit('next-slide')"></div>
         </template>
         <div class="grow"></div>
-        <div v-if="maximisable" class="mdi mdi-24px mdi-fullscreen c-hand tooltip tooltip-left" @click="toggleMaximised"
-          data-tooltip="toggle fullscreen"
-        ></div>
         <div v-for="a in actions" :class="['mdi', 'mdi-24px', 'c-hand'].concat(a.class).concat(a.tooltip ? ['tooltip', 'tooltip-left'] : '')" @click="$emit(a.emit)"
           :data-tooltip="a.tooltip ? a.tooltip : ''"
         ></div>
@@ -771,10 +773,15 @@ var content = new Vue({
     },
     editorActions: function () {
       let actions = [];
-      actions.push({
+      actions = actions.concat([{
         class: this.distractFree.editor ? ['mdi-arrow-collapse'] : ['mdi-arrow-expand'],
-        emit: 'toggle-distract-free'
-      });
+        emit: 'toggle-distract-free',
+        tooltip: "toggle distraction free"
+      }, {
+        class: ['mdi-fullscreen'],
+        emit: "toggle-fullscreen",
+        tooltip: "toggle fullscreen"
+      }]);
       if (!presentationView) {
         return actions.concat([{
           class: ['mdi-eye', 'show-md'], 
@@ -786,10 +793,15 @@ var content = new Vue({
     },
     displayActions: function () {
       let actions = [];
-      actions.push({
+      actions = actions.concat([{
         class: this.distractFree.display ? ['mdi-arrow-collapse'] : ['mdi-arrow-expand'],
-        emit: 'toggle-distract-free'
-      });
+        emit: 'toggle-distract-free',
+        tooltip: "toggle distraction free"
+      }, {
+        class: ['mdi-fullscreen'],
+        emit: 'toggle-fullscreen',
+        tooltip: "toggle fullscreen"
+      }]);
       if (this.docOrPres == 1) {
         actions = actions.concat([{
           class: ["mdi-file-presentation-box"],
@@ -843,11 +855,6 @@ var content = new Vue({
         gd.prefUnsetRenderAsPresentation(this.openedFile.id);
       } else {
         gd.prefSetRenderAsPresentation(this.openedFile.id);
-      }
-    },
-    togglePresentation: function () {
-      if (this.slideshow !== null) {
-        this.slideshow.toggleFullscreen();
       }
     },
     wheelEventHandler: function (deltaY) {

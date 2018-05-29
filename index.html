@@ -276,6 +276,7 @@
           @italictext="italicText"
           @toggle-view="switchTo('display-wrapper')"
           @toggle-distract-free="toggleDistractFree('editor')"
+          @toggle-fullscreen="$refs.editorWrapper.toggleFullscreen()"
         ></content-container>
         <content-container
           ref="displayWrapper"
@@ -291,7 +292,7 @@
           :slides-name="slidesName"
           @toggle-view="switchTo('editor-wrapper')"      
           @toggle-render="toggleRender"
-          @toggle-presentation="togglePresentation"
+          @toggle-presentation="slideshow.toggleFullscreen()"
           @toggle-presenter-mode="slideshow.togglePresenterMode()"
           @next-slide="slideshow.gotoNextSlide()"
           @previous-slide="slideshow.gotoPreviousSlide()"
@@ -299,6 +300,7 @@
           @change-slide="slideshow.gotoSlideNumber($event)"
           @clone-presentation="slideshow.createClone()"
           @toggle-distract-free="toggleDistractFree('display')"
+          @toggle-fullscreen="$refs.displayWrapper.toggleFullscreen()"
         ></content-container>
       </div>
     </div>
