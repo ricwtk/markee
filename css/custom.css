@@ -47,11 +47,10 @@ header {
   line-height: 1;
 }
 
-#editor-wrapper .controls,
-#display-wrapper .controls,
+.actual .controls,
 #content > .controls {
   border-top: 1px solid #ddd;
-  justify-content: flex-end;
+  background-color: white;
 }
 
 #editor-wrapper .actual {

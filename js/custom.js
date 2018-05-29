@@ -602,7 +602,8 @@ var contentContainer = {
         "grow": true,
         "p-1": true,
         "hide-md": this.hideMd
-      }
+      },
+      innerWrapperStyle: {}
     }
   },
   methods: {
@@ -637,6 +638,19 @@ var contentContainer = {
         this.$emit("toggle-presentation");
       }
     },
+    toggleDistractFree: function () {
+      if (Object.keys(this.innerWrapperStyle).length == 0)
+        this.innerWrapperStyle = {
+          position: "absolute",
+          width: "100%",
+          height: "100%",
+          "z-index": "10",
+          left: 0,
+          top: 0,
+          border: "0px"
+        };
+      else this.innerWrapperStyle = {};
+    },
     emitAction: function () {
       this.$emit("action");
     },
@@ -646,7 +660,7 @@ var contentContainer = {
   },
   template: `
   <span :id="wrapperId" :class="wrapperClass">
-    <div :class="['actual', 'grow', 'relative', 'md-'+contentTheme, 'v-box']" ref="innerWrapper">
+    <div :class="['actual', 'grow', 'relative', 'md-'+contentTheme, 'v-box']" ref="innerWrapper" :style="innerWrapperStyle">
       <textarea v-if="contenteditable" class="p-1 grow" ref="textarea" 
         :value="value" 
         @input="sendEditedContent" 
@@ -663,7 +677,7 @@ var contentContainer = {
       >
         <div class="presentation-display"></div>
       </div>
-      <div class="h-box px-2 v-center">
+      <div class="h-box px-2 v-center controls">
         <template v-if="!contenteditable && docOrPres == 1">
           <div class="mdi mdi-triangle mdi-rotate-270 c-hand" @click="$emit('previous-slide')"></div>
           <div class="h-box v-center px-1">
@@ -694,7 +708,11 @@ var content = new Vue({
     docOrPres: 0,
     slideshow: null,
     currentSlideNumber: 0,
-    slidesName: []
+    slidesName: [],
+    distractFree: {
+      editor: false,
+      display: false
+    }
   },
   computed: {
     compiledDoc: function () {
@@ -752,17 +770,26 @@ var content = new Vue({
       }
     },
     editorActions: function () {
+      let actions = [];
+      actions.push({
+        class: this.distractFree.editor ? ['mdi-arrow-collapse'] : ['mdi-arrow-expand'],
+        emit: 'toggle-distract-free'
+      });
       if (!presentationView) {
-        return [{
+        return actions.concat([{
           class: ['mdi-eye', 'show-md'], 
           emit: 'toggle-view' 
-        }];
+        }]);
       } else {
-        return [];
+        return actions;
       }
     },
     displayActions: function () {
       let actions = [];
+      actions.push({
+        class: this.distractFree.display ? ['mdi-arrow-collapse'] : ['mdi-arrow-expand'],
+        emit: 'toggle-distract-free'
+      });
       if (this.docOrPres == 1) {
         actions = actions.concat([{
           class: ["mdi-file-presentation-box"],
@@ -829,6 +856,10 @@ var content = new Vue({
       } else if (deltaY < 0) {
         this.slideshow.gotoPreviousSlide();        
       }
+    },
+    toggleDistractFree: function (role) {
+      this.$refs[role + "Wrapper"].toggleDistractFree();
+      this.distractFree[role] = !this.distractFree[role];
     },
     addTab: function (ta) {
       let tStart = ta.selectionStart, 

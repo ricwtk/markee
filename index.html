@@ -264,6 +264,7 @@
     <div id="content" class="px-1 grow v-box">
       <div id="actual-content" class="grow h-box">
         <content-container
+          ref="editorWrapper"
           wrapper-id="editor-wrapper"
           :contenteditable="openedFile.canEdit"
           :hide-md="false"
@@ -274,8 +275,10 @@
           @boldtext="boldText"
           @italictext="italicText"
           @toggle-view="switchTo('display-wrapper')"
+          @toggle-distract-free="toggleDistractFree('editor')"
         ></content-container>
         <content-container
+          ref="displayWrapper"
           wrapper-id="display-wrapper"
           :contenteditable="false"
           :hide-md="true"
@@ -295,6 +298,7 @@
           @p-wh="wheelEventHandler"
           @change-slide="slideshow.gotoSlideNumber($event)"
           @clone-presentation="slideshow.createClone()"
+          @toggle-distract-free="toggleDistractFree('display')"
         ></content-container>
       </div>
     </div>
