@@ -282,7 +282,7 @@ new Vue({
             "<meta name='viewport' content='width=device-width, initial-scale=1'>\n",
             "<style>\n",
             t.join("\n"),
-            "\n</style>\n</head>\n<body class='md-default'>\n",
+            "\n</style>\n</head>\n<body class='md-default presentation'>\n",
             "<textarea id='source'>", content.compiledDoc, "</textarea>\n",
             "<script>", jsForHtml, "\n",
             "var slideshow = remark.create({ converter: mdconverter, externalHighlighter: true });\n",
@@ -1013,7 +1013,6 @@ function showDisplayOnly() {
 
 window.addEventListener("load", () => {
   if (presentationView) {
-    console.log("load");
     window.switchToDisplay();
     window.renderAsSlides();
     window.showDisplayOnly();
