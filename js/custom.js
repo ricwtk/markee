@@ -757,11 +757,6 @@ var content = new Vue({
           addCallback(this.slideshow, "createClone", () => {
             let clone = this.slideshow.clone;
             clone.presentationView = true;
-            clone.addEventListener("load", () => {
-              clone.switchToDisplay();
-              clone.renderAsSlides();
-              clone.showDisplayOnly();
-            }, true);
           })
           
           if (slideIdx) { this.slideshow.gotoSlideNumber(this.slideshow.getSlides()[slideIdx].getSlideNumber()); }
@@ -1015,6 +1010,21 @@ function renderAsSlides() {
 function showDisplayOnly() {
   content.toggleDistractFree("display");
 }
+
+window.addEventListener("load", () => {
+  if (presentationView) {
+    console.log("load");
+    window.switchToDisplay();
+    window.renderAsSlides();
+    window.showDisplayOnly();
+    window.addEventListener("keypress", (ev) => {
+      if (ev.ctrlKey && !ev.shiftKey && !ev.altKey && !ev.metaKey && !ev.repeat && ev.key == "r") {
+        gd.signedInFunction();
+        ev.preventDefault();
+      }
+    });
+  }
+}, true);
 
 hltheme.getAllHlthemes();
 updateSyntaxTheme();
