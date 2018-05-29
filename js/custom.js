@@ -680,7 +680,14 @@ var contentContainer = {
       <div v-else class="presentation-wrapper grow relative" 
         @wheel.prevent="$emit('p-wh', $event.deltaY)"
       >
-        <div class="presentation-display"></div>
+        <div class="presentation-display"
+          @keyup.67.exact="customEmit('clone-presentation')"
+          @keydown.67.exact="e => e.preventDefault()"
+          @keyup.80.exact="customEmit('toggle-presenter-mode')"
+          @keydown.80.exact="e => e.preventDefault()"
+          @keyup.66.exact="customEmit('toggle-blackout')"
+          @keydown.66.exact="e => e.preventDefault()"
+        ></div>
       </div>
       <div class="h-box px-2 v-center controls">
         <template v-if="!contenteditable && docOrPres == 1">
@@ -808,6 +815,10 @@ var content = new Vue({
           class: ["mdi-content-duplicate"],
           emit: "clone-presentation",
           tooltip: "clone presentation (c)"
+        }, {
+          class: ["mdi-image-off"],
+          emit: "toggle-blackout",
+          tooltip: "toggle blackout (b)"
         }]);
       }
       if (!presentationView) {
