@@ -104,7 +104,8 @@ Menu.setApplicationMenu(menu);
 
 ipcMain.on("open-file", (ev, arg) => {
   console.log("opening " + arg);
-  win.setTitle(arg + " - Markee");
+  let p = path.parse(arg);
+  win.setTitle([p.base, p.dir, "Markee"].join(" - "));
   fs.readFile(arg, (err, data) => {
     if (err) throw err;
     ev.sender.send("file-content", data.toString());
