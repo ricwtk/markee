@@ -42,7 +42,7 @@ const menu = Menu.buildFromTemplate([
   {
     label: "File",
     submenu: [
-      {label: "Save file", accelerator: "CommandOrControl+S"},
+      {label: "Save file", accelerator: "CommandOrControl+S", click: () => { win.webContents.send("save-file"); }},
       {label: "Open file...", accelerator: "CommandOrControl+O", click: () => { win.webContents.send("open-file-ui"); }},
       {label: "New file", submenu: [
         {label: "Presentation"},
@@ -108,5 +108,12 @@ ipcMain.on("open-file", (ev, arg) => {
   fs.readFile(arg, (err, data) => {
     if (err) throw err;
     ev.sender.send("file-content", data.toString());
+  });
+})
+
+ipcMain.on("save-file", (ev, filename, content) => {
+  fs.writeFile(filename, content, (err) => {
+    if (err) throw err;
+    ev.sender.send("save-file-success", content);
   });
 })

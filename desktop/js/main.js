@@ -65,6 +65,7 @@ var main = new Vue({
     mdconverter: mdconverter,
     docContent: "",
     savedDocContent: "",
+    openedFile: ""
   },
   computed: {
     compiledDocContent: function () {
@@ -82,7 +83,13 @@ var main = new Vue({
     });
     ipcRenderer.on("open-file-ui", (ev, arg) => {
       this.openFileUi();
-    })
+    });
+    ipcRenderer.on("save-file", (ev, arg) => {
+      this.saveFile();
+    });
+    ipcRenderer.on("save-file-success", (ev, arg) => {
+      this.savedDocContent = arg;
+    });
   },
   methods: {
     showDisplay: function () {
@@ -92,6 +99,11 @@ var main = new Vue({
     showEdit: function () {
       this.$refs.editPanel.classList.remove("hide-md");
       this.$refs.displayPanel.classList.add("hide-md");
+    },
+    saveFile: function () {
+      if (this.openedFile) {
+        ipcRenderer.send("save-file", this.openedFile, this.docContent);
+      }
     },
     openFileUi: function () {
       this.$refs.fileExplorer.toggle();
@@ -104,6 +116,7 @@ var main = new Vue({
     },
     openFile: function (file) {
       console.log("opening" + file);
+      this.openedFile = file;
       ipcRenderer.send("open-file", file);
     }
   }
