@@ -4,6 +4,7 @@ const Split = require("split.js");
 const tt = require('electron-tooltip');
 const {mdconverter, mdguides} = require(path.join(__dirname, "js", "md.js"));
 const os = require("os");
+const fs = require("fs");
 
 // split
 var split;
@@ -84,8 +85,18 @@ var main = new Vue({
       this.$refs.editPanel.classList.remove("hide-md");
       this.$refs.displayPanel.classList.add("hide-md");
     },
-    test: function () {
-      console.log(this.$refs);
+    openFileFromExplorer: function (file) {
+      // close explorer
+      this.$refs.fileExplorer.toggle();
+      // save current folder as recently opened folder
+      this.openFile(file);
+    },
+    openFile: function (file) {
+      console.log("opening" + file);
+      fs.readFile(file, (err, data) => {
+        if (err) throw err;
+        this.docContent = data.toString();
+      });
     }
   }
 })

@@ -137,6 +137,8 @@ module.exports = {
         </label>
         <div class="grow"></div>
         <div class="button-group">
+          <button class="btn form-btn" data-tooltip="New folder"><i class="mdi mdi-folder-plus"></i></button>
+          <button class="btn form-btn" data-tooltip="New file"><i class="mdi mdi-file-plus"></i></button>
           <button class="btn form-btn">Open</button>
           <button class="btn form-btn" @click="toggle">Cancel</button>
         </div>
