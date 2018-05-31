@@ -13,7 +13,7 @@
     <div id="main" class="v-box">
       <nav class="h-box bg-gray-light p-1">
         <button class="btn btn-no-border" data-tooltip="Save"><i class="mdi mdi-content-save"></i></button>
-        <button class="btn btn-no-border" data-tooltip="Open" @click="$refs.fileExplorer.toggle()"><i class="mdi mdi-folder-open"></i></button>
+        <button class="btn btn-no-border" data-tooltip="Open" @click="openFileUi"><i class="mdi mdi-folder-open"></i></button>
         <button class="btn btn-no-border" data-tooltip="New document"><i class="mdi mdi-file-outline"></i></button>
         <div class="separator-vertical"></div>
         <button class="btn btn-no-border" data-tooltip="Undo"><i class="mdi mdi-undo"></i></button>
@@ -25,6 +25,8 @@
         <button class="btn btn-no-border" data-tooltip="Preference" @click="$refs.preference.toggle()"><i class="mdi mdi-settings"></i></button>
         <button class="btn btn-no-border" data-tooltip="Help" @click="$refs.help.toggle()"><i class="mdi mdi-help-circle"></i></button>
       </nav>
+
+      <div :class="['pt-1', docContent == savedDocContent ? 'bg-success' : 'bg-danger']"></div>
   
       <div class="h-box grow">
         <div class="p-1 h-box" id="edit-panel" ref="editPanel">

@@ -61,6 +61,17 @@ module.exports = {
   methods: {
     toggle: function () {
       this.$el.classList.toggle("active");
+      if (this.$el.classList.contains("active")) {
+        window.addEventListener("keyup", this.escHandler);
+      } else {
+        window.removeEventListener("keyup", this.escHandler);
+      }
+    },
+    escHandler: function (ev) {
+      if (ev.code == "Escape") {
+        this.toggle();
+        ev.preventDefault();
+      }
     },
     navigate: function (ev) {
       let i = parseInt(ev.target.dataset.i);
@@ -89,6 +100,11 @@ module.exports = {
           this.dbclkTarget = null;
         }, 250);
       }
+    },
+    openItem: function () {
+      let target = this.$el.querySelector(".selected");
+      if (target)
+        this.execItem(JSON.parse(target.dataset.item));
     },
     execItem: function (item) {
       let itemPath = this.path.join(this.directoryPath, item.name);
@@ -139,8 +155,8 @@ module.exports = {
         <div class="button-group">
           <button class="btn form-btn" data-tooltip="New folder"><i class="mdi mdi-folder-plus"></i></button>
           <button class="btn form-btn" data-tooltip="New file"><i class="mdi mdi-file-plus"></i></button>
-          <button class="btn form-btn">Open</button>
-          <button class="btn form-btn" @click="toggle">Cancel</button>
+          <button class="btn form-btn" data-tooltip="Open" @click="openItem">Open</button>
+          <button class="btn form-btn" data-tooltip="Cancel" @click="toggle">Cancel</button>
         </div>
       </div>
     </div>

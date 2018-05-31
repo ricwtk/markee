@@ -1,10 +1,10 @@
 const path = require("path");
 const Vue = require(path.join(__dirname, "js", "vue.js"));
 const Split = require("split.js");
-const tt = require('electron-tooltip');
 const {mdconverter, mdguides} = require(path.join(__dirname, "js", "md.js"));
 const os = require("os");
 const fs = require("fs");
+const {ipcRenderer} = require("electron");
 
 // split
 var split;
@@ -64,6 +64,7 @@ var main = new Vue({
     mdguides: mdguides,
     mdconverter: mdconverter,
     docContent: "",
+    savedDocContent: "",
   },
   computed: {
     compiledDocContent: function () {
@@ -75,6 +76,13 @@ var main = new Vue({
     window.addEventListener("resize", (ev) => {
       changeSplit(ev.currentTarget);
     });
+    ipcRenderer.on("file-content", (ev, arg) => {
+      this.savedDocContent = arg;
+      this.docContent = arg;
+    });
+    ipcRenderer.on("open-file-ui", (ev, arg) => {
+      this.openFileUi();
+    })
   },
   methods: {
     showDisplay: function () {
@@ -85,6 +93,9 @@ var main = new Vue({
       this.$refs.editPanel.classList.remove("hide-md");
       this.$refs.displayPanel.classList.add("hide-md");
     },
+    openFileUi: function () {
+      this.$refs.fileExplorer.toggle();
+    },
     openFileFromExplorer: function (file) {
       // close explorer
       this.$refs.fileExplorer.toggle();
@@ -93,10 +104,7 @@ var main = new Vue({
     },
     openFile: function (file) {
       console.log("opening" + file);
-      fs.readFile(file, (err, data) => {
-        if (err) throw err;
-        this.docContent = data.toString();
-      });
+      ipcRenderer.send("open-file", file);
     }
   }
 })

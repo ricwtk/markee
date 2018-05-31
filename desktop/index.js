@@ -1,6 +1,7 @@
-const {app, BrowserWindow, Menu} = require('electron');
+const {app, BrowserWindow, Menu, ipcMain} = require('electron');
 const path = require('path');
 const url = require('url');
+const fs = require("fs");
 
 let win;
 
@@ -42,7 +43,7 @@ const menu = Menu.buildFromTemplate([
     label: "File",
     submenu: [
       {label: "Save file", accelerator: "CommandOrControl+S"},
-      {label: "Open file...", accelerator: "CommandOrControl+O"},
+      {label: "Open file...", accelerator: "CommandOrControl+O", click: () => { win.webContents.send("open-file-ui"); }},
       {label: "New file", submenu: [
         {label: "Presentation"},
         {label: "Document"}
@@ -100,3 +101,12 @@ const menu = Menu.buildFromTemplate([
   }
 ]);
 Menu.setApplicationMenu(menu);
+
+ipcMain.on("open-file", (ev, arg) => {
+  console.log("opening " + arg);
+  win.setTitle(arg + " - Markee");
+  fs.readFile(arg, (err, data) => {
+    if (err) throw err;
+    ev.sender.send("file-content", data.toString());
+  });
+})
