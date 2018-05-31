@@ -1,4 +1,5 @@
 :root {
+  --font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
   --primary-color-dark: #3E2723;
   --primary-color-light: #D7CCC8;
   --absolute-black: #000000;
@@ -16,7 +17,7 @@
 body, html {
   padding: 0;
   margin: 0;
-  font-family: BlinkMacSystemFont, -apple-system, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  font-family: var(--font-family);
   color: var(--black-color);
   height: 100%;
 }
@@ -46,6 +47,18 @@ body, html {
 .bg-warning { background-color: var(--warning-color); }
 .bg-success { background-color: var(--success-color); }
 
+.hv-bg-primary-dark:hover { background-color: var(--primary-color-dark); }
+.hv-bg-primary-light:hover { background-color: var(--primary-color-light); }
+.hv-bg-absolute-black:hover { background-color: var(--absolute-black); }
+.hv-bg-black:hover { background-color: var(--black-color); }
+.hv-bg-white:hover { background-color: var(--white-color); }
+.hv-bg-gray:hover { background-color: var(--gray-color); }
+.hv-bg-gray-light:hover { background-color: var(--gray-light-color); }
+.hv-bg-gray-lighter:hover { background-color: var(--gray-lighter-color); }
+.hv-bg-danger:hover { background-color: var(--danger-color); }
+.hv-bg-warning:hover { background-color: var(--warning-color); }
+.hv-bg-success:hover { background-color: var(--success-color); }
+
 .text-primary-dark { color: var(--primary-color-dark); }
 .text-primary-light { color: var(--primary-color-light); }
 .text-absolute-black { color: var(--absolute-black); }
@@ -69,6 +82,13 @@ body, html {
 .bd-danger { border-color: var(--danger-color); }
 .bd-warning { border-color: var(--warning-color); }
 .bd-success { border-color: var(--success-color); }
+
+.no-select {
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
 
 .h-box {
   display: flex;
@@ -197,11 +217,14 @@ body, html {
 .btn:disabled { color: var(--gray-color); }
 .btn.btn-no-border { border: 0; background-color: transparent; border-radius: 0; }
 .btn.btn-no-border:hover,
-.btn.btn-no-border:focus,
 .btn.btn-no-border:active,
 .btn.btn-no-border:not(:disabled):not(.selected):active { background-color: var(--gray-lighter-color); }
 
 .form-btn { padding: .5em 1em; }
+
+.button-group {
+  display: flex;
+}
 
 .button-group > *:first-child {
   border-top-left-radius: var(--border-radius);
@@ -313,6 +336,147 @@ textarea.no-resize { resize: none; }
 @media (max-width: 1280px) {
   .hide-xl { display: none; }
   .show-xl { display: flex; }
+}
+
+/* globally floated tooltip */
+*[data-tooltip]::before {
+  display: none;
+  font-family: var(--font-family);
+  font-size: .8rem!important;
+}
+*[data-tooltip]:hover::before {
+  content: attr(data-tooltip);
+  display: block;
+  position: absolute;
+  padding: .5em;
+  background-color: var(--black-color);
+  color: var(--white-color);
+  left: .2rem;
+  right: auto;
+  top: auto;
+  bottom: .2rem;
+}
+*[data-tooltip-position='top-left']:hover::before { 
+  left: .2rem; 
+  right: auto;
+  top: .2rem; 
+  bottom: auto;
+}
+*[data-tooltip-position='top-right']:hover::before { 
+  left: auto;
+  right: .2rem; 
+  top: .2rem; 
+  bottom: auto;
+}
+*[data-tooltip-position='bottom-left']:hover::before { 
+  left: .2rem; 
+  right: auto;
+  top: auto;
+  bottom: .2rem; 
+}
+*[data-tooltip-position='bottom-right']:hover::before { 
+  left: auto;
+  right: .2rem; 
+  top: auto;
+  bottom: .2rem; 
+}
+*[data-tooltip-position='top']:hover::before {
+  left: .2rem;
+  right: .2rem;
+  top: .2rem;
+  bottom: auto;
+}
+*[data-tooltip-position='bottom']:hover::before {
+  left: .2rem;
+  right: .2rem;
+  top: auto;
+  bottom: .2rem;
+}
+*[data-tooltip-position='left']:hover::before {
+  left: .2rem;
+  right: auto;
+  top: .2rem;
+  bottom: .2rem;
+}
+*[data-tooltip-position='right']:hover::before {
+  left: auto;
+  right: .2rem;
+  top: .2rem;
+  bottom: .2rem;
+}
+
+/* breadcrumb */
+.breadcrumb {
+  display: flex;
+  overflow: hidden;
+}
+.breadcrumb .bc-item {
+  background-color: var(--gray-light-color);
+  position: relative;
+  padding: .8em 0 .8em 1.5em;
+}
+.breadcrumb .bc-item:first-child {
+  padding-left: .8em;
+}
+.breadcrumb .bc-item:not(:last-child)::before {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 2em solid transparent;
+  border-bottom: 2em solid transparent;
+  border-left: 1em solid var(--white-color);
+  margin-top: -2em;
+  margin-left: 2px;
+  left: 100%;
+  top: 50%;
+  z-index: 1;
+}
+.breadcrumb .bc-item::after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-top: 2em solid transparent;
+  border-bottom: 2em solid transparent;
+  border-left: 1em solid var(--gray-light-color);
+  margin-top: -2em;
+  left: 100%;
+  top: 50%;
+  z-index: 2;
+}
+
+/* select */
+.form-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  color: inherit;
+  background-color: inherit;
+  font-size: inherit;
+  padding: .5em;
+  border-radius: .2rem;
+}
+
+.form-select-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.form-select-wrapper .form-select-icon {
+  position: absolute;
+  right: .5em;
+}
+.form-select-wrapper .form-select {
+  padding-right: 2em;
+  z-index: 1;
+}
+
+.form-select option {
+  font-size: 0.9em;
 }
 
 /* gutter */

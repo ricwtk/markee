@@ -45,12 +45,11 @@ module.exports = {
         <div v-show="selected=='doc'" class="h-box grow overflow-auto">
           <div class="v-box tab-vertical-left tab-sm overflow-auto">
             <div v-for="(g,i) in mdguides" 
-              :class="['mdi', 'mdi-24px', i == 0 ? 'selected' : '', g.icon, 'c-hand']" 
+              :class="[i == 0 ? 'selected' : '', 'c-hand']" 
               ref="docSub"
               @click="switchDocSubTo(g)"
               :data-tooltip="g.tooltip"
-              data-tooltip-position="right"
-            ></div>
+            ><span :class="['mdi', 'mdi-24px', g.icon]"></span></div>
           </div>
           <div class="grow ml-2 overflow-auto">
             <h2 class="h-box v-center text-primary-dark"><i :class="['mr-1', 'mdi', selectedDocSub.icon]"></i>{{ selectedDocSub.tooltip }}</h2>

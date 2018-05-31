@@ -13,7 +13,7 @@
     <div id="main" class="v-box">
       <nav class="h-box bg-gray-light p-1">
         <button class="btn btn-no-border" data-tooltip="Save"><i class="mdi mdi-content-save"></i></button>
-        <button class="btn btn-no-border" data-tooltip="Open"><i class="mdi mdi-folder-open"></i></button>
+        <button class="btn btn-no-border" data-tooltip="Open" @click="$refs.fileExplorer.toggle()"><i class="mdi mdi-folder-open"></i></button>
         <button class="btn btn-no-border" data-tooltip="New document"><i class="mdi mdi-file-outline"></i></button>
         <div class="separator-vertical"></div>
         <button class="btn btn-no-border" data-tooltip="Undo"><i class="mdi mdi-undo"></i></button>
@@ -44,9 +44,9 @@
       <nav class="h-box bg-gray-light p-1">
         <div class="grow"></div>
         <div class="button-group">
-          <button class="btn" data-tooltip="Render as document" data-tooltip-position="top"><i class="mdi mdi-file-document-box"></i></buton>
-          <button class="btn selected" data-tooltip="Render as slides" data-tooltip-position="top"><i class="mdi mdi-file-presentation-box"></i></buton>
-          <button class="btn" data-tooltip="Present" data-tooltip-position="top"><i class="mdi mdi-presentation-play"></i></buton>
+          <button class="btn" data-tooltip="Render as document"><i class="mdi mdi-file-document-box"></i></buton>
+          <button class="btn selected" data-tooltip="Render as slides"><i class="mdi mdi-file-presentation-box"></i></buton>
+          <button class="btn" data-tooltip="Present"><i class="mdi mdi-presentation-play"></i></buton>
         </div>
       </nav>
 
@@ -55,6 +55,8 @@
         :mdguides="mdguides"
         :mdconverter="mdconverter"
       ></help>
+      <file-explorer ref="fileExplorer"
+      ></file-explorer>
     </div>
 
 

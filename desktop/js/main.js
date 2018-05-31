@@ -3,6 +3,7 @@ const Vue = require(path.join(__dirname, "js", "vue.js"));
 const Split = require("split.js");
 const tt = require('electron-tooltip');
 const {mdconverter, mdguides} = require(path.join(__dirname, "js", "md.js"));
+const os = require("os");
 
 // split
 var split;
@@ -48,19 +49,20 @@ function changeSplit(target) {
 }
 
 // electron-tooltip
-tt({
-  position: "bottom"
-});
+// tt({
+//   position: "bottom"
+// });
 
 // vue
 Vue.component("preference", require(path.join(__dirname, "js", "v-pref.js")));
 Vue.component("help", require(path.join(__dirname, "js", "v-help.js")));
-new Vue({
+Vue.component("file-explorer", require(path.join(__dirname, "js", "v-file-explorer.js")));
+var main = new Vue({
   el: "#main",
   data: {
     mdguides: mdguides,
     mdconverter: mdconverter,
-    docContent: ""
+    docContent: "",
   },
   computed: {
     compiledDocContent: function () {
