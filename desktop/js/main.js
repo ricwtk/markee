@@ -1,10 +1,16 @@
 const path = require("path");
 const Vue = require(path.join(__dirname, "js", "vue.js"));
 const Split = require("split.js");
-const {mdconverter, mdguides} = require(path.join(__dirname, "js", "md.js"));
+// const {mdconverter, mdguides} = require(path.join(__dirname, "js", "md.js"));
 const os = require("os");
 const fs = require("fs");
 const {ipcRenderer} = require("electron");
+const showdown = require("showdown");
+require(path.join(__dirname, "js", "showdown-timeline-ext.js"));
+require(path.join(__dirname, "js", "showdown-highlightjs-ext.js"));
+const mdconverter = require(path.join(__dirname, "js", "md-converter.js"));
+const emojiList = require(path.join(__dirname, "js", "emoji.js"));
+const mdguides = require(path.join(__dirname, "js", "md-guides.js"));
 
 // split
 var split;
@@ -49,11 +55,6 @@ function changeSplit(target) {
   }
 }
 
-// electron-tooltip
-// tt({
-//   position: "bottom"
-// });
-
 // vue
 Vue.component("preference", require(path.join(__dirname, "js", "v-pref.js")));
 Vue.component("help", require(path.join(__dirname, "js", "v-help.js")));
@@ -61,7 +62,7 @@ Vue.component("file-explorer", require(path.join(__dirname, "js", "v-file-explor
 var main = new Vue({
   el: "#main",
   data: {
-    mdguides: mdguides,
+    mdguides: mdguides,//mdguides,
     mdconverter: mdconverter,
     docContent: "",
     savedDocContent: "",

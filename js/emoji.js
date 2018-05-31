@@ -1,5 +1,9 @@
-(function (window) {
-  emojiList = [
+(function (extension) {
+  if (typeof exports == 'object' && typeof module !== 'undefined') module.exports = extension();
+  else if (typeof define === 'function' && define.amd) define(extension);
+  else window.emojiList = extension();
+}(function () {
+  return [
     ':showdown:',
     ':+1:',
     ':-1:',
@@ -1230,8 +1234,4 @@
     ':zipper_mouth_face:',
     ':zzz:'
   ]
-
-  if(typeof(window.emojiList) === 'undefined'){
-    window.emojiList = emojiList;
-  }
-})(window)
+}))
