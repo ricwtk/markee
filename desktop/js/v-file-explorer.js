@@ -29,7 +29,7 @@ module.exports = {
       let p = this.path.parse(this.directoryPath);
       let res = [];
       res.push(p.root, ...p.dir.split(this.path.sep).filter(el => el !== ""), p.base);
-      return res;
+      return res.filter(el => el !== "");
     },
     directoryContent: function () {
       if (!this.directoryPath) { return []; }
@@ -61,6 +61,12 @@ module.exports = {
   methods: {
     toggle: function () {
       this.$el.classList.toggle("active");
+    },
+    navigate: function (ev) {
+      let i = parseInt(ev.target.dataset.i);
+      let pa = this.directoryPathArray.slice(0, i+1);
+      if (pa.length > 1) this.directoryPath = pa[0] + this.path.join(...pa.slice(1));
+      else this.directoryPath = pa[0];
     },
     getItemWrapper: function (el) {
       while (!el.classList.contains("item-wrapper")) {
@@ -109,7 +115,7 @@ module.exports = {
       <div class="modal-title">
         <div class="grow">
           <span class="breadcrumb">
-            <span class="bc-item" v-for="p in directoryPathArray">{{ p }}</span>
+            <span class="bc-item" v-for="(p,i) in directoryPathArray" :data-i="i" @click="navigate">{{ p }}</span>
           </span>
         </div>
         <div class="mdi mdi-24px mdi-close c-hand" @click="toggle"></div>
