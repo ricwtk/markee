@@ -47,7 +47,7 @@
           <div class="v-box show-md mr-1">
             <button class="btn btn-no-border mdi mdi-24px mdi-chevron-left c-hand grow" @click="showEdit"></button>
           </div>
-          <div class="grow v-box md-default b-2 b-solid bd-gray-lighter">
+          <div class="grow v-box md-default b-2 b-solid bd-gray-lighter overflow-hidden">
             <div v-if="renderOptions.docOrPres==0" class="grow bg-gray-lighter p-1 overflow-auto" v-html="compiledDocContent"></div>
             <div v-else class="presentation-display grow pos-relative">
               <div class="full-width full-height" ref="presentationDisplay"></div>
