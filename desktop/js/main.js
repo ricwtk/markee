@@ -163,6 +163,9 @@ var main = new Vue({
       this.openedFile = file;
       ipcRenderer.send("open-file", file);
     },
+    newFile: function () {
+      ipcRenderer.send("new-file");
+    },
     createSlideShow: function () {
       let slideIdx;
       if (this.slides.slideshow !== null) {

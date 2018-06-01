@@ -63,10 +63,7 @@ const menu = Menu.buildFromTemplate([
     submenu: [
       {label: "Save file", accelerator: "CommandOrControl+S", click: () => { win.webContents.send("save-file"); }},
       {label: "Open file...", accelerator: "CommandOrControl+O", click: () => { win.webContents.send("open-file-ui"); }},
-      {label: "New file", submenu: [
-        {label: "Presentation"},
-        {label: "Document"}
-      ]},
+      {label: "New file", accelerator: "CommandOrControl+N", click: newFile},
       {type: "separator"},
       {label: "Preference"}
     ]
@@ -121,6 +118,17 @@ const menu = Menu.buildFromTemplate([
 ]);
 Menu.setApplicationMenu(menu);
 
+ipcMain.on("app-ready", (ev) => {
+  if (process.argv.length > 2) {
+    let p = path.parse(process.argv[2]);
+    win.setTitle([p.base, p.dir, "Markee"].join(" - "));
+    fs.readFile(process.argv[2], (err, data) => {
+      if (err) throw err;
+      win.webContents.send("file-content", data.toString());
+    });
+  }
+});
+
 ipcMain.on("open-file", (ev, arg) => {
   console.log("opening " + arg);
   child_process.spawn(process.argv[0], [process.argv[1], arg], {
@@ -138,13 +146,11 @@ ipcMain.on("save-file", (ev, filename, content) => {
   });
 });
 
-ipcMain.on("app-ready", (ev) => {
-  if (process.argv.length > 2) {
-    let p = path.parse(process.argv[2]);
-    win.setTitle([p.base, p.dir, "Markee"].join(" - "));
-    fs.readFile(process.argv[2], (err, data) => {
-      if (err) throw err;
-      win.webContents.send("file-content", data.toString());
-    });
-  }
-});
+function newFile() {
+  console.log("opening new file");
+  child_process.spawn(process.argv[0], [process.argv[1]], {
+    detached: true,
+    stdio: 'ignore'
+  }).unref();
+}
+ipcMain.on("new-file", newFile);
