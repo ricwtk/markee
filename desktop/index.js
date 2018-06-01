@@ -133,6 +133,8 @@ ipcMain.on("save-file", (ev, filename, content) => {
   fs.writeFile(filename, content, (err) => {
     if (err) throw err;
     ev.sender.send("save-file-success", content);
+    let p = path.parse(filename);
+    win.setTitle([p.base, p.dir, "Markee"].join(" - "));
   });
 });
 

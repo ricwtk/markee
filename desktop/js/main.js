@@ -129,10 +129,14 @@ var main = new Vue({
         ipcRenderer.send("save-file", this.openedFile, this.docContent);
       } else {
         this.feMainAction.name = "Save";
-        this.feMainAction.fcn = () => {};
+        this.feMainAction.fcn = (newFilePath) => {
+          ipcRenderer.send("save-file", newFilePath, this.docContent);
+          this.openedFile = newFilePath;
+          this.$refs.fileExplorer.toggle();
+        };
         this.feMainAction.validate = (self, name, fullpath) => {
           let x = self.directoryContent.filter(el => el.name == name);
-          if (x.length < 0 || x[0].isDirectory) return true;
+          if (x.length < 1 || x[0].isDirectory) return true;
           else return { msg: "Duplicated file name. File will be replaced if saved.", classes: ["bg-warning", "text-black"], preventExec: false };
         }
         this.$refs.fileExplorer.toggle();
