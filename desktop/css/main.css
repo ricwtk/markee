@@ -207,6 +207,9 @@ body, html {
   border: 1px solid var(--gray-color);
 }
 
+.larger { font-size: 1.2em; }
+.smaller { font-size: .8em; }
+
 .btn {
   line-height: 1.5em;
   appearance: none;
