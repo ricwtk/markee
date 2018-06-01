@@ -139,7 +139,7 @@ var main = new Vue({
           if (x.length < 1 || x[0].isDirectory) return true;
           else return { msg: "Duplicated file name. File will be replaced if saved.", classes: ["bg-warning", "text-black"], preventExec: false };
         }
-        this.$refs.fileExplorer.toggle();
+        if (!this.$refs.fileExplorer.isActive()) this.$refs.fileExplorer.toggle();
       }
     },
     openFileUi: function () {
@@ -150,7 +150,7 @@ var main = new Vue({
         if (x.length > 0) return true;
         else return { msg: "File does not exist", classes: ["bg-danger", "text-white"], preventExec: true };
       }
-      this.$refs.fileExplorer.toggle();
+      if (!this.$refs.fileExplorer.isActive()) this.$refs.fileExplorer.toggle();
     },
     openFileFromExplorer: function (file) {
       // close explorer

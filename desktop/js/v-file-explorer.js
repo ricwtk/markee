@@ -71,6 +71,9 @@ module.exports = {
     }
   },
   methods: {
+    isActive: function () {
+      return this.$el.classList.contains("active");
+    },
     toggle: function () {
       this.$el.classList.toggle("active");
       if (this.$el.classList.contains("active")) {
