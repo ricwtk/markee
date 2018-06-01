@@ -78,6 +78,7 @@ module.exports = {
       } else {
         window.removeEventListener("keyup", this.escHandler);
       }
+      this.selectedName = "";
     },
     escHandler: function (ev) {
       if (ev.code == "Escape") {
