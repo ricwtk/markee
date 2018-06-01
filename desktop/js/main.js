@@ -113,6 +113,8 @@ var main = new Vue({
     ipcRenderer.on("save-file-success", (ev, arg) => {
       this.savedDocContent = arg;
     });
+    ipcRenderer.on("render-as-document", () => { this.renderOptions.docOrPres = 0; });
+    ipcRenderer.on("render-as-slides", () => { this.renderOptions.docOrPres = 1; });
     ipcRenderer.send("app-ready");
   },
   methods: {
@@ -153,14 +155,11 @@ var main = new Vue({
       if (!this.$refs.fileExplorer.isActive()) this.$refs.fileExplorer.toggle();
     },
     openFileFromExplorer: function (file) {
-      // close explorer
       this.$refs.fileExplorer.toggle();
       // save current folder as recently opened folder
       this.openFile(file);
     },
     openFile: function (file) {
-      console.log("opening" + file);
-      this.openedFile = file;
       ipcRenderer.send("open-file", file);
     },
     newFile: function () {
