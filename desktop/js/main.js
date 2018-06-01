@@ -62,15 +62,32 @@ Vue.component("file-explorer", require(path.join(__dirname, "js", "v-file-explor
 var main = new Vue({
   el: "#main",
   data: {
-    mdguides: mdguides,//mdguides,
+    mdguides: mdguides,
     mdconverter: mdconverter,
     docContent: "",
     savedDocContent: "",
-    openedFile: ""
+    openedFile: "",
+    slides: {
+      slideshow: null,
+      names: []
+    },
+    renderOptions: {
+      docOrPres: 0
+    }
   },
   computed: {
     compiledDocContent: function () {
       return mdconverter.makeHtml(this.docContent);
+    }
+  },
+  watch: {
+    "renderOptions.docOrPres": function () {
+      this.$nextTick(() => {
+        if (this.renderOptions.docOrPres == 1) this.createSlideShow(); 
+      });
+    },
+    "docContent": function () {
+      if (this.renderOptions.docOrPres == 1) this.createSlideShow();
     }
   },
   mounted: function () {
@@ -91,6 +108,7 @@ var main = new Vue({
     ipcRenderer.on("save-file-success", (ev, arg) => {
       this.savedDocContent = arg;
     });
+    ipcRenderer.send("app-ready");
   },
   methods: {
     showDisplay: function () {
@@ -119,6 +137,23 @@ var main = new Vue({
       console.log("opening" + file);
       this.openedFile = file;
       ipcRenderer.send("open-file", file);
+    },
+    createSlideShow: function () {
+      let slideIdx;
+      if (this.slides.slideshow !== null) {
+        slideIdx = this.slides.slideshow.getCurrentSlideIndex();
+      }
+      let outer = this.$refs.presentationDisplay;
+      while (outer.firstChild) outer.removeChild(outer.firstChild);
+      outer.classList.remove("remark-container");
+      this.slides.slideshow = remark.create({
+        container: outer,
+        source: this.docContent,
+        converter: mdconverter,
+        externalHighlighter: true
+      });
+      this.slides.names = this.slides.slideshow.getSlides().map(s => s.properties.name);
+      if (slideIdx) { this.slides.slideshow.gotoSlideNumber(this.slides.slideshow.getSlides()[slideIdx].getSlideNumber()); }
     }
   }
 })

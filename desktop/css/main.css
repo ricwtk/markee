@@ -132,9 +132,14 @@ body, html {
 .overflow-auto { overflow: auto; }
 .overflow-hidden { overflow: hidden; }
 
+.pos-relative { position: relative; }
+.pos-absolute { position: absolute; }
+
 .sticky-top { position: sticky; top: 0; }
 .sticky-bottom { position: sticky; bottom: 0; }
 
+.full-width { width: 100%; }
+.full-height { height: 100%; }
 
 .p-0 { padding: 0; }
 .p-1 { padding: .5em; }

@@ -8,6 +8,7 @@
     <link rel="stylesheet" type="text/css" href="./css/main.css">
     <link rel="stylesheet" type="text/css" href="./css/md-themes.css">
     <script src="js/highlight.pack.js"></script>    
+    <script src="js/remark.min.js"></script>
     <!-- <script src="js/showdown-timeline-ext.js"></script>
     <script src="js/showdown-highlightjs-ext.js"></script>
     <script src="js/md-converter.js"></script>
@@ -46,15 +47,26 @@
           <div class="v-box show-md mr-1">
             <button class="btn btn-no-border mdi mdi-24px mdi-chevron-left c-hand grow" @click="showEdit"></button>
           </div>
-          <div class="grow overflow-auto p-1 bg-gray-lighter md-default" v-html="compiledDocContent"></div>
+          <div class="grow v-box md-default b-2 b-solid bd-gray-lighter">
+            <div v-if="renderOptions.docOrPres==0" class="grow bg-gray-lighter p-1 overflow-auto" v-html="compiledDocContent"></div>
+            <div v-else class="presentation-display grow pos-relative">
+              <div class="full-width full-height" ref="presentationDisplay"></div>
+            </div>
+            <div class="h-box bg-white p-1">
+              <button class="btn btn-no-border mdi mdi-close"></button>
+            </div>
+          </div>
         </div>
       </div>
   
       <nav class="h-box bg-gray-light p-1">
         <div class="grow"></div>
         <div class="button-group">
-          <button class="btn" data-tooltip="Render as document"><i class="mdi mdi-file-document-box"></i></buton>
-          <button class="btn selected" data-tooltip="Render as slides"><i class="mdi mdi-file-presentation-box"></i></buton>
+          <button :class="['btn', renderOptions.docOrPres==0 ? 'selected' : '']" data-tooltip="Render as document" @click="renderOptions.docOrPres=0"><i class="mdi mdi-file-document-box"></i></buton>
+          <button :class="['btn', renderOptions.docOrPres==1 ? 'selected' : '']" data-tooltip="Render as slides" @click="renderOptions.docOrPres=1"><i class="mdi mdi-file-presentation-box"></i></buton>
+        </div>
+        <div class="ml-1 mt-1"></div>
+        <div class="button-group">
           <button class="btn" data-tooltip="Present"><i class="mdi mdi-presentation-play"></i></buton>
         </div>
       </nav>

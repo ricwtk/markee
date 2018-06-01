@@ -2,9 +2,12 @@ const {app, BrowserWindow, Menu, ipcMain} = require('electron');
 const path = require('path');
 const url = require('url');
 const fs = require("fs");
+const process = require("process");
+const child_process = require("child_process");
 
 let win;
 
+console.log(process.argv);
 function createWindow() {
   win = new BrowserWindow({width: 800, height: 600});
 
@@ -12,12 +15,28 @@ function createWindow() {
   win.loadURL(url.format({
     pathname: path.join(__dirname, "index.html"),
     protocol: "file:",
-    slashes: true
+    slashes: true,
+    show: false
   }));
+
+  win.on("ready-to-show", () => {
+    win.show();
+  })
 
   win.on('closed', () => {
     win = null;
   })
+
+  // let x = new BrowserWindow();
+  // x.loadURL('data:text/html;charset=UTF-8,' + encodeURIComponent(
+  //   `
+  //   <!DOCTYPE html>
+  //   <html>
+  //     <body>
+  //       hello world
+  //     </body>
+  //   </html>
+  //   `));
 }
 
 app.on('ready', createWindow);
@@ -104,17 +123,26 @@ Menu.setApplicationMenu(menu);
 
 ipcMain.on("open-file", (ev, arg) => {
   console.log("opening " + arg);
-  let p = path.parse(arg);
-  win.setTitle([p.base, p.dir, "Markee"].join(" - "));
-  fs.readFile(arg, (err, data) => {
-    if (err) throw err;
-    ev.sender.send("file-content", data.toString());
-  });
-})
+  child_process.spawn(process.argv[0], [process.argv[1], arg], {
+    detached: true,
+    stdio: 'ignore'
+  }).unref();
+});
 
 ipcMain.on("save-file", (ev, filename, content) => {
   fs.writeFile(filename, content, (err) => {
     if (err) throw err;
     ev.sender.send("save-file-success", content);
   });
-})
+});
+
+ipcMain.on("app-ready", (ev) => {
+  if (process.argv.length > 2) {
+    let p = path.parse(process.argv[2]);
+    win.setTitle([p.base, p.dir, "Markee"].join(" - "));
+    fs.readFile(process.argv[2], (err, data) => {
+      if (err) throw err;
+      win.webContents.send("file-content", data.toString());
+    });
+  }
+});
