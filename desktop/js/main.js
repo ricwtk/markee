@@ -73,6 +73,11 @@ var main = new Vue({
     },
     renderOptions: {
       docOrPres: 0
+    },
+    feMainAction: {
+      name: "",
+      fcn: () => {},
+      validate: () => true
     }
   },
   computed: {
@@ -122,9 +127,25 @@ var main = new Vue({
     saveFile: function () {
       if (this.openedFile) {
         ipcRenderer.send("save-file", this.openedFile, this.docContent);
+      } else {
+        this.feMainAction.name = "Save";
+        this.feMainAction.fcn = () => {};
+        this.feMainAction.validate = (self, name, fullpath) => {
+          let x = self.directoryContent.filter(el => el.name == name);
+          if (x.length < 0 || x[0].isDirectory) return true;
+          else return { msg: "Duplicated file name. File will be replaced if saved.", classes: ["bg-warning", "text-black"], preventExec: false };
+        }
+        this.$refs.fileExplorer.toggle();
       }
     },
     openFileUi: function () {
+      this.feMainAction.name = "Open";
+      this.feMainAction.fcn = this.openFileFromExplorer;
+      this.feMainAction.validate = (self, name, fullpath) => {
+        let x = self.directoryContent.filter(el => el.name == name);
+        if (x.length > 0) return true;
+        else return { msg: "File does not exist", classes: ["bg-danger", "text-white"], preventExec: true };
+      }
       this.$refs.fileExplorer.toggle();
     },
     openFileFromExplorer: function (file) {

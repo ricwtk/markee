@@ -34,7 +34,7 @@
         <button class="btn btn-no-border" data-tooltip="Help" @click="$refs.help.toggle()"><i class="mdi mdi-help-circle"></i></button>
       </nav>
 
-      <div :class="['pt-1', docContent == savedDocContent ? 'bg-success' : 'bg-danger']"></div>
+      <div :class="['pt-1', docContent == savedDocContent && openedFile ? 'bg-success' : 'bg-danger']"></div>
   
       <div class="h-box grow">
         <div class="p-1 h-box" id="edit-panel" ref="editPanel">
@@ -77,7 +77,9 @@
         :mdconverter="mdconverter"
       ></help>
       <file-explorer ref="fileExplorer"
-        @open-file="openFileFromExplorer"
+        :main-action-display="feMainAction.name"
+        :validation-function="feMainAction.validate"
+        @main-action="feMainAction.fcn"
       ></file-explorer>
     </div>
 

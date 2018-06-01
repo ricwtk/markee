@@ -1,4 +1,5 @@
 module.exports = {
+  props: ['mainActionDisplay', 'validationFunction'],
   data: function () {
     return {
       os: require("os"),
@@ -16,12 +17,23 @@ module.exports = {
         display: "Markdown (.md) files only"
       }],
       selectedDisplayType: "",
+      selectedName: "",
+      validatedResult: {},
       dbclkTarget: null
     }
   },
   mounted: function () {
     this.directoryPath = this.os.homedir();
     this.selectedDisplayType = this.displayType[1].value;
+  },
+  watch: {
+    "selectedName": function () {
+      if (this.selectedName) {
+        this.validatedResult = this.validationFunction(this, this.selectedName);
+      } else {
+        this.validatedResult = {}
+      }
+    }
   },
   computed: {
     directoryPathArray: function () {
@@ -86,11 +98,8 @@ module.exports = {
       return el;
     },
     selectItem: function (ev) {
-      this.$el.querySelectorAll(".selected").forEach(el => {
-        el.classList.remove("selected", "bd-gray");
-      })
       let target = this.getItemWrapper(ev.target);
-      target.classList.add("selected", "bd-gray");
+      this.selectedName = JSON.parse(target.dataset.item).name;
       if (this.dbclkTarget == target) {
         let item = JSON.parse(target.dataset.item);
         this.execItem(item);
@@ -101,17 +110,23 @@ module.exports = {
         }, 250);
       }
     },
-    openItem: function () {
-      let target = this.$el.querySelector(".selected");
-      if (target)
-        this.execItem(JSON.parse(target.dataset.item));
+    execAction: function () {
+      let item = this.directoryContent.filter(el => el.name == this.selectedName);
+      if (item.length > 0) this.execItem(item[0]);
+      else this.execItem({
+        name: this.selectedName,
+        isDirectory: false
+      });
     },
     execItem: function (item) {
       let itemPath = this.path.join(this.directoryPath, item.name);
       if (item.isDirectory) {
         this.directoryPath = itemPath;
+        this.selectedName = "";
       } else {
-        this.$emit("open-file", itemPath);
+        if (!this.validatedResult.preventExec) {
+          this.$emit("main-action", itemPath);
+        }
       }
     },
     getItemIcon: function (item) {
@@ -144,20 +159,25 @@ module.exports = {
           </span>
         </template>
       </div>
-      <div class="modal-footer">
-        <label class="form-select-wrapper">
-          <select class="form-select" v-model="selectedDisplayType">
-            <option v-for="dt in displayType" :value="dt.value">{{ dt.display }}</option>
-          </select>
-          <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>
-        </label>
-        <div class="grow"></div>
-        <div class="button-group">
-          <button class="btn form-btn" data-tooltip="New folder"><i class="mdi mdi-folder-plus"></i></button>
-          <button class="btn form-btn" data-tooltip="New file"><i class="mdi mdi-file-plus"></i></button>
-          <button class="btn form-btn" data-tooltip="Open" @click="openItem">Open</button>
-          <button class="btn form-btn" data-tooltip="Cancel" @click="toggle">Cancel</button>
+      <div class="modal-footer v-box">
+        <div class="h-box">
+          <input class="form-input grow" v-model="selectedName">
+          <div class="ml-1 mt-1"></div>
+          <label class="form-select-wrapper">
+            <select class="form-select" v-model="selectedDisplayType">
+              <option v-for="dt in displayType" :value="dt.value">{{ dt.display }}</option>
+            </select>
+            <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>
+          </label>
+          <div class="m-1"></div>
+          <div class="button-group">
+            <button class="btn form-btn" data-tooltip="New folder"><i class="mdi mdi-folder-plus"></i></button>
+            <button class="btn form-btn" data-tooltip="New file"><i class="mdi mdi-file-plus"></i></button>
+            <button class="btn form-btn" data-tooltip="Open" @click="execAction">{{ mainActionDisplay }}</button>
+            <button class="btn form-btn" data-tooltip="Cancel" @click="toggle">Cancel</button>
+          </div>
         </div>
+        <div v-if="validatedResult.msg" :class="[...validatedResult.classes, 'p-1', 'mt-1', 'br-1']">{{ validatedResult.msg }}</div>
       </div>
     </div>
   </div>
