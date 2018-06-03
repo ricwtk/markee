@@ -165,6 +165,9 @@ var main = new Vue({
     newFile: function () {
       ipcRenderer.send("new-file");
     },
+    execCommand: function (cmd) {
+      document.execCommand(cmd);
+    },
     createSlideShow: function () {
       let slideIdx;
       if (this.slides.slideshow !== null) {

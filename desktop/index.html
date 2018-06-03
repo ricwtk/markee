@@ -24,11 +24,11 @@
         <button class="btn btn-no-border" data-tooltip="Open" @click="openFileUi"><i class="mdi mdi-folder-open"></i></button>
         <button class="btn btn-no-border" data-tooltip="New document" @click="newFile"><i class="mdi mdi-file-outline"></i></button>
         <div class="separator-vertical"></div>
-        <button class="btn btn-no-border" data-tooltip="Undo"><i class="mdi mdi-undo"></i></button>
-        <button class="btn btn-no-border" data-tooltip="Redo"><i class="mdi mdi-redo"></i></button>
-        <button class="btn btn-no-border" data-tooltip="Copy"><i class="mdi mdi-content-copy"></i></button>
-        <button class="btn btn-no-border" data-tooltip="Cut"><i class="mdi mdi-content-cut"></i></button>
-        <button class="btn btn-no-border" data-tooltip="Paste"><i class="mdi mdi-content-paste"></i></button>
+        <button class="btn btn-no-border" data-tooltip="Undo" @click="execCommand('undo')"><i class="mdi mdi-undo"></i></button>
+        <button class="btn btn-no-border" data-tooltip="Redo" @click="execCommand('redo')"><i class="mdi mdi-redo"></i></button>
+        <button class="btn btn-no-border" data-tooltip="Copy" @click="execCommand('copy')"><i class="mdi mdi-content-copy"></i></button>
+        <button class="btn btn-no-border" data-tooltip="Cut" @click="execCommand('cut')"><i class="mdi mdi-content-cut"></i></button>
+        <button class="btn btn-no-border" data-tooltip="Paste" @click="execCommand('paste')"><i class="mdi mdi-content-paste"></i></button>
         <div class="separator-vertical"></div>
         <button class="btn btn-no-border" data-tooltip="Preference" @click="$refs.preference.toggle()"><i class="mdi mdi-settings"></i></button>
         <button class="btn btn-no-border" data-tooltip="Help" @click="$refs.help.toggle()"><i class="mdi mdi-help-circle"></i></button>
