@@ -84,6 +84,9 @@ var main = new Vue({
     },
     font: {
       all: []
+    },
+    preferences: {
+      
     }
   },
   computed: {

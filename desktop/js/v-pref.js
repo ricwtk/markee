@@ -1,57 +1,44 @@
 const fs = require("fs");
 
 module.exports = {
-  props: ["hljsTheme", "font"],
+  props: ["hljsTheme", "font", "savedPref"],
   data: function () {
     return {
       editorFont: {
-        family: "Arial",
-        weight: "400",
-        size: "12px"
+        "font-family": "Arial",
+        "font-weight": "400",
+        "font-size": "12px"
       },
       displayFont: {
-        family: "Arial",
-        weight: "400",
-        size: "12px"
+        "font-family": "Arial",
+        "font-weight": "400",
+        "font-size": "12px"
       },
-      codeBlockTheme: "default"
+      codeBlockTheme: "default",
+      customCSS: ""
     }
   },
   computed: {
     fontFamilies: function () {
       return Object.keys(this.font.all);
     },
-    editorFontShowcase: function () {
-      return {
-        "font-family": this.editorFont.family,
-        "font-weight": this.editorFont.weight,
-        "font-size": this.editorFont.size
-      }
-    },
-    displayFontShowcase: function () {
-      return {
-        "font-family": this.displayFont.family,
-        "font-weight": this.displayFont.weight,
-        "font-size": this.displayFont.size
-      }
-    },
     codeBlockExample: function () {
       return "./snippets/code-block-example.html?hljsTheme=" + this.codeBlockTheme;
     }
   },
-  mounted: function () {
-    console.log(this.objData);
-  },
   methods: {
     toggle: function () {
       this.$el.classList.toggle("active");
-    },
-    fontWeights: function (family) {
-      if (this.font.all[family]) {
-        return this.font.all[family].map(el => el.weight);
-      } else {
-        return [];
+      if (this.$el.classList.contains("active")) {
+        // this.editorFont = this.savedPref.editorFont || { "" }
       }
+    },
+    fontWeights: function (font) {
+      let weights = this.font.all[font['font-family']] || [];
+      if (!weights.includes(font['font-weight'])) {
+        font['font-weight'] = weights[0] || "";
+      }
+      return weights;
     },
   },
   template: `
@@ -66,49 +53,49 @@ module.exports = {
         <div class="text-gray mb-1">Editor font</div>
         <div class="h-box">
           <label class="form-select-wrapper grow mr-1">
-            <select class="form-select grow" v-model="editorFont.family">
+            <select class="form-select grow" v-model="editorFont['font-family']">
               <option v-for="fn in fontFamilies" :value="fn">{{ fn }}</option>
             </select>
             <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>
           </label>
           <label class="form-select-wrapper mr-1">
-            <select class="form-select" v-model="editorFont.weight">
-              <option v-for="w in fontWeights(editorFont.family)" :value="w">{{ w }}</option>
+            <select class="form-select" v-model="editorFont['font-weight']">
+              <option v-for="w in fontWeights(editorFont)" :value="w">{{ w }}</option>
             </select>
             <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>            
           </label>
           <label class="form-select-wrapper">
-            <select class="form-select" v-model="editorFont.size">
+            <select class="form-select" v-model="editorFont['font-size']">
               <option v-for="n in [10, 12, 14, 15, 16, 17, 18]" :value="n+'px'">{{ n + 'px' }}</option>
             </select>
             <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>            
           </label>
         </div>
-        <div class="b-1 bd-gray b-solid br-1 mt-1 p-2" :style="editorFontShowcase">
+        <div class="b-1 bd-gray b-solid br-1 mt-1 p-2" :style="editorFont">
           The quick brown fox jumps over the lazy dog. 0123456789
         </div>
         <div class="text-gray mb-1 mt-2">Base font for display</div>
         <div class="h-box">
           <label class="form-select-wrapper grow mr-1">
-            <select class="form-select grow" v-model="displayFont.family">
+            <select class="form-select grow" v-model="displayFont['font-family']">
               <option v-for="fn in fontFamilies" :value="fn">{{ fn }}</option>
             </select>
             <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>
           </label>
           <label class="form-select-wrapper mr-1">
-            <select class="form-select" v-model="displayFont.weight">
-              <option v-for="w in fontWeights(displayFont.family)" :value="w">{{ w }}</option>
+            <select class="form-select" v-model="displayFont['font-weight']">
+              <option v-for="w in fontWeights(displayFont)" :value="w">{{ w }}</option>
             </select>
             <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>            
           </label>
           <label class="form-select-wrapper">
-            <select class="form-select" v-model="displayFont.size">
+            <select class="form-select" v-model="displayFont['font-size']">
               <option v-for="n in [10, 12, 14, 15, 16, 17, 18]" :value="n+'px'">{{ n + 'px' }}</option>
             </select>
             <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>            
           </label>
         </div>
-        <div class="b-1 bd-gray b-solid br-1 mt-1 p-2" :style="displayFontShowcase">
+        <div class="b-1 bd-gray b-solid br-1 mt-1 p-2" :style="displayFont">
           The quick brown fox jumps over the lazy dog. 0123456789
         </div>
         <div class="text-gray mb-1 mt-2">Code block highlight theme</div>

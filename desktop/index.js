@@ -172,6 +172,9 @@ ipcMain.on("get-available-fonts", (ev) => {
         fonts[fn.family] = [fn.weight];
       }
     });
+    Object.keys(fonts).forEach(name => {
+      fonts[name] = fonts[name].filter((wg,i) => i == fonts[name].indexOf(wg)).sort();
+    });
     ev.sender.send("update-available-fonts", fonts);
   });
 })
