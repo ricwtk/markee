@@ -30,7 +30,13 @@ module.exports = {
     toggle: function () {
       this.$el.classList.toggle("active");
       if (this.$el.classList.contains("active")) {
-        // this.editorFont = this.savedPref.editorFont || { "" }
+        this.editorFont = this.savedPref.editorFont ? JSON.parse(JSON.stringify(this.savedPref.editorFont)) 
+          : { "font-family": "Arial", "font-weight": "400", "font-size": "12px"};
+        this.displayFont = this.savedPref.displayFont ? JSON.parse(JSON.stringify(this.savedPref.displayFont)) 
+          : { "font-family": "Arial", "font-weight": "400", "font-size": "12px"};
+        this.codeBlockTheme = this.savedPref.codeBlockTheme || "default";
+        this.customCSS = this.savedPref.customCSS || "";
+        this.$el.querySelector(".modal-body").scrollTop = 0;
       }
     },
     fontWeights: function (font) {
@@ -109,13 +115,13 @@ module.exports = {
         </div>
         <object :data="codeBlockExample" type="text/html" height="220px"></object>
         <div class="text-gray mb-1 mt-2">Custom CSS</div>
-        <textarea class="form-textarea no-resize br-1 p-1"></textarea>
+        <textarea class="form-textarea no-resize br-1 p-1" v-model="customCSS"></textarea>
       </div>
       <div class="modal-footer">
         <div class="grow"></div>
         <div class="button-group">
         <button class="btn form-btn">Save</button>
-        <button class="btn form-btn">Cancel</button>
+        <button class="btn form-btn" @click="toggle">Cancel</button>
         </div>
       </div>
     </div>
