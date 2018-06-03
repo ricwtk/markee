@@ -1,4 +1,4 @@
-const {app, BrowserWindow, Menu, ipcMain} = require('electron');
+const {app, BrowserWindow, Menu, ipcMain, shell} = require('electron');
 const path = require('path');
 const url = require('url');
 const fs = require("fs");
@@ -154,3 +154,5 @@ function newFile() {
   }).unref();
 }
 ipcMain.on("new-file", newFile);
+
+ipcMain.on("open-external", (ev, dpath) => { shell.openItem(dpath) });

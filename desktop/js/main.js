@@ -165,6 +165,9 @@ var main = new Vue({
     newFile: function () {
       ipcRenderer.send("new-file");
     },
+    openExternal: function (dpath) {
+      ipcRenderer.send("open-external", dpath);
+    },
     execCommand: function (cmd) {
       document.execCommand(cmd);
     },

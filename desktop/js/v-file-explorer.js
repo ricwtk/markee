@@ -141,6 +141,9 @@ module.exports = {
       } else {
         return "mdi-file-outline";
       }
+    },
+    openExternal: function () {
+      this.$emit("open-external", this.directoryPath);
     }
   },
   template: `
@@ -148,11 +151,12 @@ module.exports = {
     <div class="modal-overlay" @click="toggle"></div>
     <div class="modal-container">
       <div class="modal-title">
-        <div class="grow">
-          <span class="breadcrumb">
+        <div class="grow overflow-auto">
+          <span class="breadcrumb grow">
             <span class="bc-item" v-for="(p,i) in directoryPathArray" :data-i="i" @click="navigate">{{ p }}</span>
           </span>
         </div>
+        <div class="mdi mdi-open-in-new c-hand" @click="openExternal"></div>
         <div class="mdi mdi-24px mdi-close c-hand" @click="toggle"></div>
       </div>
       <div class="modal-body bg-white p-1">
@@ -175,8 +179,6 @@ module.exports = {
           </label>
           <div class="m-1"></div>
           <div class="button-group">
-            <button class="btn form-btn" data-tooltip="New folder"><i class="mdi mdi-folder-plus"></i></button>
-            <button class="btn form-btn" data-tooltip="New file"><i class="mdi mdi-file-plus"></i></button>
             <button class="btn form-btn" data-tooltip="Open" @click="execAction">{{ mainActionDisplay }}</button>
             <button class="btn form-btn" data-tooltip="Cancel" @click="toggle">Cancel</button>
           </div>
