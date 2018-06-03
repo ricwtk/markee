@@ -78,6 +78,12 @@ var main = new Vue({
       name: "",
       fcn: () => {},
       validate: () => true
+    },
+    hljsTheme: {
+      all: []
+    },
+    font: {
+      all: []
     }
   },
   computed: {
@@ -116,6 +122,11 @@ var main = new Vue({
     ipcRenderer.on("render-as-document", () => { this.renderOptions.docOrPres = 0; });
     ipcRenderer.on("render-as-slides", () => { this.renderOptions.docOrPres = 1; });
     ipcRenderer.send("app-ready");
+    this.hljsTheme.all = ipcRenderer.sendSync("get-hljs-themes");
+    ipcRenderer.on("update-available-fonts", (ev, arg) => {
+      this.font.all = arg;
+    });
+    ipcRenderer.send("get-available-fonts");
   },
   methods: {
     showDisplay: function () {

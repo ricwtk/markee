@@ -71,7 +71,10 @@
         </div>
       </nav>
 
-      <preference ref="preference"></preference>
+      <preference ref="preference"
+        :hljs-theme="hljsTheme"
+        :font="font"
+      ></preference>
       <help ref="help"
         :mdguides="mdguides"
         :mdconverter="mdconverter"

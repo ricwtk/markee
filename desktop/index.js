@@ -4,6 +4,7 @@ const url = require('url');
 const fs = require("fs");
 const process = require("process");
 const child_process = require("child_process");
+const fm = require("font-manager");
 
 let win;
 
@@ -124,7 +125,7 @@ ipcMain.on("app-ready", (ev) => {
     win.setTitle([p.base, p.dir, "Markee"].join(" - "));
     fs.readFile(process.argv[2], (err, data) => {
       if (err) throw err;
-      win.webContents.send("file-content", data.toString());
+      ev.sender.send("file-content", data.toString());
     });
   }
 });
@@ -156,3 +157,21 @@ function newFile() {
 ipcMain.on("new-file", newFile);
 
 ipcMain.on("open-external", (ev, dpath) => { shell.openItem(dpath) });
+
+ipcMain.on("get-hljs-themes", (ev) => {
+  ev.returnValue = fs.readdirSync(path.join(__dirname, "css", "highlight")).filter(f => f.endsWith(".css")).map(f => path.parse(f).name);
+})
+
+ipcMain.on("get-available-fonts", (ev) => {
+  fonts = {};
+  fm.getAvailableFonts(allFonts => {
+    allFonts.forEach(fn => {
+      if (fonts.hasOwnProperty(fn.family)) {
+        fonts[fn.family].push(fn.weight);
+      } else {
+        fonts[fn.family] = [fn.weight];
+      }
+    });
+    ev.sender.send("update-available-fonts", fonts);
+  });
+})
