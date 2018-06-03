@@ -263,9 +263,6 @@ body, html {
   border-right: 0;
 }
 
-textarea { font-family: inherit; }
-textarea.no-resize { resize: none; }
-
 .modal {
   display: none;
   position: absolute;
@@ -512,6 +509,17 @@ textarea.no-resize { resize: none; }
 
 .form-select option {
   font-size: 0.9em;
+}
+
+/* textarea */
+textarea.no-resize { resize: none; }
+
+.form-textarea {
+  font-family: inherit;
+  background-color: inherit;
+  color: inherit;
+  resize: none;
+  min-height: 200px;
 }
 
 /* gutter */
