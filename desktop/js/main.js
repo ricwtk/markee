@@ -187,6 +187,10 @@ var main = new Vue({
           codeBlockTheme: this.preferences.codeBlockTheme,
           customCSS: this.preferences.customCSS
         }, "*");
+      } else if (ev.data.msg == "scroll-top") {
+        if (this.renderOptions.docOrPres == 0) {
+          this.$refs.docDisplay.scrollTop = ev.data.scrollTop;
+        }
       } else if (ev.data.startsWith("gotoSlide") || ev.data == "toggleBlackout") {
         if (this.slides.slideshow !== null) this.slides.slideshow.events.emit("message", ev);
       }
@@ -330,6 +334,11 @@ var main = new Vue({
         this.docClone = window.open(path.join(__dirname, "snippets", "cloned-doc.html"), "Cloned: " + document.title, 'menubar=no,location=no');
       } else {
         this.docClone.focus();
+      }
+    },
+    scrollDoc: function (ev) {
+      if (this.docClone) {
+        this.docClone.postMessage({ msg: "scroll-top", scrollTop: ev.target.scrollTop });
       }
     }
   }

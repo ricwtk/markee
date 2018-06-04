@@ -11,7 +11,7 @@
   </head>
   <body class="md-default v-box">
     <div id="container-wrapper" class="grow v-box">
-      <div id="container" class="grow p-2 bg-gray-lighter overflow-auto"></div>
+      <div id="container" class="grow p-2 bg-gray-lighter overflow-auto" onscroll="scrollDoc()"></div>
       <div id="controls" class="h-box p-1 bg-gray-light">
         <div class="grow"></div>
         <div class="button-group">
@@ -81,6 +81,9 @@
             codeBlockTheme: codeBlockTheme,
             customCSS: customCSS
           }, "*");
+        } else if (ev.data.msg == "scroll-top") {
+          let el = document.getElementById("container");
+          el.scrollTop = ev.data.scrollTop;
         }
       });
 
@@ -89,10 +92,21 @@
       }
 
       function createClone() {
-        if (!this.docClone || this.docClone.closed) {
-          this.docClone = window.open(window.location, "Cloned: " + document.title, 'menubar=no,location=no');
+        if (!docClone || docClone.closed) {
+          docClone = window.open(window.location, "Cloned: " + document.title, 'menubar=no,location=no');
         } else {
-          this.docClone.focus();
+          docClone.focus();
+        }
+      }
+
+      function scrollDoc() {
+        let el = document.getElementById("container");
+        msg = { msg: "scroll-top", scrollTop: el.scrollTop };
+        if (window.opener) {
+          window.opener.postMessage(msg);
+        }
+        if (docClone) {
+          docClone.postMessage(msg);
         }
       }
     </script>
