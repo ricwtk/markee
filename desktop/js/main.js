@@ -164,6 +164,18 @@ var main = new Vue({
     ipcRenderer.on("open-help", ev => {
       if (!this.$refs.help.$el.classList.contains("active")) this.$refs.help.toggle();
     });
+    // for clone window
+    window.addEventListener("message", (ev) => {
+      if (ev.data == "clone-loaded") {
+        ev.source.postMessage({
+          msg: "set-source",
+          content: this.docContent,
+          font: this.preferences.presDisplayFont,
+          codeBlockTheme: this.preferences.codeBlockTheme,
+          customCSS: this.preferences.customCSS
+        }, "*");
+      }
+    }, false)
   },
   methods: {
     updateCodeBlockTheme: function () {
@@ -188,6 +200,7 @@ var main = new Vue({
     showDisplay: function () {
       this.$refs.editPanel.classList.add("hide-md");
       this.$refs.displayPanel.classList.remove("hide-md");
+      if (this.slides.slideshow) this.slides.slideshow.events.emit("resize");
     },
     showEdit: function () {
       this.$refs.editPanel.classList.remove("hide-md");
@@ -284,6 +297,14 @@ var main = new Vue({
       });
       this.slides.names = this.slides.slideshow.getSlides().map(s => s.properties.name);
       if (slideIdx) { this.slides.slideshow.gotoSlideNumber(this.slides.slideshow.getSlides()[slideIdx].getSlideNumber()); }
+    },
+    createClone: function () {
+      if (!this.slides.slideshow.clone || this.slides.slideshow.clone.closed) {
+        this.slides.slideshow.clone = window.open(path.join(__dirname, "snippets", "cloned-slides.html"), this.slides.slideshow.getCloneTarget(), 'location=no');
+      }
+      else {
+        this.slides.slideshow.clone.focus();
+      }
     }
   }
 })

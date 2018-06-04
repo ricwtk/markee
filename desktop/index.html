@@ -64,14 +64,16 @@
   
       <nav class="h-box bg-gray-light p-1">
         <div class="grow"></div>
-        <div class="button-group">
+        <div v-if="renderOptions.docOrPres==1" class="button-group">
+          <button class="btn" data-tooltip="Toggle blackout" @click="slides.slideshow.toggleBlackout()"><i class="mdi mdi-image-off"></i></buton>
+          <button class="btn" data-tooltip="Clone" @click="createClone"><i class="mdi mdi-checkbox-multiple-blank-outline"></i></buton>
+          <button class="btn" data-tooltip="Presenter mode" @click="slides.slideshow.togglePresenterMode()"><i class="mdi mdi-file-presentation-box"></i></buton>
+          <button class="btn" data-tooltip="Present" @click="slides.slideshow.toggleFullscreen()"><i class="mdi mdi-presentation-play"></i></buton>
+        </div>
+        <div class="button-group ml-1">
           <button :class="['btn', renderOptions.docOrPres==0 ? 'selected' : '']" data-tooltip="Render as document" @click="renderOptions.docOrPres=0"><i class="mdi mdi-file-document-box"></i></buton>
-          <button :class="['btn', renderOptions.docOrPres==1 ? 'selected' : '']" data-tooltip="Render as slides" @click="renderOptions.docOrPres=1"><i class="mdi mdi-file-presentation-box"></i></buton>
-        </div>
-        <div class="ml-1 mt-1"></div>
-        <div class="button-group">
-          <button class="btn" data-tooltip="Present"><i class="mdi mdi-presentation-play"></i></buton>
-        </div>
+          <button :class="['btn', renderOptions.docOrPres==1 ? 'selected' : '']" data-tooltip="Render as slides" @click="renderOptions.docOrPres=1"><i class="mdi mdi-file-powerpoint"></i></buton>
+        </div>        
       </nav>
 
       <preference ref="preference"

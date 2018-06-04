@@ -88,8 +88,7 @@ const menu = Menu.buildFromTemplate([
     label: 'View',
     submenu: [
       {label: "Render as document", accelerator: "CommandOrControl+Shift+D", click: () => { win.webContents.send("render-as-document"); }},
-      {label: "Render as slides", accelerator: "CommandOrControl+Shift+S", click: () => { win.webContents.send("render-as-slides"); }},
-      {label: "Full screen presentation", accelerator: "F11"}
+      {label: "Render as slides", accelerator: "CommandOrControl+Shift+S", click: () => { win.webContents.send("render-as-slides"); }}
     ]
   },
   {
