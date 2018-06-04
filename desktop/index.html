@@ -38,7 +38,7 @@
   
       <div class="h-box grow">
         <div class="p-1 h-box" id="edit-panel" ref="editPanel">
-          <textarea class="grow overflow-auto p-1 b-1 bd-gray-light b-solid no-resize" v-model="docContent"></textarea>
+          <textarea class="grow overflow-auto p-1 b-1 bd-gray-light b-solid no-resize" v-model="docContent" :style="preferences.editorFont"></textarea>
           <div class="v-box show-md ml-1">
             <button class="btn btn-no-border mdi mdi-24px mdi-chevron-right c-hand grow" @click="showDisplay"></button>
           </div>
@@ -48,12 +48,9 @@
             <button class="btn btn-no-border mdi mdi-24px mdi-chevron-left c-hand grow" @click="showEdit"></button>
           </div>
           <div class="grow v-box md-default b-2 b-solid bd-gray-lighter overflow-hidden">
-            <div v-if="renderOptions.docOrPres==0" class="grow bg-gray-lighter p-1 overflow-auto" v-html="compiledDocContent"></div>
-            <div v-else class="presentation-display grow pos-relative">
+            <div v-if="renderOptions.docOrPres==0" class="grow bg-gray-lighter p-1 overflow-auto" v-html="compiledDocContent" :style="preferences.docDisplayFont"></div>
+            <div v-else class="presentation-display grow pos-relative" :style="preferences.presDisplayFont">
               <div class="full-width full-height" ref="presentationDisplay"></div>
-            </div>
-            <div class="h-box bg-white p-1">
-              <button class="btn btn-no-border mdi mdi-close"></button>
             </div>
           </div>
         </div>

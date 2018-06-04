@@ -86,7 +86,23 @@ var main = new Vue({
       all: []
     },
     preferences: {
-      
+      editorFont: {
+        "font-family": "Roboto Mono",
+        "font-weight": "400",
+        "font-size": "12px"
+      },
+      docDisplayFont: {
+        "font-family": "Arial",
+        "font-weight": "400",
+        "font-size": "12px"
+      },
+      presDisplayFont: {
+        "font-family": "Arial",
+        "font-weight": "400",
+        "font-size": "12px"
+      },
+      codeBlockTheme: "default",
+      customCSS: ""
     }
   },
   computed: {
@@ -109,6 +125,8 @@ var main = new Vue({
     window.addEventListener("resize", (ev) => {
       changeSplit(ev.currentTarget);
     });
+    this.updateCodeBlockTheme();
+    this.updateCustomCSS();
     ipcRenderer.on("file-content", (ev, arg) => {
       this.savedDocContent = arg;
       this.docContent = arg;
@@ -131,11 +149,36 @@ var main = new Vue({
     });
     ipcRenderer.send("get-available-fonts");
     ipcRenderer.on("update-preferences", (ev, arg) => {
-      this.preferences = arg;
+      this.preferences.editorFont = arg.editorFont || this.preferences.editorFont;
+      this.preferences.docDisplayFont = arg.docDisplayFont || this.preferences.docDisplayFont;
+      this.preferences.presDisplayFont = arg.presDisplayFont || this.preferences.presDisplayFont;
+      this.preferences.codeBlockTheme = arg.codeBlockTheme || this.preferences.codeBlockTheme;
+      this.preferences.customCSS = arg.customCSS || this.preferences.customCSS;
+      this.updateCodeBlockTheme();
+      this.updateCustomCSS();
     });
     ipcRenderer.send("get-preferences");
   },
   methods: {
+    updateCodeBlockTheme: function () {
+      let head = document.querySelector("head");
+      let eel = head.querySelector("#hljstheme");
+      if (eel) head.removeChild(eel);
+      let el = document.createElement("link");
+      el.id = "hljstheme";
+      el.rel = "stylesheet";
+      el.href = "./css/highlight/" + this.preferences.codeBlockTheme + ".css";
+      head.appendChild(el);
+    },
+    updateCustomCSS: function () {
+      let head = document.querySelector("head");
+      let eel = head.querySelector("#customcss");
+      if (eel) head.removeChild(eel);
+      let el = document.createElement("style");
+      el.id = "customcss";
+      el.innerHTML = this.preferences.customCSS;
+      head.appendChild(el);
+    },
     showDisplay: function () {
       this.$refs.editPanel.classList.add("hide-md");
       this.$refs.displayPanel.classList.remove("hide-md");
@@ -192,6 +235,8 @@ var main = new Vue({
     savePreferences: function (pref) {
       ipcRenderer.send("save-preferences", pref);
       this.preferences = pref;
+      this.updateCodeBlockTheme();
+      this.updateCustomCSS();
     },
     createSlideShow: function () {
       let slideIdx;

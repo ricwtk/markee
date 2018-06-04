@@ -4,23 +4,12 @@ module.exports = {
   props: ["hljsTheme", "font", "savedPref"],
   data: function () {
     return {
-      editorFont: {
-        "font-family": "Arial",
-        "font-weight": "400",
-        "font-size": "12px"
-      },
-      docDisplayFont: {
-        "font-family": "Arial",
-        "font-weight": "400",
-        "font-size": "12px"
-      },
-      presDisplayFont: {
-        "font-family": "Arial",
-        "font-weight": "400",
-        "font-size": "12px"
-      },
-      codeBlockTheme: "default",
-      customCSS: ""
+      editorFont: {},
+      docDisplayFont: {},
+      presDisplayFont: {},
+      codeBlockTheme: "",
+      customCSS: "",
+      fontSizes: [...Array(21).keys()].slice(8)
     }
   },
   computed: {
@@ -35,14 +24,11 @@ module.exports = {
     toggle: function () {
       this.$el.classList.toggle("active");
       if (this.$el.classList.contains("active")) {
-        this.editorFont = this.savedPref.editorFont ? JSON.parse(JSON.stringify(this.savedPref.editorFont)) 
-          : { "font-family": "Arial", "font-weight": "400", "font-size": "12px"};
-        this.docDisplayFont = this.savedPref.docDisplayFont ? JSON.parse(JSON.stringify(this.savedPref.docDisplayFont)) 
-          : { "font-family": "Arial", "font-weight": "400", "font-size": "12px"};
-        this.presDisplayFont = this.savedPref.presDisplayFont ? JSON.parse(JSON.stringify(this.savedPref.presDisplayFont)) 
-          : { "font-family": "Arial", "font-weight": "400", "font-size": "12px"};
-        this.codeBlockTheme = this.savedPref.codeBlockTheme || "default";
-        this.customCSS = this.savedPref.customCSS || "";
+        this.editorFont = JSON.parse(JSON.stringify(this.savedPref.editorFont));
+        this.docDisplayFont = JSON.parse(JSON.stringify(this.savedPref.docDisplayFont));
+        this.presDisplayFont = JSON.parse(JSON.stringify(this.savedPref.presDisplayFont));
+        this.codeBlockTheme = this.savedPref.codeBlockTheme;
+        this.customCSS = this.savedPref.customCSS;
         this.$el.querySelector(".modal-body").scrollTop = 0;
       }
     },
@@ -90,7 +76,7 @@ module.exports = {
           </label>
           <label class="form-select-wrapper">
             <select class="form-select" v-model="editorFont['font-size']">
-              <option v-for="n in [10, 12, 14, 15, 16, 17, 18]" :value="n+'px'">{{ n + 'px' }}</option>
+              <option v-for="n in fontSizes" :value="n+'px'">{{ n + 'px' }}</option>
             </select>
             <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>            
           </label>
@@ -116,7 +102,7 @@ module.exports = {
             </label>
             <label class="form-select-wrapper">
               <select class="form-select" v-model="docDisplayFont['font-size']">
-                <option v-for="n in [10, 12, 14, 15, 16, 17, 18]" :value="n+'px'">{{ n + 'px' }}</option>
+                <option v-for="n in fontSizes" :value="n+'px'">{{ n + 'px' }}</option>
               </select>
               <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>            
             </label>
@@ -140,7 +126,7 @@ module.exports = {
             </label>
             <label class="form-select-wrapper">
               <select class="form-select" v-model="presDisplayFont['font-size']">
-                <option v-for="n in [10, 12, 14, 15, 16, 17, 18]" :value="n+'px'">{{ n + 'px' }}</option>
+                <option v-for="n in fontSizes" :value="n+'px'">{{ n + 'px' }}</option>
               </select>
               <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>            
             </label>
@@ -160,7 +146,7 @@ module.exports = {
         </div>
         <object :data="codeBlockExample" type="text/html" height="220px"></object>
         <div class="text-gray mb-1 mt-2">Custom CSS</div>
-        <textarea class="form-textarea no-resize br-1 p-1" v-model="customCSS"></textarea>
+        <textarea class="form-textarea no-resize br-1 p-1" v-model="customCSS" style="font-family: monospace;"></textarea>
       </div>
       <div class="modal-footer">
         <div class="grow"></div>
