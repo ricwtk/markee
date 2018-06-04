@@ -65,14 +65,14 @@
       <nav class="h-box bg-gray-light p-1">
         <div class="grow"></div>
         <div v-if="renderOptions.docOrPres==1" class="button-group">
-          <button class="btn" data-tooltip="Toggle blackout" @click="slides.slideshow.toggleBlackout()"><i class="mdi mdi-image-off"></i></buton>
-          <button class="btn" data-tooltip="Clone" @click="createClone"><i class="mdi mdi-checkbox-multiple-blank-outline"></i></buton>
-          <button class="btn" data-tooltip="Presenter mode" @click="slides.slideshow.togglePresenterMode()"><i class="mdi mdi-file-presentation-box"></i></buton>
-          <button class="btn" data-tooltip="Present" @click="slides.slideshow.toggleFullscreen()"><i class="mdi mdi-presentation-play"></i></buton>
+          <button class="btn" data-tooltip="Toggle blackout" @click="slides.slideshow.toggleBlackout()"><i class="mdi mdi-image-off"></i></button>
+          <button class="btn" data-tooltip="Clone" @click="slides.slideshow.createClone()"><i class="mdi mdi-checkbox-multiple-blank-outline"></i></button>
+          <button class="btn" data-tooltip="Presenter mode" @click="slides.slideshow.togglePresenterMode()"><i class="mdi mdi-file-presentation-box"></i></button>
+          <button class="btn" data-tooltip="Present" @click="slides.slideshow.toggleFullscreen()"><i class="mdi mdi-presentation-play"></i></button>
         </div>
         <div class="button-group ml-1">
-          <button :class="['btn', renderOptions.docOrPres==0 ? 'selected' : '']" data-tooltip="Render as document" @click="renderOptions.docOrPres=0"><i class="mdi mdi-file-document-box"></i></buton>
-          <button :class="['btn', renderOptions.docOrPres==1 ? 'selected' : '']" data-tooltip="Render as slides" @click="renderOptions.docOrPres=1"><i class="mdi mdi-file-powerpoint"></i></buton>
+          <button :class="['btn', renderOptions.docOrPres==0 ? 'selected' : '']" data-tooltip="Render as document" @click="renderOptions.docOrPres=0"><i class="mdi mdi-file-document-box"></i></button>
+          <button :class="['btn', renderOptions.docOrPres==1 ? 'selected' : '']" data-tooltip="Render as slides" @click="renderOptions.docOrPres=1"><i class="mdi mdi-file-powerpoint"></i></button>
         </div>        
       </nav>
 

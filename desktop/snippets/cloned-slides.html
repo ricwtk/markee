@@ -3,25 +3,49 @@
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" type="text/css" href="../css/md-themes.css">
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <link rel="stylesheet" type="text/css" href="../node_modules/mdi/css/materialdesignicons.min.css">
     <script src="../js/highlight.pack.js"></script>
     <script src="../js/remark.min.js"></script>
+    <style>
+    </style>
   </head>
-  <body class="md-default">
-    <textarea id="source"></textarea>
+  <body class="md-default v-box">
+    <div id="container-wrapper" class="grow pos-relative v-box">
+      <div id="container-container" class="grow pos-relative">
+        <div id="container" class="full-width full-height"></div>
+      </div>
+      <div id="controls" class="h-box p-1 bg-gray-light">
+        <div class="grow"></div>
+        <div class="button-group">
+          <button class="btn" data-tooltip="Toggle blackout" onclick="slideshow.toggleBlackout()"><i class="mdi mdi-image-off"></i></button>
+          <button class="btn" data-tooltip="Clone" onclick="slideshow.createClone()"><i class="mdi mdi-checkbox-multiple-blank-outline"></i></button>
+          <button class="btn" data-tooltip="Presenter mode" onclick="slideshow.togglePresenterMode()"><i class="mdi mdi-file-presentation-box"></i></button>
+          <button class="btn" data-tooltip="Present" onclick="slideshow.toggleFullscreen()"><i class="mdi mdi-presentation-play"></i></button>
+        </div>
+      </div>
+    </div>
+
     <script>
       const path = require("path");
       const showdown = require("showdown");
       require(path.join(__dirname, "..", "js", "showdown-timeline-ext.js"));
       require(path.join(__dirname, "..", "js", "showdown-highlightjs-ext.js"));
       const mdconverter = require(path.join(__dirname, "..", "js", "md-converter.js"));
-
+      var slidesource = "";
+      var slideshow = null;
+      var font, codeBlockTheme, customCSS;
       window.addEventListener("load", () => {
         window.opener.postMessage("clone-loaded", "*");
       });
 
       window.addEventListener("message", (ev) => {
+        if (slideshow) slideshow.events.emit("message", ev);
         if (ev.data.msg == "set-source") {
-          document.getElementById("source").innerHTML = ev.data.content;
+          document.title = ev.data.title;
+
+          slidesource = ev.data.content;
+          
           let head = document.querySelector("head");
 
           let eel = head.querySelector("#codeblocktheme");
@@ -31,6 +55,7 @@
           el.rel = "stylesheet";
           el.href = "../css/highlight/" + ev.data.codeBlockTheme + ".css";
           head.appendChild(el);
+          codeBlockTheme = ev.data.codeBlockTheme;
 
           eel = head.querySelector("#cssstyle");
           if (eel) head.removeChild(eel);
@@ -41,6 +66,7 @@
             + "font-size: " + ev.data.font['font-size'] + "; "
             + "}";
           head.appendChild(el);
+          font = ev.data.font;
 
           eel = head.querySelector("#customcss");
           if (eel) head.removeChild(eel);
@@ -48,13 +74,40 @@
           el.id = "#customcss";
           el.innerHTML = ev.data.customCSS;
           head.appendChild(el);
+          customCSS = ev.data.customCSS;
           
-          remark.create({
+          let outer = document.getElementById("container");
+          while (outer.firstChild) outer.removeChild(outer.firstChild);
+          outer.classList.remove("remark-container");
+          slideshow = remark.create({
+            container: outer,
+            source: slidesource,
             converter: mdconverter,
             externalHighlighter: true
           });
+          slideshow.events._events.createClone = () => {
+            if (!slideshow.clone || slideshow.clone.closed) {
+              slideshow.clone = window.open(window.location, "Cloned: " + document.title, 'menubar=no,location=no');
+            }
+            else {
+              slideshow.clone.focus();
+            }
+          }
+        } else if (ev.data == "clone-loaded") {
+          ev.source.postMessage({
+            msg: "set-source",
+            title: "Cloned: " + document.title,
+            content: slidesource,
+            font: font,
+            codeBlockTheme: codeBlockTheme,
+            customCSS: customCSS
+          }, "*");
         }
       });
+
+      window.addEventListener("keydown", ev => slideshow.events.emit("keydown", ev));
+      window.addEventListener("keyup", ev => slideshow.events.emit("keyup", ev));
+      window.addEventListener("keypress", ev => slideshow.events.emit("keypress", ev));
     </script>
   </body>
 </html>

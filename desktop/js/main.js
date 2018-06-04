@@ -169,6 +169,7 @@ var main = new Vue({
       if (ev.data == "clone-loaded") {
         ev.source.postMessage({
           msg: "set-source",
+          title: "Cloned: " + document.title,
           content: this.docContent,
           font: this.preferences.presDisplayFont,
           codeBlockTheme: this.preferences.codeBlockTheme,
@@ -303,7 +304,7 @@ var main = new Vue({
     },
     createClone: function () {
       if (!this.slides.slideshow.clone || this.slides.slideshow.clone.closed) {
-        this.slides.slideshow.clone = window.open(path.join(__dirname, "snippets", "cloned-slides.html"), this.slides.slideshow.getCloneTarget(), 'location=no');
+        this.slides.slideshow.clone = window.open(path.join(__dirname, "snippets", "cloned-slides.html"), "Cloned: " + document.title, 'menubar=no,location=no');
       }
       else {
         this.slides.slideshow.clone.focus();
