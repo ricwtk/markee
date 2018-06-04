@@ -130,6 +130,10 @@ var main = new Vue({
       this.font.all = arg;
     });
     ipcRenderer.send("get-available-fonts");
+    ipcRenderer.on("update-preferences", (ev, arg) => {
+      this.preferences = arg;
+    });
+    ipcRenderer.send("get-preferences");
   },
   methods: {
     showDisplay: function () {
@@ -184,6 +188,10 @@ var main = new Vue({
     },
     execCommand: function (cmd) {
       document.execCommand(cmd);
+    },
+    savePreferences: function (pref) {
+      ipcRenderer.send("save-preferences", pref);
+      this.preferences = pref;
     },
     createSlideShow: function () {
       let slideIdx;

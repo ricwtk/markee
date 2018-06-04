@@ -1,4 +1,5 @@
 const {app, BrowserWindow, Menu, ipcMain, shell} = require('electron');
+const os = require("os");
 const path = require('path');
 const url = require('url');
 const fs = require("fs");
@@ -160,7 +161,7 @@ ipcMain.on("open-external", (ev, dpath) => { shell.openItem(dpath) });
 
 ipcMain.on("get-hljs-themes", (ev) => {
   ev.returnValue = fs.readdirSync(path.join(__dirname, "css", "highlight")).filter(f => f.endsWith(".css")).map(f => path.parse(f).name);
-})
+});
 
 ipcMain.on("get-available-fonts", (ev) => {
   fonts = {};
@@ -177,4 +178,29 @@ ipcMain.on("get-available-fonts", (ev) => {
     });
     ev.sender.send("update-available-fonts", fonts);
   });
-})
+});
+
+function getPrefLocation() {
+  let settingFolder = "";
+  switch (os.platform()) {
+    case "linux":
+      settingFolder = path.join(os.homedir(), ".local", "share");
+      break;
+    default:
+      settingFolder = os.homedir();
+  }
+  if (!fs.statSync(settingFolder).isDirectory()) fs.mkdirSync();
+  let fileLocation = path.join(settingFolder, "markee.pref");
+  return { location: fileLocation, exist: fs.existsSync(fileLocation) };
+}
+ipcMain.on("get-preferences", (ev) => {
+  let pref = getPrefLocation();
+  let prefContent = {};
+  if (pref.exist) {
+    prefContent = JSON.parse(fs.readFileSync(pref.location).toString());
+  }
+  ev.sender.send("update-preferences", prefContent);
+});
+ipcMain.on("save-preferences", (ev, arg) => {
+  fs.writeFileSync(getPrefLocation().location, JSON.stringify(arg, null, 2));
+});

@@ -9,7 +9,12 @@ module.exports = {
         "font-weight": "400",
         "font-size": "12px"
       },
-      displayFont: {
+      docDisplayFont: {
+        "font-family": "Arial",
+        "font-weight": "400",
+        "font-size": "12px"
+      },
+      presDisplayFont: {
         "font-family": "Arial",
         "font-weight": "400",
         "font-size": "12px"
@@ -32,7 +37,9 @@ module.exports = {
       if (this.$el.classList.contains("active")) {
         this.editorFont = this.savedPref.editorFont ? JSON.parse(JSON.stringify(this.savedPref.editorFont)) 
           : { "font-family": "Arial", "font-weight": "400", "font-size": "12px"};
-        this.displayFont = this.savedPref.displayFont ? JSON.parse(JSON.stringify(this.savedPref.displayFont)) 
+        this.docDisplayFont = this.savedPref.docDisplayFont ? JSON.parse(JSON.stringify(this.savedPref.docDisplayFont)) 
+          : { "font-family": "Arial", "font-weight": "400", "font-size": "12px"};
+        this.presDisplayFont = this.savedPref.presDisplayFont ? JSON.parse(JSON.stringify(this.savedPref.presDisplayFont)) 
           : { "font-family": "Arial", "font-weight": "400", "font-size": "12px"};
         this.codeBlockTheme = this.savedPref.codeBlockTheme || "default";
         this.customCSS = this.savedPref.customCSS || "";
@@ -46,6 +53,17 @@ module.exports = {
       }
       return weights;
     },
+    save: function () {
+      let pref = {
+        editorFont: JSON.parse(JSON.stringify(this.editorFont)),
+        docDisplayFont: JSON.parse(JSON.stringify(this.docDisplayFont)),
+        presDisplayFont: JSON.parse(JSON.stringify(this.presDisplayFont)),
+        codeBlockTheme: this.codeBlockTheme,
+        customCSS: this.customCSS
+      }
+      this.$emit("save-pref", pref);
+      this.toggle();
+    }
   },
   template: `
   <div class="modal">
@@ -77,32 +95,59 @@ module.exports = {
             <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>            
           </label>
         </div>
-        <div class="b-1 bd-gray b-solid br-1 mt-1 p-2" :style="editorFont">
+        <div class="b-1 bd-gray b-solid br-1 mt-1 p-2 h-center" :style="editorFont">
           The quick brown fox jumps over the lazy dog. 0123456789
         </div>
         <div class="text-gray mb-1 mt-2">Base font for display</div>
-        <div class="h-box">
-          <label class="form-select-wrapper grow mr-1">
-            <select class="form-select grow" v-model="displayFont['font-family']">
-              <option v-for="fn in fontFamilies" :value="fn">{{ fn }}</option>
-            </select>
-            <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>
-          </label>
-          <label class="form-select-wrapper mr-1">
-            <select class="form-select" v-model="displayFont['font-weight']">
-              <option v-for="w in fontWeights(displayFont)" :value="w">{{ w }}</option>
-            </select>
-            <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>            
-          </label>
-          <label class="form-select-wrapper">
-            <select class="form-select" v-model="displayFont['font-size']">
-              <option v-for="n in [10, 12, 14, 15, 16, 17, 18]" :value="n+'px'">{{ n + 'px' }}</option>
-            </select>
-            <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>            
-          </label>
-        </div>
-        <div class="b-1 bd-gray b-solid br-1 mt-1 p-2" :style="displayFont">
-          The quick brown fox jumps over the lazy dog. 0123456789
+        <div class="v-box pl-2">
+          <div class="text-gray mb-1 mt-1">Document</div>
+          <div class="h-box">
+            <label class="form-select-wrapper grow mr-1">
+              <select class="form-select grow" v-model="docDisplayFont['font-family']">
+                <option v-for="fn in fontFamilies" :value="fn">{{ fn }}</option>
+              </select>
+              <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>
+            </label>
+            <label class="form-select-wrapper mr-1">
+              <select class="form-select" v-model="docDisplayFont['font-weight']">
+                <option v-for="w in fontWeights(docDisplayFont)" :value="w">{{ w }}</option>
+              </select>
+              <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>            
+            </label>
+            <label class="form-select-wrapper">
+              <select class="form-select" v-model="docDisplayFont['font-size']">
+                <option v-for="n in [10, 12, 14, 15, 16, 17, 18]" :value="n+'px'">{{ n + 'px' }}</option>
+              </select>
+              <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>            
+            </label>
+          </div>
+          <div class="b-1 bd-gray b-solid br-1 mt-1 p-2 h-center" :style="docDisplayFont">
+            The quick brown fox jumps over the lazy dog. 0123456789
+          </div>
+          <div class="text-gray mb-1 mt-1">Presentation</div>
+          <div class="h-box">
+            <label class="form-select-wrapper grow mr-1">
+              <select class="form-select grow" v-model="presDisplayFont['font-family']">
+                <option v-for="fn in fontFamilies" :value="fn">{{ fn }}</option>
+              </select>
+              <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>
+            </label>
+            <label class="form-select-wrapper mr-1">
+              <select class="form-select" v-model="presDisplayFont['font-weight']">
+                <option v-for="w in fontWeights(presDisplayFont)" :value="w">{{ w }}</option>
+              </select>
+              <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>            
+            </label>
+            <label class="form-select-wrapper">
+              <select class="form-select" v-model="presDisplayFont['font-size']">
+                <option v-for="n in [10, 12, 14, 15, 16, 17, 18]" :value="n+'px'">{{ n + 'px' }}</option>
+              </select>
+              <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>            
+            </label>
+          </div>
+          <div class="b-1 bd-gray b-solid br-1 mt-1 p-2 h-center" :style="presDisplayFont">
+            The quick brown fox jumps over the lazy dog. 0123456789
+          </div>
         </div>
         <div class="text-gray mb-1 mt-2">Code block highlight theme</div>
         <div class="h-box">
@@ -120,7 +165,7 @@ module.exports = {
       <div class="modal-footer">
         <div class="grow"></div>
         <div class="button-group">
-        <button class="btn form-btn">Save</button>
+        <button class="btn form-btn" @click="save">Save</button>
         <button class="btn form-btn" @click="toggle">Cancel</button>
         </div>
       </div>
