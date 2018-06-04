@@ -3,18 +3,11 @@
   <head>
     <title>Markee</title>
     <meta charset="utf-8">
-    <!-- <link rel="stylesheet" type="text/css" href="./node_modules/bulma/css/bulma.css"> -->
     <link rel="stylesheet" type="text/css" href="./node_modules/mdi/css/materialdesignicons.min.css">
     <link rel="stylesheet" type="text/css" href="./css/main.css">
     <link rel="stylesheet" type="text/css" href="./css/md-themes.css">
     <script src="js/highlight.pack.js"></script>    
     <script src="js/remark.min.js"></script>
-    <!-- <script src="js/showdown-timeline-ext.js"></script>
-    <script src="js/showdown-highlightjs-ext.js"></script>
-    <script src="js/md-converter.js"></script>
-    <script src="js/emoji.js"></script>
-    <script src="js/md-guides.js"></script>
-    <script src="js/remark.min.js"></script> -->
   </head>
 
   <body>
@@ -54,7 +47,7 @@
             <button class="btn btn-no-border mdi mdi-24px mdi-chevron-left c-hand grow" @click="showEdit"></button>
           </div>
           <div class="grow v-box md-default b-2 b-solid bd-gray-lighter overflow-hidden">
-            <div v-if="renderOptions.docOrPres==0" class="grow bg-gray-lighter p-1 overflow-auto" v-html="compiledDocContent" :style="preferences.docDisplayFont"></div>
+            <div v-if="renderOptions.docOrPres==0" class="grow bg-gray-lighter p-1 overflow-auto" v-html="compiledDocContent" :style="preferences.docDisplayFont" ref="docDisplay"></div>
             <div v-else class="presentation-display grow pos-relative" :style="preferences.presDisplayFont">
               <div class="full-width full-height" ref="presentationDisplay"></div>
             </div>
@@ -69,6 +62,10 @@
           <button class="btn" data-tooltip="Clone" @click="slides.slideshow.createClone()"><i class="mdi mdi-checkbox-multiple-blank-outline"></i></button>
           <button class="btn" data-tooltip="Presenter mode" @click="slides.slideshow.togglePresenterMode()"><i class="mdi mdi-file-presentation-box"></i></button>
           <button class="btn" data-tooltip="Present" @click="slides.slideshow.toggleFullscreen()"><i class="mdi mdi-presentation-play"></i></button>
+        </div>
+        <div v-else class="button-group">
+          <button class="btn" data-tooltip="Clone" @click="docCreateClone"><i class="mdi mdi-checkbox-multiple-blank-outline"></i></button>
+          <button class="btn" data-tooltip="Fullscreen" @click="docToggleFullscreen"><i class="mdi mdi-presentation-play"></i></button>
         </div>
         <div class="button-group ml-1">
           <button :class="['btn', renderOptions.docOrPres==0 ? 'selected' : '']" data-tooltip="Render as document" @click="renderOptions.docOrPres=0"><i class="mdi mdi-file-document-box"></i></button>

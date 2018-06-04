@@ -103,7 +103,8 @@ var main = new Vue({
       },
       codeBlockTheme: "default",
       customCSS: ""
-    }
+    },
+    docClone: null
   },
   computed: {
     compiledDocContent: function () {
@@ -164,14 +165,25 @@ var main = new Vue({
     ipcRenderer.on("open-help", ev => {
       if (!this.$refs.help.$el.classList.contains("active")) this.$refs.help.toggle();
     });
-    // for clone window
+    
     window.addEventListener("message", (ev) => {
       if (ev.data == "clone-loaded") {
+        // for clone window
         ev.source.postMessage({
           msg: "set-source",
           title: "Cloned: " + document.title,
           content: this.docContent,
           font: this.preferences.presDisplayFont,
+          codeBlockTheme: this.preferences.codeBlockTheme,
+          customCSS: this.preferences.customCSS
+        }, "*");
+      } else if (ev.data == "doc-clone-loaded") {
+        // for doc clone window
+        ev.source.postMessage({
+          msg: "set-source",
+          title: "Cloned: " + document.title,
+          content: this.docContent,
+          font: this.preferences.docDisplayFont,
           codeBlockTheme: this.preferences.codeBlockTheme,
           customCSS: this.preferences.customCSS
         }, "*");
@@ -305,9 +317,19 @@ var main = new Vue({
     createClone: function () {
       if (!this.slides.slideshow.clone || this.slides.slideshow.clone.closed) {
         this.slides.slideshow.clone = window.open(path.join(__dirname, "snippets", "cloned-slides.html"), "Cloned: " + document.title, 'menubar=no,location=no');
-      }
-      else {
+      } else {
         this.slides.slideshow.clone.focus();
+      }
+    },
+    docToggleFullscreen: function () {
+      let el = this.$refs.docDisplay;
+      el.webkitRequestFullscreen();
+    },
+    docCreateClone: function () {
+      if (!this.docClone || this.docClone.closed) {
+        this.docClone = window.open(path.join(__dirname, "snippets", "cloned-doc.html"), "Cloned: " + document.title, 'menubar=no,location=no');
+      } else {
+        this.docClone.focus();
       }
     }
   }

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../css/md-themes.css">
+    <link rel="stylesheet" type="text/css" href="../css/main.css">
+    <link rel="stylesheet" type="text/css" href="../node_modules/mdi/css/materialdesignicons.min.css">
+    <script src="../js/highlight.pack.js"></script>
+    <style>
+    </style>
+  </head>
+  <body class="md-default v-box">
+    <div id="container-wrapper" class="grow v-box">
+      <div id="container" class="grow p-2 bg-gray-lighter"></div>
+      <div id="controls" class="h-box p-1 bg-gray-light">
+        <div class="grow"></div>
+        <div class="button-group">
+          <button class="btn" data-tooltip="Clone" onclick="createClone()"><i class="mdi mdi-checkbox-multiple-blank-outline"></i></button>
+          <button class="btn" data-tooltip="Present" onclick="toggleFullscreen()"><i class="mdi mdi-presentation-play"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const path = require("path");
+      const showdown = require("showdown");
+      require(path.join(__dirname, "..", "js", "showdown-timeline-ext.js"));
+      require(path.join(__dirname, "..", "js", "showdown-highlightjs-ext.js"));
+      const mdconverter = require(path.join(__dirname, "..", "js", "md-converter.js"));
+      var source = "";
+      var font, codeBlockTheme, customCSS, docClone;
+      window.addEventListener("load", () => {
+        window.opener.postMessage("doc-clone-loaded", "*");
+      });
+
+      window.addEventListener("message", (ev) => {
+        if (ev.data.msg == "set-source") {
+          document.title = ev.data.title;
+
+          source = ev.data.content;
+          
+          let head = document.querySelector("head");
+
+          let eel = head.querySelector("#codeblocktheme");
+          if (eel) head.removeChild(eel);
+          let el = document.createElement("link");
+          el.id = "codeblocktheme";
+          el.rel = "stylesheet";
+          el.href = "../css/highlight/" + ev.data.codeBlockTheme + ".css";
+          head.appendChild(el);
+          codeBlockTheme = ev.data.codeBlockTheme;
+
+          eel = head.querySelector("#cssstyle");
+          if (eel) head.removeChild(eel);
+          el = document.createElement("style");
+          el.id = "#cssstyle";
+          el.innerHTML = ".remark-container { font-family: " + ev.data.font['font-family'] + "; "
+            + "font-weight: " + ev.data.font['font-weight'] + "; "
+            + "font-size: " + ev.data.font['font-size'] + "; "
+            + "}";
+          head.appendChild(el);
+          font = ev.data.font;
+
+          eel = head.querySelector("#customcss");
+          if (eel) head.removeChild(eel);
+          el = document.createElement("style");
+          el.id = "#customcss";
+          el.innerHTML = ev.data.customCSS;
+          head.appendChild(el);
+          customCSS = ev.data.customCSS;
+          
+          let outer = document.getElementById("container");
+          while (outer.firstChild) outer.removeChild(outer.firstChild);
+          outer.innerHTML = mdconverter.makeHtml(source);
+        } else if (ev.data == "doc-clone-loaded") {
+          ev.source.postMessage({
+            msg: "set-source",
+            title: "Cloned: " + document.title,
+            content: source,
+            font: font,
+            codeBlockTheme: codeBlockTheme,
+            customCSS: customCSS
+          }, "*");
+        }
+      });
+
+      function toggleFullscreen() {
+        document.getElementById("container").webkitRequestFullscreen();
+      }
+
+      function createClone() {
+        if (!this.docClone || this.docClone.closed) {
+          this.docClone = window.open(window.location, "Cloned: " + document.title, 'menubar=no,location=no');
+        } else {
+          this.docClone.focus();
+        }
+      }
+    </script>
+  </body>
+</html>
