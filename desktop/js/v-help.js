@@ -38,10 +38,10 @@ module.exports = {
         <div class="mdi mdi-24px mdi-close c-hand" @click="toggle"></div>
       </div>
       <div class="modal-body">
-        <div class="h-box tab">
+        <!--<div class="h-box tab">
           <div class="grow h-center c-hand selected" ref="doc" @click="switchTo('doc')"><i class="mdi mdi-file-document-box"></i> Markdown document</div>
           <div class="grow h-center c-hand" ref="slide" @click="switchTo('slide')"><i class="mdi mdi-file-presentation-box"></i> Markdown slides</div>
-        </div>
+        </div>-->
         <div v-show="selected=='doc'" class="h-box grow overflow-auto">
           <div class="v-box tab-vertical-left tab-sm overflow-auto">
             <div v-for="(g,i) in mdguides" 
