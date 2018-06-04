@@ -158,6 +158,12 @@ var main = new Vue({
       this.updateCustomCSS();
     });
     ipcRenderer.send("get-preferences");
+    ipcRenderer.on("open-preferences", ev => {
+      if (!this.$refs.preference.$el.classList.contains("active")) this.$refs.preference.toggle();
+    });
+    ipcRenderer.on("open-help", ev => {
+      if (!this.$refs.help.$el.classList.contains("active")) this.$refs.help.toggle();
+    });
   },
   methods: {
     updateCodeBlockTheme: function () {
@@ -237,6 +243,30 @@ var main = new Vue({
       this.preferences = pref;
       this.updateCodeBlockTheme();
       this.updateCustomCSS();
+    },
+    addTab: function (ev) {
+      let ta = ev.target;
+      let ss = ta.selectionStart;
+      let se = ta.selectionEnd;
+      ta.value = ta.value.slice(0,ss) + "  " + ta.value.slice(ss);
+      ta.selectionStart = ss + 2;
+      ta.selectionEnd = se + 2;
+    },
+    addBold: function (ev) {
+      let ta = ev.target;
+      let ss = ta.selectionStart;
+      let se = ta.selectionEnd;
+      ta.value = ta.value.slice(0,ss) + "**" + ta.value.slice(ss,se) + "**";
+      ta.selectionStart = ss + 2;
+      ta.selectionEnd = se + 2;
+    },
+    addItalic: function (ev) {
+      let ta = ev.target;
+      let ss = ta.selectionStart;
+      let se = ta.selectionEnd;
+      ta.value = ta.value.slice(0,ss) + "*" + ta.value.slice(ss,se) + "*";
+      ta.selectionStart = ss + 1;
+      ta.selectionEnd = se + 1;
     },
     createSlideShow: function () {
       let slideIdx;

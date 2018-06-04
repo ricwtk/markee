@@ -38,7 +38,13 @@
   
       <div class="h-box grow">
         <div class="p-1 h-box" id="edit-panel" ref="editPanel">
-          <textarea class="grow overflow-auto p-1 b-1 bd-gray-light b-solid no-resize" v-model="docContent" :style="preferences.editorFont"></textarea>
+          <textarea class="grow overflow-auto p-1 b-1 bd-gray-light b-solid no-resize" 
+            v-model="docContent" 
+            :style="preferences.editorFont"
+            @keydown.tab.prevent="addTab"
+            @keydown.ctrl.b.prevent="addBold"
+            @keydown.ctrl.i.prevent="addItalic"
+          ></textarea>
           <div class="v-box show-md ml-1">
             <button class="btn btn-no-border mdi mdi-24px mdi-chevron-right c-hand grow" @click="showDisplay"></button>
           </div>

@@ -67,7 +67,7 @@ const menu = Menu.buildFromTemplate([
       {label: "Open file...", accelerator: "CommandOrControl+O", click: () => { win.webContents.send("open-file-ui"); }},
       {label: "New file", accelerator: "CommandOrControl+N", click: newFile},
       {type: "separator"},
-      {label: "Preference"}
+      {label: "Preference", click: () => { win.webContents.send("open-preferences"); }}
     ]
   },
   {
@@ -113,7 +113,7 @@ const menu = Menu.buildFromTemplate([
         label: "About Markee",
         click () { require('electron').shell.openExternal('https://electronjs.org') }
       },
-      {label: "Markdown Guide"},
+      {label: "Markdown Guide", click: () => { win.webContents.send("open-help"); }},
       {label: "Markee web"}
     ]
   }
