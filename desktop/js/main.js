@@ -174,6 +174,8 @@ var main = new Vue({
           codeBlockTheme: this.preferences.codeBlockTheme,
           customCSS: this.preferences.customCSS
         }, "*");
+      } else if (ev.data.startsWith("gotoSlide") || ev.data == "toggleBlackout") {
+        if (this.slides.slideshow !== null) this.slides.slideshow.events.emit("message", ev);
       }
     }, false)
   },
@@ -297,6 +299,7 @@ var main = new Vue({
       });
       this.slides.names = this.slides.slideshow.getSlides().map(s => s.properties.name);
       if (slideIdx) { this.slides.slideshow.gotoSlideNumber(this.slides.slideshow.getSlides()[slideIdx].getSlideNumber()); }
+      this.slides.slideshow.events._events.createClone = this.createClone;
     },
     createClone: function () {
       if (!this.slides.slideshow.clone || this.slides.slideshow.clone.closed) {
