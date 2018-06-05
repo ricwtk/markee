@@ -40,7 +40,6 @@
       });
 
       window.addEventListener("message", (ev) => {
-        if (slideshow) slideshow.events.emit("message", ev);
         if (ev.data.msg == "set-source") {
           document.title = ev.data.title;
 
@@ -93,6 +92,9 @@
               slideshow.clone.focus();
             }
           }
+          window.addEventListener("keydown", ev => slideshow.events.emit("keydown", ev));
+          window.addEventListener("keyup", ev => slideshow.events.emit("keyup", ev));
+          window.addEventListener("keypress", ev => slideshow.events.emit("keypress", ev));
         } else if (ev.data == "clone-loaded") {
           ev.source.postMessage({
             msg: "set-source",
@@ -102,12 +104,18 @@
             codeBlockTheme: codeBlockTheme,
             customCSS: customCSS
           }, "*");
+        } else {
+          if (slideshow) {
+            slideshow.events.emit("message", ev);
+            if (slideshow.clone && !slideshow.clone.closed && ev.source !== slideshow.clone) {
+              slideshow.clone.postMessage(ev.data);
+            }
+            if (window.opener && ev.source !== window.opener) {
+              window.opener.postMessage(ev.data);
+            }
+          }
         }
       });
-
-      window.addEventListener("keydown", ev => slideshow.events.emit("keydown", ev));
-      window.addEventListener("keyup", ev => slideshow.events.emit("keyup", ev));
-      window.addEventListener("keypress", ev => slideshow.events.emit("keypress", ev));
     </script>
   </body>
 </html>
