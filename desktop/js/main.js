@@ -120,6 +120,18 @@ var main = new Vue({
     },
     "docContent": function () {
       if (this.renderOptions.docOrPres == 1) this.createSlideShow();
+      else {
+        if (this.docClone && !this.docClone.closed) {
+          this.docClone.postMessage({
+            msg: "set-source",
+            title: "Cloned: " + document.title,
+            content: this.docContent,
+            font: this.preferences.docDisplayFont,
+            codeBlockTheme: this.preferences.codeBlockTheme,
+            customCSS: this.preferences.customCSS
+          }, "*");
+        }
+      }
     }
   },
   mounted: function () {
