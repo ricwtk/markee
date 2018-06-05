@@ -43,6 +43,7 @@ function changeSplit(target) {
     [document.querySelector("#edit-panel"),
     document.querySelector("#display-panel")].forEach(el => {
       el.classList.add("grow");
+      el.style.width = "100%";
     })
   } else {
     [document.querySelector("#edit-panel"),
