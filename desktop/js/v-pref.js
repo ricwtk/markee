@@ -30,6 +30,16 @@ module.exports = {
         this.codeBlockTheme = this.savedPref.codeBlockTheme;
         this.customCSS = this.savedPref.customCSS;
         this.$el.querySelector(".modal-body").scrollTop = 0;
+        
+        window.addEventListener("keyup", this.escHandler);
+      } else {
+        window.removeEventListener("keyup", this.escHandler);
+      }
+    },
+    escHandler: function (ev) {
+      if (ev.code == "Escape") {
+        this.toggle();
+        ev.preventDefault();
       }
     },
     fontWeights: function (font) {

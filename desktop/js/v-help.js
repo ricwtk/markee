@@ -9,6 +9,17 @@ module.exports = {
   methods: {
     toggle: function () {
       this.$el.classList.toggle("active");
+      if (this.$el.classList.contains("active")) {
+        window.addEventListener("keyup", this.escHandler);
+      } else {
+        window.removeEventListener("keyup", this.escHandler);
+      }
+    },
+    escHandler: function (ev) {
+      if (ev.code == "Escape") {
+        this.toggle();
+        ev.preventDefault();
+      }
     },
     switchTo: function (x) {
       this.selected = x;
