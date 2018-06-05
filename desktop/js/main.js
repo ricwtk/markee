@@ -110,6 +110,16 @@ var main = new Vue({
   computed: {
     compiledDocContent: function () {
       return mdconverter.makeHtml(this.docContent);
+    },
+    cloneMessage: function () {
+      return {
+        msg: "set-source",
+        title: "Cloned: " + document.title,
+        content: this.docContent,
+        font: this.renderOptions.docOrPres == 0 ? this.preferences.docDisplayFont : this.preferences.presDisplayFont,
+        codeBlockTheme: this.preferences.codeBlockTheme,
+        customCSS: this.preferences.customCSS
+      }
     }
   },
   watch: {
@@ -122,14 +132,7 @@ var main = new Vue({
       if (this.renderOptions.docOrPres == 1) this.createSlideShow();
       else {
         if (this.docClone && !this.docClone.closed) {
-          this.docClone.postMessage({
-            msg: "set-source",
-            title: "Cloned: " + document.title,
-            content: this.docContent,
-            font: this.preferences.docDisplayFont,
-            codeBlockTheme: this.preferences.codeBlockTheme,
-            customCSS: this.preferences.customCSS
-          }, "*");
+          this.docClone.postMessage(this.cloneMessage, "*");
         }
       }
     }
@@ -182,24 +185,10 @@ var main = new Vue({
     window.addEventListener("message", (ev) => {
       if (ev.data == "clone-loaded") {
         // for clone window
-        ev.source.postMessage({
-          msg: "set-source",
-          title: "Cloned: " + document.title,
-          content: this.docContent,
-          font: this.preferences.presDisplayFont,
-          codeBlockTheme: this.preferences.codeBlockTheme,
-          customCSS: this.preferences.customCSS
-        }, "*");
+        ev.source.postMessage(this.cloneMessage, "*");
       } else if (ev.data == "doc-clone-loaded") {
         // for doc clone window
-        ev.source.postMessage({
-          msg: "set-source",
-          title: "Cloned: " + document.title,
-          content: this.docContent,
-          font: this.preferences.docDisplayFont,
-          codeBlockTheme: this.preferences.codeBlockTheme,
-          customCSS: this.preferences.customCSS
-        }, "*");
+        ev.source.postMessage(this.cloneMessage, "*");
       } else if (ev.data.msg == "scroll-top") {
         if (this.renderOptions.docOrPres == 0) {
           this.$refs.docDisplay.scrollTop = ev.data.scrollTop;
@@ -314,9 +303,10 @@ var main = new Vue({
       ta.selectionEnd = se + 1;
     },
     createSlideShow: function () {
-      let slideIdx;
+      let slideIdx, slideClone;
       if (this.slides.slideshow !== null) {
         slideIdx = this.slides.slideshow.getCurrentSlideIndex();
+        slideClone = this.slides.slideshow.clone;
       }
       let outer = this.$refs.presentationDisplay;
       while (outer.firstChild) outer.removeChild(outer.firstChild);
@@ -328,6 +318,10 @@ var main = new Vue({
         externalHighlighter: true
       });
       this.slides.names = this.slides.slideshow.getSlides().map(s => s.properties.name);
+      if (slideClone) {
+        this.slides.slideshow.clone = slideClone;
+        this.slides.slideshow.clone.postMessage(this.cloneMessage, "*");
+      }
       if (slideIdx) { this.slides.slideshow.gotoSlideNumber(this.slides.slideshow.getSlides()[slideIdx].getSlideNumber()); }
       this.slides.slideshow.events._events.createClone = this.createClone;
     },

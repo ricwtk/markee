@@ -49,7 +49,7 @@
       new Vue({
         el: "#customcss",
         data: { pref: pref }
-      })
+      });
       new Vue({
         el: "#container-wrapper",
         data: {
@@ -64,14 +64,7 @@
         watch: {
           "source": function () {
             if (this.docClone && !this.docClone.closed) {
-              this.docClone.postMessage({
-                msg: "set-source",
-                title: "Cloned: " + document.title,
-                content: this.pref.source,
-                font: this.pref.font,
-                codeBlockTheme: this.pref.codeBlockTheme,
-                customCSS: this.pref.customCSS
-              }, "*");
+              this.docClone.postMessage(getCloneMessage(), "*");
             }
           }
         },
@@ -110,19 +103,23 @@
           pref.font = ev.data.font;
           pref.customCSS = ev.data.customCSS;
         } else if (ev.data == "doc-clone-loaded") {
-          ev.source.postMessage({
-            msg: "set-source",
-            title: "Cloned: " + document.title,
-            content: pref.source,
-            font: pref.font,
-            codeBlockTheme: pref.codeBlockTheme,
-            customCSS: pref.customCSS
-          }, "*");
+          ev.source.postMessage(getCloneMessage(), "*");
         } else if (ev.data.msg == "scroll-top") {
           let el = document.getElementById("container");
           el.scrollTop = ev.data.scrollTop;
         }
       });
+
+      function getCloneMessage() {
+        return {
+          msg: "set-source",
+          title: "Cloned: " + document.title,
+          content: pref.source,
+          font: pref.font,
+          codeBlockTheme: pref.codeBlockTheme,
+          customCSS: pref.customCSS
+        }
+      }
     </script>
   </body>
 </html>
