@@ -29,6 +29,18 @@ function createWindow() {
     win = null;
   })
 
+  var handleRedirect = (e, urlStr) => {
+    if (urlStr != win.webContents.getURL() 
+      && urlStr != "file:///media/ricwtk/HDD_2/projects/markee/desktop/snippets/cloned-doc.html"
+      && urlStr != "file:///media/ricwtk/HDD_2/projects/markee/desktop/snippets/cloned-slides.html") {
+      e.preventDefault();
+      shell.openExternal(urlStr);
+    }
+  };
+  
+  win.webContents.on('will-navigate', handleRedirect)
+  win.webContents.on('new-window', handleRedirect)
+
   // let x = new BrowserWindow();
   // x.loadURL('data:text/html;charset=UTF-8,' + encodeURIComponent(
   //   `
