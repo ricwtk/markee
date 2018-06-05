@@ -1,5 +1,5 @@
 const path = require("path");
-const Vue = require(path.join(__dirname, "js", "vue.js"));
+const Vue = require(path.join(__dirname, "js", "vue.min.js"));
 const Split = require("split.js");
 // const {mdconverter, mdguides} = require(path.join(__dirname, "js", "md.js"));
 const os = require("os");

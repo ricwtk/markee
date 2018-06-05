@@ -1,1 +1,3 @@
 desktop/node_modules
+desktop/dist
+desktop/yarn-error.log

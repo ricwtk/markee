@@ -43,20 +43,20 @@ const menu = Menu.buildFromTemplate([
       {label: "Render as slides", accelerator: "CommandOrControl+Shift+S", click: () => { win.webContents.send("render-as-slides"); }}
     ]
   },
-  {
-    label: 'Dev',
-    submenu: [
-      {role: 'reload'},
-      {role: 'forcereload'},
-      {role: 'toggledevtools'},
-      {type: 'separator'},
-      {role: 'resetzoom'},
-      {role: 'zoomin'},
-      {role: 'zoomout'},
-      {type: 'separator'},
-      {role: 'togglefullscreen'}
-    ]
-  },
+  // {
+  //   label: 'Dev',
+  //   submenu: [
+  //     {role: 'reload'},
+  //     {role: 'forcereload'},
+  //     {role: 'toggledevtools'},
+  //     {type: 'separator'},
+  //     {role: 'resetzoom'},
+  //     {role: 'zoomin'},
+  //     {role: 'zoomout'},
+  //     {type: 'separator'},
+  //     {role: 'togglefullscreen'}
+  //   ]
+  // },
   {
     role: 'help',
     submenu: [
@@ -72,7 +72,11 @@ const menu = Menu.buildFromTemplate([
 
 
 function createWindow() {
-  win = new BrowserWindow({width: 800, height: 600});
+  win = new BrowserWindow({
+    icon: path.join(__dirname, "icons", "icon.png"), 
+    width: 800, 
+    height: 600
+  });
 
   // and load the index.html of the app.
   win.loadURL(url.format({
@@ -92,8 +96,8 @@ function createWindow() {
 
   var handleRedirect = (e, urlStr) => {
     if (urlStr != win.webContents.getURL() 
-      && urlStr != "file:///media/ricwtk/HDD_2/projects/markee/desktop/snippets/cloned-doc.html"
-      && urlStr != "file:///media/ricwtk/HDD_2/projects/markee/desktop/snippets/cloned-slides.html") {
+      && !urlStr.endsWith("snippets/cloned-doc.html")
+      && !urlStr.endsWith("snippets/cloned-slides.html")) {
       e.preventDefault();
       shell.openExternal(urlStr);
     }

@@ -1,15 +1,34 @@
 {
   "name": "markee-desktop",
+  "productName": "Markee",
   "version": "1.0.0",
-  "description": "Markdown editor",
+  "description": "Desktop app for Markee",
   "main": "index.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
-  "author": "",
+  "author": "Richard Wong",
   "license": "ISC",
+  "build": {
+    "appId": "com.ricwtk.markee",
+    "linux": {
+      "files": [
+        "build/icons",
+        "css",
+        "js",
+        "!js/vue.js",
+        "snippets",
+        "index.html",
+        "index.js"
+      ],
+      "asar": true
+    }
+  },
   "devDependencies": {
-    "electron": "^2.0.0"
+    "electron": "^2.0.0",
+    "electron-builder": "^20.15.1"
   },
   "dependencies": {
     "font-manager": "^0.3.0",
