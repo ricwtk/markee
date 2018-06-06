@@ -16,11 +16,12 @@
     "linux": {
       "files": [
         "build/icons",
+        "icons",
         "css",
         "js",
         "!js/vue.js",
         "snippets",
-        "index.html",
+        "main.html",
         "index.js"
       ],
       "asar": true
