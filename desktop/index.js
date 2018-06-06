@@ -131,19 +131,32 @@ app.on('activate', () => {
 });
 
 ipcMain.on("app-ready", (ev) => {
-  if (process.argv.length > 2) {
-    let p = path.parse(process.argv[2]);
+  let fileToRead;
+  if ((process.argv[0].endsWith("electron") && process.argv.length > 2)
+    || (!process.argv[0].endsWith("electron") && process.argv.length > 1)) {
+    fileToRead = process.argv[process.argv.length - 1];
+  }
+  if (fileToRead) {
+    let p = path.parse(fileToRead);
     win.setTitle([p.base, p.dir, "Markee"].join(" - "));
-    fs.readFile(process.argv[2], (err, data) => {
+    fs.readFile(fileToRead, (err, data) => {
       if (err) throw err;
       ev.sender.send("file-content", data.toString());
     });
   }
 });
 
-ipcMain.on("open-file", (ev, arg) => {
-  console.log("opening " + arg);
-  child_process.spawn(process.argv[0], [process.argv[1], arg], {
+ipcMain.on("open-file", (ev, extraArg) => {
+  console.log("opening " + extraArg);
+  let cmd, arg;
+  if (process.argv[0].endsWith("electron")) {
+    cmd = process.argv[0];
+    arg = [process.argv[1], extraArg];
+  } else {
+    cmd = process.argv[0];
+    arg = [extraArg];
+  }
+  child_process.spawn(cmd, arg, {
     detached: true,
     stdio: 'ignore'
   }).unref();
@@ -160,7 +173,15 @@ ipcMain.on("save-file", (ev, filename, content) => {
 
 function newFile() {
   console.log("opening new file");
-  child_process.spawn(process.argv[0], [process.argv[1]], {
+  let cmd, arg;
+  if (process.argv[0].endsWith("electron")) {
+    cmd = process.argv[0];
+    arg = [process.argv[1]];
+  } else {
+    cmd = process.argv[0];
+    arg = [];
+  }
+  child_process.spawn(cmd, arg, {
     detached: true,
     stdio: 'ignore'
   }).unref();
