@@ -60,12 +60,9 @@ const menu = Menu.buildFromTemplate([
   {
     role: 'help',
     submenu: [
-      {
-        label: "About Markee",
-        click () { require('electron').shell.openExternal('https://electronjs.org') }
-      },
+      {label: "About Markee", click: () => { shell.openExternal("https://ricwtk.github.io/markee/desktop") }},
       {label: "Markdown Guide", click: () => { win.webContents.send("open-help"); }},
-      {label: "Markee web"}
+      {label: "Markee web", click: () => { shell.openExternal("https://ricwtk.github.io/markee") }}
     ]
   }
 ]);
