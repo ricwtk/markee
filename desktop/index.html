@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="../css/materialdesignicons.min.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link href="https://fonts.googleapis.com/css?family=Oswald|Roboto:300,700" rel="stylesheet"> 
+    <style>
+      html {
+        font-family: "Roboto";
+      }
+      #header-bar {
+        font-family: "Oswald";
+        font-size: 2rem;
+      }
+      #header-bar img {
+        width: 1.5em;
+      }
+      #desc {
+        font-size: 1.5rem;
+        padding-top: 1.5em;
+        padding-bottom: 1.5em;
+      }
+      h1,h2,h3,h4,h5,h6 {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+    </style>
+  </head>
+  <body class="v-box">
+    <div class="h-box v-center h-center bg-primary-light p-1" id="header-bar">
+      <img src="icons/icon.png">
+      <div class="ml-1">Markee Desktop</div>
+    </div>
+    <div class="v-box v-center h-center p-2" id="desc">
+      The Markdown editor to create document and slideshow using Markdown.
+    </div>
+    <div class="h-box pb-2"><hr class="grow bd-gray-lighter"></div>
+    <div class="v-box p-2 h-center" id="download">
+      <h2>Download link</h2>
+      <table class="larger p-1">
+        <tr>
+          <td><i class="mdi mdi-linux"></i></td>
+          <td><a class="hv-bg-gray-light p-1 text-inherit" href="">AppImage</a></td>
+        </tr>
+        <!-- <tr>
+          <td><i class="mdi mdi-microsoft mr-2"></i></td>
+          <td><a href="">Installer</a></td>
+        </tr> -->
+      </table>
+    </div>
+    <div class="h-box p-2"><hr class="grow bd-gray-lighter"></div>
+    <div class="v-box p-2 h-center" id="feature">
+      <h2>Features</h2>
+      <div class="v-box mt-2 mb-2">
+        <div class="mdi mdi-24px mdi-laptop"></div>
+        <strong>create and edit files in local machine</strong>
+        You can create new markdown file and edit existing markdown file in the application
+      </div>
+      <div class="v-box mt-2 mb-2">
+        <div class="mdi mdi-24px mdi-markdown"></div>
+        <strong>render markdown</strong>
+        <div>Markdown syntax is supported using <a class="hv-bg-gray-light text-inherit" href="//github.com/showdownjs/showdown" target="_blank">Showdown</a></div>
+      </div>
+      <div class="v-box mt-2 mb-2">
+        <div class="mdi mdi-24px mdi-file-presentation-box"></div>
+        <strong>create presentation</strong>
+        Presentations are created using a library forked from the Remarkjs library
+      </div>
+      <div class="v-box mt-2 mb-2">
+        <div class="mdi mdi-24px mdi-presentation-play"></div>
+        <strong>fullscreen display</strong>
+        Fullscreen slideshow or document display can be launched directly within the application
+      </div>
+      <div class="v-box mt-2 mb-2">
+        <div class="mdi mdi-24px mdi-meteor"></div>
+        <strong>other features</strong>
+        Other features include presenter mode for slideshow, cloning of display, display sync between cloned and main display, content sync from main window to cloned display, &#8230;
+      </div>
+    </div>
+    <div id="web" class="v-box p-2 h-center bg-primary-light">
+      <h2>Markee Web <a href="//ricwtk.github.io/markee" target="_blank" class="text-inherit mdi mdi-open-in-new"></a></h2>
+      <div>
+        use Markee web to create and modify Markdown files on Google Drive
+      </div>
+    </div>    
+  </body>
+</html>
