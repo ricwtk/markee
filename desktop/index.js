@@ -67,6 +67,14 @@ const menu = Menu.buildFromTemplate([
   }
 ]);
 
+var handleRedirect = (e, urlStr) => {
+  if (urlStr != win.webContents.getURL() 
+    && !urlStr.endsWith("snippets/cloned-doc.html")
+    && !urlStr.endsWith("snippets/cloned-slides.html")) {
+    e.preventDefault();
+    shell.openExternal(urlStr);
+  }
+};
 
 function createWindow() {
   win = new BrowserWindow({
@@ -90,15 +98,6 @@ function createWindow() {
   win.on('closed', () => {
     win = null;
   })
-
-  var handleRedirect = (e, urlStr) => {
-    if (urlStr != win.webContents.getURL() 
-      && !urlStr.endsWith("snippets/cloned-doc.html")
-      && !urlStr.endsWith("snippets/cloned-slides.html")) {
-      e.preventDefault();
-      shell.openExternal(urlStr);
-    }
-  };
   
   win.webContents.on('will-navigate', handleRedirect)
   win.webContents.on('new-window', handleRedirect)
@@ -231,4 +230,9 @@ ipcMain.on("get-preferences", (ev) => {
 });
 ipcMain.on("save-preferences", (ev, arg) => {
   fs.writeFileSync(getPrefLocation().location, JSON.stringify(arg, null, 2));
+});
+
+ipcMain.on("configure-clone", ev => {
+  ev.sender.on('will-navigate', handleRedirect)
+  ev.sender.on('new-window', handleRedirect)
 });

@@ -35,6 +35,8 @@
       require(path.join(__dirname, "..", "js", "showdown-timeline-ext.js"));
       require(path.join(__dirname, "..", "js", "showdown-highlightjs-ext.js"));
       const mdconverter = require(path.join(__dirname, "..", "js", "md-converter.js"));
+      const {ipcRenderer} = require("electron");
+      ipcRenderer.send("configure-clone");
       var pref = {
         source: "",
         font: {},
