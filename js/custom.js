@@ -306,6 +306,9 @@ new Vue({
     },
     openPreferences: function () {
       modalPreferences.toggleModal();
+    },
+    openMarkeeDesktop: function () {
+      window.open("//ricwtk.github.io/markee/desktop", "_blank");
     }
   },
   mounted: function () {

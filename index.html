@@ -53,6 +53,7 @@
           <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-download" data-tooltip="Save as html file" @click="saveAsHtml" v-if="!savingashtml && openedFile.parents.length > 0"></span>
           <span class="tooltip tooltip-bottom px-2 mdi mdi-24px mdi-loading mdi-spin" data-tooltip="Saving as html file" v-if="savingashtml"></span>
           <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-settings" data-tooltip="Preferences" @click="openPreferences"></span>
+          <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-laptop" data-tooltip="Markee desktop" @click="openMarkeeDesktop"></span>
           <div class="divider-vert"></div>
           <span id="user" class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-account-circle" data-tooltip="User" @click="clickUser"></span>
         </section>
