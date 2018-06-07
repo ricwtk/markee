@@ -170,15 +170,55 @@
           <strong>Preferences</strong>
         </div>
         <div class="modal-body v-box">
-          <h5>Syntax theme</h5>
-          <div class="divider"></div>
-          <div class="v-box">
+          <div>
+            <strong>Editor font</strong>
+            <small>Fonts are provided by <a href="https://fonts.google.com/" target="_blank">Google Fonts</a>.</small>
+          </div>
+          <div class="h-box">
+            <select class="grow-3 form-select mr-1" v-model="editorFont['font-family']"><option v-for="ff in fontFamilies" :value="ff">{{ ff }}</option></select>
+            <select class="grow-1 form-select mr-1" v-model="editorFont['font-weight']"><option v-for="fw in getFontWeights(editorFont['font-family'])" :value="fw">{{ fw }}</option></select>
+            <select class="grow-1 form-select" v-model="editorFont['font-size']"><option v-for="n in fontSizes" :value="n + 'px'">{{ n + 'px' }}</option></select>
+          </div>
+          <div class="py-1" :style="{ 'font-family': editorFont['font-family'], 'font-weight': editorFont['font-weight'], 'font-size': editorFont['font-size'] }">
+            {{ fontExample }}
+          </div>
+
+          <div class="py-2"></div>
+
+          <strong>Base font for display</strong>
+          <div class="v-box ml-2">
+            <div class="form-label">Document</div>
+            <div class="h-box">
+                <select class="grow-3 form-select mr-1" v-model="docFont['font-family']"><option v-for="ff in fontFamilies" :value="ff">{{ ff }}</option></select>
+                <select class="grow-1 form-select mr-1" v-model="docFont['font-weight']"><option v-for="fw in getFontWeights(docFont['font-family'])" :value="fw">{{ fw }}</option></select>
+                <select class="grow-1 form-select" v-model="docFont['font-size']"><option v-for="n in fontSizes" :value="n + 'px'">{{ n + 'px' }}</option></select>
+            </div>
+            <div class="py-1" :style="{ 'font-family': docFont['font-family'], 'font-weight': docFont['font-weight'], 'font-size': docFont['font-size'] }">
+              {{ fontExample }}
+            </div>
+          </div>
+          <div class="v-box ml-2">
+            <div class="form-label">Presentation</div>
+            <div class="h-box">
+                <select class="grow-3 form-select mr-1" v-model="slideFont['font-family']"><option v-for="ff in fontFamilies" :value="ff">{{ ff }}</option></select>
+                <select class="grow-1 form-select mr-1" v-model="slideFont['font-weight']"><option v-for="fw in getFontWeights(slideFont['font-family'])" :value="fw">{{ fw }}</option></select>
+                <select class="grow-1 form-select" v-model="slideFont['font-size']"><option v-for="n in fontSizes" :value="n + 'px'">{{ n + 'px' }}</option></select>
+            </div>
+            <div class="py-1" :style="{ 'font-family': slideFont['font-family'], 'font-weight': slideFont['font-weight'], 'font-size': slideFont['font-size'] }">
+              {{ fontExample }}
+            </div>
+          </div>
+
+          <div class="py-2"></div>
+          
+          <strong>Syntax theme</strong>
+          <div class="v-box ml-2">
             <div class="form-label">Default</div>
             <select class="form-select" v-model="defaultSyntaxTheme">
               <option v-for="hlt in hltheme.list" :value="hlt">{{ hlt }}</option>
             </select>
           </div>
-          <div class="v-box" v-if="hasLocation">
+          <div class="v-box ml-2" v-if="hasLocation">
             <div class="h-box">
               <div class="form-label mr-2">This document</div>
               <label class="form-switch"><input type="checkbox" v-model="useSeparateSyntaxTheme"><i class="form-icon"></i></label>
@@ -187,6 +227,16 @@
               <option v-for="hlt in hltheme.list" :value="hlt">{{ hlt }}</option>
             </select>
           </div>
+
+          <div class="py-2"></div>
+
+          <strong>Custom CSS</strong>
+          <textarea class="form-input" rows="10" style="overflow: initial; resize: none;" 
+            v-model="customCSS"
+            @keydown.tab.prevent="addTab"
+          ></textarea>
+
+          <div class="py-2"></div>
         </div>
       </div>
     </div>
@@ -272,6 +322,7 @@
           v-model="openedFile.raw"
           :maximisable="false"
           :actions="editorActions"
+          :font-style="editorFontStyle"
           @addtab="addTab"
           @boldtext="boldText"
           @italictext="italicText"
@@ -288,6 +339,7 @@
           content-theme="default"
           :maximisable="true"
           :actions="displayActions"
+          :font-style="docOrPres==0 ? docFontStyle : slideFontStyle"
           :doc-or-pres="docOrPres"
           :current-slide="currentSlideNumber"
           :slides-name="slidesName"

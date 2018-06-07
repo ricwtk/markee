@@ -1,5 +1,73 @@
 var split;
 var presentationView;
+var gfFonts = {
+  list: []
+};
+
+let gfReq = new Request("https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyDMQVW72MRoWlANqcx0CjbFzeIKisRuAhc&sort=alpha");
+fetch(gfReq).then(resp => {
+  if (resp.status == 200) {
+    resp.json().then(res => {
+      gfFonts.list = res.items;
+    })
+  }
+})
+
+const DFTS = {
+  editorFont: {
+    "font-family": "Roboto",
+    "font-weight": "regular",
+    "font-size": "12px"
+  },
+  slideFont: {
+    "font-family": "Roboto",
+    "font-weight": "regular",
+    "font-size": "12px"
+  },
+  docFont: {
+    "font-family": "Roboto",
+    "font-weight": "regular",
+    "font-size": "12px"
+  },
+}
+
+function updateLoadedFont() {
+  let head = document.querySelector("head");
+  let el = head.querySelector("link#fonts");
+  let fonts = {};
+  [modalPreferences.editorFont, modalPreferences.docFont, modalPreferences.slideFont].forEach(fn => {
+    if (Object.keys(fonts).includes(fn["font-family"])) {
+      if (!fonts[fn["font-family"]].includes(fn["font-weight"])) {
+        fonts[fn["font-family"]].push(fn["font-weight"]);
+      }
+    } else {
+      fonts[fn["font-family"]] = [fn["font-weight"]];
+    }
+  })
+  let ln = "https://fonts.googleapis.com/css?family=" + Object.entries(fonts).map(([ff, fws]) => ff + ":" + fws.join(",")).join("|");
+  if (el) {
+    el.href = ln;
+  } else {
+    el = document.createElement("link");
+    el.id = "fonts";
+    el.rel = "stylesheet";
+    el.href = ln;
+    head.appendChild(el);
+  }
+}
+
+function updateCustomCSS() {
+  let head = document.querySelector("head");
+  let el = head.querySelector("style#customcss");
+  if (el) {
+    el.innerHTML = modalPreferences.customCSS;
+  } else {
+    el = document.createElement("style");
+    el.id = "customcss";
+    el.innerHTML = modalPreferences.customCSS;
+    head.appendChild(el);
+  }
+}
 
 function updateSplit(target) {
   if (!presentationView) {
@@ -360,9 +428,67 @@ var modalPreferences = new Vue({
   el: "#modal-preferences",
   data: {
     hltheme: hltheme,
-    savedDocumentSyntaxTheme: null
+    savedDocumentSyntaxTheme: null,
+    gfFonts: gfFonts,
+    fontSizes: [...Array(21).keys()].slice(8),
+    fontExample: "The quick brown fox jumps over the lazy dog. 0123456789",
+    lastCustomCSSEdit: 0
   },
   computed: {
+    fontFamilies: function () {
+      return this.gfFonts.list.map(f => f.family);
+    },
+    editorFont: function () {
+      let fn = {};
+      let vi = this;
+      Object.defineProperty(fn, "font-family", {
+        get: () => signedInUser.preferences.editorFont ? signedInUser.preferences.editorFont["font-family"] : DFTS.editorFont["font-family"],
+        set: function (ff) { vi.setFn("editorFont", "font-family", ff, this); }
+      });
+      Object.defineProperty(fn, "font-weight", {
+        get: () => signedInUser.preferences.editorFont ? signedInUser.preferences.editorFont["font-weight"] : DFTS.editorFont["font-weight"],
+        set: function (fw) { vi.setFn("editorFont", "font-weight", fw, this); }
+      });
+      Object.defineProperty(fn, "font-size", {
+        get: () => signedInUser.preferences.editorFont ? signedInUser.preferences.editorFont["font-size"] : DFTS.editorFont["font-size"],
+        set: function (fs) { vi.setFn("editorFont", "font-size", fs, this); }
+      });
+      return fn;
+    },
+    slideFont: function () {
+      let fn = {};
+      let vi = this;
+      Object.defineProperty(fn, "font-family", {
+        get: () => signedInUser.preferences.slideFont ? signedInUser.preferences.slideFont["font-family"] : DFTS.slideFont["font-family"],
+        set: function (ff) { vi.setFn("slideFont", "font-family", ff, this); }
+      });
+      Object.defineProperty(fn, "font-weight", {
+        get: () => signedInUser.preferences.slideFont ? signedInUser.preferences.slideFont["font-weight"] : DFTS.slideFont["font-weight"],
+        set: function (fw) { vi.setFn("slideFont", "font-weight", fw, this); }
+      });
+      Object.defineProperty(fn, "font-size", {
+        get: () => signedInUser.preferences.slideFont ? signedInUser.preferences.slideFont["font-size"] : DFTS.slideFont["font-size"],
+        set: function (fs) { vi.setFn("slideFont", "font-size", fs, this); }
+      });
+      return fn;
+    },
+    docFont: function () {
+      let fn = {};
+      let vi = this;
+      Object.defineProperty(fn, "font-family", {
+        get: () => signedInUser.preferences.docFont ? signedInUser.preferences.docFont["font-family"] : DFTS.docFont["font-family"],
+        set: function (ff) { vi.setFn("docFont", "font-family", ff, this); }
+      });
+      Object.defineProperty(fn, "font-weight", {
+        get: () => signedInUser.preferences.docFont ? signedInUser.preferences.docFont["font-weight"] : DFTS.docFont["font-weight"],
+        set: function (fw) { vi.setFn("docFont", "font-weight", fw, this); }
+      });
+      Object.defineProperty(fn, "font-size", {
+        get: () => signedInUser.preferences.docFont ? signedInUser.preferences.docFont["font-size"] : DFTS.docFont["font-size"],
+        set: function (fs) { vi.setFn("docFont", "font-size", fs, this); }
+      });
+      return fn;
+    },
     defaultSyntaxTheme: {
       get: function () {
         return signedInUser.preferences.defaultSyntaxTheme || "default";
@@ -407,6 +533,22 @@ var modalPreferences = new Vue({
         updateSyntaxTheme();
       }
     },
+    customCSS: {
+      get: function () {
+        return signedInUser.preferences.customCSS || "";
+      },
+      set: function (cCSS) {
+        this.$set(signedInUser.preferences, "customCSS", cCSS);
+        let currentEdit = Date.now();
+        setTimeout(() => {
+          if (this.lastCustomCSSEdit == currentEdit) {
+            gd.prefSetCustomCSS(cCSS);
+            updateCustomCSS();
+          }
+        }, 1000);
+        this.lastCustomCSSEdit = currentEdit;
+      }
+    },
     hasLocation: function () {
       return openedFile.id ? true : false;
     }
@@ -421,6 +563,39 @@ var modalPreferences = new Vue({
         }
       }
       this.$el.classList.toggle("active");
+    },
+    addTab: function (ev) {
+      let ta = ev.target,
+        tStart = ta.selectionStart, 
+        tEnd = ta.selectionEnd;
+      this.customCSS = this.customCSS.slice(0, tStart) + "  " + this.customCSS.slice(tEnd);
+      this.$nextTick(() => {
+        ta.selectionStart = tStart + 2;
+        ta.selectionEnd = tStart + 2;
+      });
+    },
+    setFn: function (objectName, propertyName, propertyValue, fontObj) {
+      if (propertyName == "font-family") { // validate font weight
+        let aw = this.getFontWeights(propertyValue);
+        if (!aw.includes(fontObj["font-weight"])) {
+          fontObj["font-weight"] = aw.includes("regular") ? "regular" : aw[0];
+        }
+      }
+      let fontStyle = {
+        "font-family": propertyName == "font-family" ? propertyValue : fontObj["font-family"],
+        "font-weight": propertyName == "font-weight" ? propertyValue : fontObj["font-weight"],
+        "font-size": propertyName == "font-size" ? propertyValue : fontObj["font-size"],
+      };
+      this.$set(signedInUser.preferences, objectName, fontStyle);
+      gd.prefSetFont(objectName, fontStyle);
+
+      updateLoadedFont();
+    },
+    getFontWeights: function (ff) {
+      return (this.gfFonts.list.length > 0 ? this.gfFonts.list.find(el => el.family == ff).variants : []).filter(el => !el.includes("italic"));
+    },
+    validateWeight: function (fontPref, fontDefault) {
+      return fontPref ? fontPref["font-weight"] : fontDefault
     }
   }
 });
@@ -594,7 +769,7 @@ var modalFileExplorer = new Vue({
 })
 
 var contentContainer = {
-  props: ["contenteditable", "wrapperId", "hideMd", "value", "contentTheme", "maximisable", "actions", "docOrPres", "currentSlide", "slidesName"],
+  props: ["contenteditable", "wrapperId", "hideMd", "value", "contentTheme", "maximisable", "actions", "docOrPres", "currentSlide", "slidesName", "fontStyle"],
   data: function () {
     return {
       height: 80,
@@ -669,7 +844,7 @@ var contentContainer = {
   template: `
   <span :id="wrapperId" :class="wrapperClass">
     <div :class="['actual', 'grow', 'relative', 'md-'+contentTheme, 'v-box']" ref="innerWrapper" :style="innerWrapperStyle">
-      <textarea v-if="contenteditable" class="p-1 grow" ref="textarea" 
+      <textarea v-if="contenteditable" class="p-1 grow" ref="textarea" :style="fontStyle"
         :value="value" 
         @input="sendEditedContent" 
         @keydown.tab="addTab"
@@ -678,10 +853,11 @@ var contentContainer = {
         @keyup.ctrl.73.exact="italicText"
         @keydown.ctrl.73.exact="e => e.preventDefault()">
       </textarea>
-      <div v-else-if="docOrPres == 0" v-html="value" class="p-1 grow content-display" style="overflow-y: scroll; background-color: white;" ref="docDisplay">
+      <div v-else-if="docOrPres == 0" v-html="value" class="p-1 grow content-display" style="overflow-y: scroll; background-color: white;" ref="docDisplay" :style="fontStyle">
       </div>
       <div v-else class="presentation-wrapper grow relative" 
         @wheel.prevent="$emit('p-wh', $event.deltaY)"
+        :style="fontStyle"
       >
         <div class="presentation-display"
           @keyup.67.exact="customEmit('clone-presentation')"
@@ -835,6 +1011,38 @@ var content = new Vue({
         }]);
       }
       return actions;
+    },
+    editorFontStyle: function () {
+      return {
+        "font-family": modalPreferences.editorFont["font-family"],
+        "font-weight": modalPreferences.editorFont["font-weight"],
+        "font-size": modalPreferences.editorFont["font-size"]
+      }
+    },
+    docFontStyle: function () {
+      return {
+        "font-family": modalPreferences.docFont["font-family"],
+        "font-weight": modalPreferences.docFont["font-weight"],
+        "font-size": modalPreferences.docFont["font-size"]
+      }
+    },
+    slideFontStyle: function () {
+      return {
+        "font-family": modalPreferences.slideFont["font-family"],
+        "font-weight": modalPreferences.slideFont["font-weight"],
+        "font-size": modalPreferences.slideFont["font-size"]
+      }
+    },
+    cloneMessage: function () {
+      return {}
+      // return {
+      //   msg: "set-source",
+      //   title: "Cloned: " + document.title,
+      //   content: this.openedFile.raw,
+      //   font: this.docOrPres == 0 ? this.preferences.docDisplayFont : this.preferences.presDisplayFont,
+      //   codeBlockTheme: this.preferences.codeBlockTheme,
+      //   customCSS: this.preferences.customCSS
+      // }
     }
   },
   components: {
@@ -984,7 +1192,9 @@ function initApis() {
           if (pref.renderAsPresentation && pref.renderAsPresentation.includes(openedFile.id)) {
             renderAsSlides();
           }
+          updateLoadedFont();
           updateSyntaxTheme();
+          updateCustomCSS();
         });
       } else {
         notiObj.notify(`The signed in user is not the same as the user who opened this page. You can solve this by

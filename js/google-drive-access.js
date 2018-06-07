@@ -297,6 +297,24 @@
       }
     }
 
+    this.prefSetFont = (fontName, fontStyle) => {
+      if (this.signedIn) {
+        return this.getPreferences().then(pref => {
+          pref[fontName] = fontStyle;
+          return this.savePreferences(pref);
+        });
+      }
+    }
+
+    this.prefSetCustomCSS = (customCSS) => {
+      if (this.signedIn) {
+        return this.getPreferences().then(pref => {
+          pref.customCSS = customCSS;
+          return this.savePreferences(pref);
+        });
+      }
+    }
+
     this.init();
   }
 
