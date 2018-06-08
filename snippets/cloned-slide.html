@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link id="codeblocktheme" rel="stylesheet" :href="target">
+    <style id="customcss">{{ pref.customCSS }}</style>
+    <link rel="icon" type="image/png" href="../icons/icon.png?v=1.0">
+    <link rel="stylesheet" href="../css/md-themes.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/materialdesignicons.min.css">
+    <script src="../js/vue.min.js"></script>
+    <script src="../js/highlight.pack.js"></script>    
+    <script src="../js/showdown.js"></script>
+    <script src="../js/showdown-timeline-ext.js"></script>
+    <script src="../js/showdown-highlightjs-ext.js"></script>
+    <script src="../js/md-converter.js"></script>
+    <script src="../js/remark.min.js"></script>
+  </head>
+  <body class="md-default v-box">
+    <div id="container-wrapper" class="grow pos-relative v-box">
+      <div id="container-container" class="grow pos-relative">
+        <div id="container" class="full-width full-height" ref="container" :style="pref.font"></div>
+      </div>
+      <div id="controls" class="h-box p-1 bg-gray-light">
+        <div class="grow"></div>
+        <div class="button-group">
+          <button class="btn" data-tooltip="Toggle blackout" @click="slideshow.toggleBlackout()"><i class="mdi mdi-image-off"></i></button>
+          <button class="btn" data-tooltip="Clone" @click="slideshow.createClone()"><i class="mdi mdi-checkbox-multiple-blank-outline"></i></button>
+          <button class="btn" data-tooltip="Presenter mode" @click="slideshow.togglePresenterMode()"><i class="mdi mdi-file-presentation-box"></i></button>
+          <button class="btn" data-tooltip="Present" @click="slideshow.toggleFullscreen()"><i class="mdi mdi-presentation-play"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var pref = {
+        source: "",
+        font: {},
+        codeBlockTheme: "",
+        customCSS: ""
+      }
+      new Vue({
+        el: "#codeblocktheme",
+        data: { pref: pref }, 
+        computed: { target: function () { return pref.codeBlockTheme ? "../css/highlight/" + pref.codeBlockTheme + ".css" : "" } }
+      });
+      new Vue({
+        el: "#customcss",
+        data: { pref: pref }
+      });
+      new Vue({
+        el: "#container-wrapper",
+        data: {
+          pref: pref,
+          slideshow: null
+        },
+        computed: {
+          cloneMessage: function () {
+            return {
+              msg: "set-source",
+              title: "Cloned: " + document.title,
+              content: this.pref.source,
+              font: this.pref.font,
+              codeBlockTheme: this.pref.codeBlockTheme,
+              customCSS: this.pref.customCSS
+            }
+          }
+        },
+        watch: {
+          "pref.source": function () {
+            let outer = this.$refs.container;
+            while (outer.firstChild) outer.removeChild(outer.firstChild);
+            outer.classList.remove("remark-container");
+            let oldClone, oldSlideIdx;
+            if (this.slideshow) {
+              oldClone = this.slideshow.clone;
+              oldSlideIdx = this.slideshow.getCurrentSlideIndex();
+            }
+            this.slideshow = remark.create({
+              container: outer,
+              source: pref.source,
+              converter: mdconverter,
+              externalHighlighter: true
+            });
+            if (oldClone) {
+              this.slideshow.clone = oldClone;
+              this.slideshow.clone.postMessage(this.cloneMessage, "*");
+            }
+            let allSlides = this.slideshow.getSlides();
+            if (oldSlideIdx && allSlides.length > oldSlideIdx) this.slideshow.gotoSlide(allSlides[oldSlideIdx].getSlideNumber());
+            this.slideshow.events._events.createClone = () => {
+              if (!this.slideshow.clone || this.slideshow.clone.closed) {
+                this.slideshow.clone = window.open(window.location, "Cloned: " + document.title, 'menubar=no,location=no');
+              }
+              else {
+                this.slideshow.clone.focus();
+              }
+            }
+            this.slideshow.events._events.mousewheel = () => {};
+          }
+        },
+        mounted: function () {
+          window.addEventListener("keydown", ev => this.slideshow ? this.slideshow.events.emit("keydown", ev) : null);
+          window.addEventListener("keyup", ev => this.slideshow ? this.slideshow.events.emit("keyup", ev) : null);
+          window.addEventListener("keypress", ev => this.slideshow ? this.slideshow.events.emit("keypress", ev) : null);
+          window.addEventListener("wheel", ev => {
+            if (this.slideshow) {
+              if (ev.deltaY > 0) {
+                this.slideshow.gotoNextSlide();
+              } else if (ev.deltaY < 0) {
+                this.slideshow.gotoPreviousSlide();        
+              }
+            }
+          });
+          window.addEventListener("message", (ev) => {
+            if (ev.data.msg == "set-source") {
+              document.title = ev.data.title;
+              this.pref.source = ev.data.content;
+              this.pref.font = ev.data.font;
+              this.pref.codeBlockTheme = ev.data.codeBlockTheme;
+              this.pref.customCSS = ev.data.customCSS;
+            } else if (ev.data == "slide-clone-loaded") {
+              ev.source.postMessage(this.cloneMessage, "*");
+            } else {
+              if (this.slideshow) {
+                this.slideshow.events.emit("message", ev);
+                if (this.slideshow.clone && !this.slideshow.clone.closed && ev.source !== this.slideshow.clone) {
+                  this.slideshow.clone.postMessage(ev.data);
+                }
+                if (window.opener && ev.source !== window.opener) {
+                  window.opener.postMessage(ev.data, "*");
+                }
+              }
+            }
+          });
+        }
+      });
+
+      window.addEventListener("load", () => {
+        window.opener.postMessage("slide-clone-loaded", "*");
+      });
+    </script>
+  </body>
+</html>

@@ -345,6 +345,8 @@
           :slides-name="slidesName"
           @toggle-view="switchTo('editor-wrapper')"      
           @toggle-render="toggleRender"
+          @clone-doc="cloneDoc"
+          @scroll-doc="scrollDoc"
           @toggle-presentation="slideshow.toggleFullscreen()"
           @toggle-presenter-mode="slideshow.togglePresenterMode()"
           @next-slide="slideshow.gotoNextSlide()"

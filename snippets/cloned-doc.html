@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link id="codeblocktheme" rel="stylesheet" :href="target">
+    <style id="customcss">{{ pref.customCSS }}</style>
+    <link rel="icon" type="image/png" href="../icons/icon.png?v=1.0">
+    <link rel="stylesheet" href="../css/md-themes.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/materialdesignicons.min.css">
+    <script src="../js/vue.min.js"></script>
+    <script src="../js/highlight.pack.js"></script>    
+    <script src="../js/showdown.js"></script>
+    <script src="../js/showdown-timeline-ext.js"></script>
+    <script src="../js/showdown-highlightjs-ext.js"></script>
+    <script src="../js/md-converter.js"></script>
+  </head>
+  <body class="md-default v-box">
+    <div id="container-wrapper" class="grow v-box">
+      <div id="container" class="grow p-2 bg-gray-lighter overflow-auto full-width full-height" 
+        @scroll.passive="scrollDoc" 
+        v-html="compiled"
+        :style="pref.font"
+        ref="container"
+      ></div>
+      <div id="controls" class="h-box p-1 bg-gray-light">
+        <div class="grow"></div>
+        <div class="button-group">
+          <button class="btn" data-tooltip="Clone" @click="createClone"><i class="mdi mdi-checkbox-multiple-blank-outline"></i></button>
+          <button class="btn" data-tooltip="Present" @click="toggleFullscreen"><i class="mdi mdi-presentation-play"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var pref = {
+        source: "",
+        font: {},
+        codeBlockTheme: "",
+        customCSS: ""
+      }
+      new Vue({
+        el: "#codeblocktheme",
+        data: { pref: pref }, 
+        computed: { target: function () { return pref.codeBlockTheme ? "../css/highlight/" + pref.codeBlockTheme + ".css" : "" } }
+      });
+      new Vue({
+        el: "#customcss",
+        data: { pref: pref }
+      });
+      new Vue({
+        el: "#container-wrapper",
+        data: {
+          pref: pref,
+          docClone: null,
+          scrollSource: null
+        },
+        computed: {
+          compiled: function () {
+            return mdconverter.makeHtml(this.pref.source);
+          }
+        },
+        watch: {
+          "source": function () {
+            if (this.docClone && !this.docClone.closed) {
+              this.docClone.postMessage(getCloneMessage(), "*");
+            }
+          }
+        },
+        methods: {
+          scrollDoc: function (ev) {
+            msg = { msg: "scroll-top", scrollTop: ev.target.scrollTop };
+            if (window.opener && this.scrollSource !== window.opener) {
+              window.opener.postMessage(msg, "*");
+            }
+            if (this.docClone && this.scrollSource !== this.docClone) {
+              this.docClone.postMessage(msg, "*");
+            }
+            this.scrollSource = null;
+          },
+          toggleFullscreen: function () {
+            let el = this.$refs.container;
+            if (el.requestFullscreen) {
+              el.requestFullscreen();
+            } else if (el.mozRequestFullScreen) {
+              el.mozRequestFullScreen();
+            } else if (el.webkitRequestFullScreen) {
+              el.webkitRequestFullScreen();
+            } else if (el.msRequestFullscreen) {
+              el.msRequestFullscreen();
+            }
+          },
+          createClone: function () {
+            if (!this.docClone || this.docClone.closed) {
+              this.docClone = window.open(window.location, "Cloned: " + document.title, 'menubar=no,location=no');
+            } else {
+              this.docClone.focus();
+            }
+          }
+        },
+        mounted: function () {
+          window.addEventListener("message", (ev) => {
+            if (ev.data.msg == "set-source") {
+              document.title = ev.data.title;
+              pref.source = ev.data.content;
+              pref.codeBlockTheme = ev.data.codeBlockTheme;
+              pref.font = ev.data.font;
+              pref.customCSS = ev.data.customCSS;
+            } else if (ev.data == "doc-clone-loaded") {
+              ev.source.postMessage(getCloneMessage(), "*");
+            } else if (ev.data.msg == "scroll-top") {
+              this.scrollSource = ev.source;
+              let el = document.getElementById("container");
+              el.scrollTop = ev.data.scrollTop;
+            }
+          });
+        }
+      })
+
+      window.addEventListener("load", () => {
+        window.opener.postMessage("doc-clone-loaded", "*");
+      });
+
+      function getCloneMessage() {
+        return {
+          msg: "set-source",
+          title: "Cloned: " + document.title,
+          content: pref.source,
+          font: pref.font,
+          codeBlockTheme: pref.codeBlockTheme,
+          customCSS: pref.customCSS
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -533,6 +533,9 @@ var modalPreferences = new Vue({
         updateSyntaxTheme();
       }
     },
+    actualSyntaxTheme: function () {
+      return this.useSeparateSyntaxTheme ? this.documentSyntaxTheme : this.defaultSyntaxTheme;
+    },
     customCSS: {
       get: function () {
         return signedInUser.preferences.customCSS || "";
@@ -840,6 +843,11 @@ var contentContainer = {
     customEmit: function (msg) {
       this.$emit(msg);
     },
+    setScrollTop: function (scrollTop) {
+      if (!this.contenteditable && this.docOrPres == 0) {
+        this.$refs.docDisplay.scrollTop = scrollTop;
+      }
+    }
   },
   template: `
   <span :id="wrapperId" :class="wrapperClass">
@@ -853,7 +861,12 @@ var contentContainer = {
         @keyup.ctrl.73.exact="italicText"
         @keydown.ctrl.73.exact="e => e.preventDefault()">
       </textarea>
-      <div v-else-if="docOrPres == 0" v-html="value" class="p-1 grow content-display" style="overflow-y: scroll; background-color: white;" ref="docDisplay" :style="fontStyle">
+      <div v-else-if="docOrPres == 0" v-html="value" 
+        class="p-1 grow content-display" 
+        style="overflow-y: scroll; background-color: white;" 
+        ref="docDisplay" 
+        @scroll.passive="$emit('scroll-doc', $event)"
+        :style="fontStyle">
       </div>
       <div v-else class="presentation-wrapper grow relative" 
         @wheel.prevent="$emit('p-wh', $event.deltaY)"
@@ -900,17 +913,21 @@ var content = new Vue({
     distractFree: {
       editor: false,
       display: false
-    }
+    },
+    docClone: null,
+    scrollSource: null
   },
   computed: {
     compiledDoc: function () {
       if (this.docOrPres == 0) {
+        if (this.docClone && !this.docClone.closed) { this.docClone.postMessage(this.cloneMessage, "*"); }
         return mdconverter.makeHtml(this.openedFile.raw);
       } else {
         this.$nextTick(() => {
-          let slideIdx;
+          let slideIdx, slideClone;
           if (this.slideshow !== null) {
             slideIdx = this.slideshow.getCurrentSlideIndex();
+            slideClone = this.slideshow.clone;
           }
           let outer = document.querySelector("#display-wrapper .presentation-display");
           while (outer.firstChild) outer.removeChild(outer.firstChild);
@@ -922,6 +939,9 @@ var content = new Vue({
             externalHighlighter: true
           });
           this.slidesName = this.slideshow.getSlides().map(s => s.properties.name);
+          this.slideshow.clone = slideClone;
+
+          if (this.slideshow.clone) this.slideshow.clone.postMessage(this.cloneMessage, "*");
 
           function addCallback(ss, eventName, callback) {
             let orig = ss.events._events[eventName];
@@ -940,10 +960,14 @@ var content = new Vue({
           addCallback(this.slideshow, "slidesChanged", () => {
             this.currentSlideNumber = this.slideshow.getCurrentSlideIndex() + 1;
           });
-          addCallback(this.slideshow, "createClone", () => {
-            let clone = this.slideshow.clone;
-            clone.presentationView = true;
-          })
+          this.slideshow.events._events.createClone = () => {
+            if (!this.slideshow.clone || this.slideshow.clone.closed) {
+              this.slideshow.clone = window.open("snippets/cloned-slide.html", "Cloned: " + document.title, 'menubar=no,location=no');
+            } else {
+              this.slideshow.clone.focus();
+            }
+          }
+          this.slideshow.events._events.mousewheel = () => {};
           
           if (slideIdx) { this.slideshow.gotoSlideNumber(this.slideshow.getSlides()[slideIdx].getSlideNumber()); }
           this.currentSlideNumber = this.slideshow.getCurrentSlideIndex() + 1;
@@ -985,7 +1009,13 @@ var content = new Vue({
         emit: 'toggle-fullscreen',
         tooltip: "toggle fullscreen"
       });
-      if (this.docOrPres == 1) {
+      if (this.docOrPres == 0) {
+        actions = actions.concat([{
+          class: ["mdi-content-duplicate"],
+          emit: "clone-doc",
+          tooltip: "clone document"
+        }]);
+      } else {
         actions = actions.concat([{
           class: ["mdi-file-presentation-box"],
           emit: "toggle-presenter-mode",
@@ -1034,15 +1064,20 @@ var content = new Vue({
       }
     },
     cloneMessage: function () {
-      return {}
-      // return {
-      //   msg: "set-source",
-      //   title: "Cloned: " + document.title,
-      //   content: this.openedFile.raw,
-      //   font: this.docOrPres == 0 ? this.preferences.docDisplayFont : this.preferences.presDisplayFont,
-      //   codeBlockTheme: this.preferences.codeBlockTheme,
-      //   customCSS: this.preferences.customCSS
-      // }
+      let fn = this.docOrPres == 0 ? modalPreferences.docFont : modalPreferences.slideFont;
+      fn = {
+        "font-family": fn["font-family"],
+        "font-weight": fn["font-weight"],
+        "font-size": fn["font-size"]
+      };
+      return {
+        msg: "set-source",
+        title: "Cloned: " + document.title,
+        content: this.openedFile.raw,
+        font: fn,
+        codeBlockTheme: modalPreferences.actualSyntaxTheme,
+        customCSS: modalPreferences.customCSS
+      }
     }
   },
   components: {
@@ -1054,8 +1089,17 @@ var content = new Vue({
       window.addEventListener("resize", (ev) => {
         updateSplit(ev.currentTarget);
       });
-      window.addEventListener("message", (msg) => { 
-        if (this.slideshow !== null) this.slideshow.events.emit("message", msg);
+      window.addEventListener("message", (ev) => { 
+        if (ev.data == "slide-clone-loaded") {
+          ev.source.postMessage(this.cloneMessage, "*");
+        } else if (ev.data == "doc-clone-loaded") {
+          ev.source.postMessage(this.cloneMessage, "*");
+        } else if (ev.data.msg == "scroll-top") {
+          this.scrollSource = ev.source;
+          this.$refs.displayWrapper.setScrollTop(ev.data.scrollTop);
+        } else {
+          if (this.slideshow !== null) this.slideshow.events.emit("message", ev);
+        }
       }, false);
     })
   },
@@ -1118,6 +1162,19 @@ var content = new Vue({
         ta.selectionStart = tStart + 1;
         ta.selectionEnd = tEnd + 1;
       });
+    },
+    cloneDoc: function () {
+      if (!this.docClone || this.docClone.closed) {
+        this.docClone = window.open("snippets/cloned-doc.html", "Cloned: " + document.title, 'menubar=no,location=no');
+      } else {
+        this.docClone.focus();
+      }
+    },
+    scrollDoc: function (ev) {
+      if (this.docClone && !this.docClone.closed && !this.scrollSource) {
+        this.docClone.postMessage({ msg: "scroll-top", scrollTop: ev.target.scrollTop }, "*");
+      }
+      this.scrollSource = null;
     }
   }
 })
