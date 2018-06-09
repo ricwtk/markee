@@ -36,13 +36,12 @@
 
   <body class="v-box">
     <header id="navbar" class="v-box">
-      <div class="h-box v-center bg-primary-dark text-white p-1" ref="titleBar">
+      <div class="h-box v-center bg-primary-dark text-white p-1 wrap" ref="titleBar">
         <section class="h-box v-center">
           <img src="icons/icon.png" style="height: 24px;">&nbsp;<strong>Markee</strong>
           <span>&nbsp;Markdown&nbsp;Editor</span></span>
         </section>
-        <section class="grow"></section>
-        <section class="h-box v-center">
+        <section class="h-box v-center grow h-end">
           <span class="mr-1 c-hand mdi mdi-24px mdi-file" data-tooltip="New file" @click="createNewFile"></span>
           <span class="mr-1 c-hand mdi mdi-24px mdi-content-save" data-tooltip="Save file" @click="saveFile" v-if="!saving"></span>
           <span class="mr-1 mdi mdi-24px mdi-loading mdi-spin" data-tooltip="Saving file" v-if="saving"></span>
