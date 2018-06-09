@@ -91,10 +91,11 @@ function updateSplit(target) {
           document.querySelector("#display-wrapper")
         ], {
           sizes: [50,50],
-          gutterSize: 5,
+          gutterSize: 10,
+          minSize: [230, 320],
           gutter: (index, direction) => {
             const gutter = document.createElement('div');
-            gutter.className = `gutter gutter-${direction}`;
+            gutter.className = `gutter gutter-${direction} bg-white`;
             return gutter;
           },
           onDrag: () => {
@@ -156,7 +157,7 @@ var notiObj = {
   notifications: [],
   notify(msg, stat) {
     this.notifications.push({
-      statusClass: stat ? "toast-" + stat : "",
+      statusClass: stat ? "bg-" + stat : "",
       message: msg
     })
   }
@@ -213,37 +214,6 @@ var modalLoading = new Vue({
   data: {
     activate: false,
     loadingText: "Loading more words",
-    fontSizeStyle: {
-      "font-size": "1000%"
-    }
-  },
-  mounted: function () {
-    window.addEventListener("resize", this.setFontSize);
-    this.setFontSize();
-  },
-  beforeDestroy: function () {
-    window.removeEventListener("resize", this.setFontSize);
-  },
-  watch: {
-    "activate": function (val) {
-      if (val) {
-        this.setFontSize();
-      }
-    },
-    "loadingText": function () {
-      this.setFontSize();
-    }
-  },
-  methods: {
-    setFontSize: function () {
-      let fs = parseInt(this.fontSizeStyle["font-size"].match(/\d+/g));
-      let ww = window.innerWidth - 30;
-      let tw = parseInt(window.getComputedStyle(this.$refs.loadingText).getPropertyValue("width").match(/\d+/g));
-      let newfs = ww / tw * fs;
-      if (!isNaN(newfs)) {
-        this.fontSizeStyle["font-size"] = (ww / tw * fs) + "%";
-      }
-    }
   }
 })
 
@@ -256,16 +226,6 @@ new Vue({
     notiObj: notiObj,
     saving: false,
     savingashtml: false
-  },
-  computed: {
-    fileBar: function () {
-      return {
-        "background-color": this.openedFile.raw == this.openedFile.saved && this.openedFile.id ? "#8BC34A" : "#F44336"
-      }
-    },
-    fileSavedString: function () {
-      return this.openedFile.raw == this.openedFile.saved ? "File saved" : "File unsaved";
-    }
   },
   methods: {
     clickUser: function () {
@@ -290,7 +250,7 @@ new Vue({
     updateNGuideShown: function () {
       let barStyle = window.getComputedStyle(this.$el.querySelector("#md-guide"))
       let totalXPadding = this.getN(barStyle.getPropertyValue("padding")) + this.getN(barStyle.getPropertyValue("padding-left")) + this.getN(barStyle.getPropertyValue("padding-right"))
-      this.nguideshown = (this.getN(barStyle.getPropertyValue("width")) - totalXPadding - 24) / (24+8)
+      this.nguideshown = (this.getN(barStyle.getPropertyValue("width")) - totalXPadding - 24) / (24+10)
     },
     clickGuide: function (g) {
       modalGuide.title = g.tooltip
@@ -851,8 +811,8 @@ var contentContainer = {
   },
   template: `
   <span :id="wrapperId" :class="wrapperClass">
-    <div :class="['actual', 'grow', 'relative', 'md-'+contentTheme, 'v-box']" ref="innerWrapper" :style="innerWrapperStyle">
-      <textarea v-if="contenteditable" class="p-1 grow" ref="textarea" :style="fontStyle"
+    <div :class="['actual', 'bg-white', 'b-1', 'b-solid', 'bd-gray', 'br-1', 'grow', 'pos-relative', 'md-'+contentTheme, 'v-box']" ref="innerWrapper" :style="innerWrapperStyle">
+      <textarea v-if="contenteditable" class="b-0 form-textarea p-1 grow no-resize full-width full-height" ref="textarea" :style="fontStyle"
         :value="value" 
         @input="sendEditedContent" 
         @keydown.tab="addTab"
@@ -868,11 +828,11 @@ var contentContainer = {
         @scroll.passive="$emit('scroll-doc', $event)"
         :style="fontStyle">
       </div>
-      <div v-else class="presentation-wrapper grow relative" 
+      <div v-else class="presentation-wrapper grow pos-relative" 
         @wheel.prevent="$emit('p-wh', $event.deltaY)"
         :style="fontStyle"
       >
-        <div class="presentation-display"
+        <div class="presentation-display full-width full-height"
           @keyup.67.exact="customEmit('clone-presentation')"
           @keydown.67.exact="e => e.preventDefault()"
           @keyup.80.exact="customEmit('toggle-presenter-mode')"
@@ -881,11 +841,11 @@ var contentContainer = {
           @keydown.66.exact="e => e.preventDefault()"
         ></div>
       </div>
-      <div class="h-box px-2 v-center controls">
+      <div class="h-box pl-1 pr-1 v-center b-0 bt-1 b-solid bd-gray" style="font-size: 15px;">
         <template v-if="!contenteditable && docOrPres == 1">
           <div class="mdi mdi-triangle mdi-rotate-270 c-hand" @click="$emit('previous-slide')"></div>
-          <div class="h-box v-center px-1">
-            <select class="form-select select-sm" :value="currentSlide" @change="$emit('change-slide', $event.target.value)">
+          <div class="h-box v-center pl-1 pr-1">
+            <select class="form-select pr-1" :value="currentSlide" @change="$emit('change-slide', $event.target.value)">
               <option v-for="(n, idx) in slidesName" :value="idx+1">{{ idx+1 }}{{ n ? ': ' + n : '' }}</option>
             </select>
             <span>&nbsp;of&nbsp;{{ slidesName.length }}</span>
@@ -893,7 +853,7 @@ var contentContainer = {
           <div class="mdi mdi-triangle mdi-rotate-90 c-hand" @click="$emit('next-slide')"></div>
         </template>
         <div class="grow"></div>
-        <div v-for="a in actions" :class="['mdi', 'mdi-24px', 'c-hand'].concat(a.class).concat(a.tooltip ? ['tooltip', 'tooltip-left'] : '')" @click="$emit(a.emit)"
+        <div v-for="a in actions" :class="['mdi', 'mdi-24px', 'c-hand', 'pt-1', 'pb-1'].concat(a.class)" @click="$emit(a.emit)"
           :data-tooltip="a.tooltip ? a.tooltip : ''"
         ></div>
       </div>
@@ -982,14 +942,15 @@ var content = new Vue({
         emit: 'toggle-distract-free',
         tooltip: "toggle distraction free"
       }, {
-        class: ['mdi-fullscreen'],
+        class: ['mdi-presentation-play'],
         emit: "toggle-fullscreen",
         tooltip: "toggle fullscreen"
       }]);
       if (!presentationView) {
         return actions.concat([{
           class: ['mdi-eye', 'show-md'], 
-          emit: 'toggle-view' 
+          emit: 'toggle-view',
+          tooltip: 'view display'
         }]);
       } else {
         return actions;
@@ -1005,13 +966,13 @@ var content = new Vue({
         });
       }
       actions.push({
-        class: ['mdi-fullscreen'],
+        class: ['mdi-presentation-play'],
         emit: 'toggle-fullscreen',
         tooltip: "toggle fullscreen"
       });
       if (this.docOrPres == 0) {
         actions = actions.concat([{
-          class: ["mdi-content-duplicate"],
+          class: ["mdi-checkbox-multiple-blank-outline"],
           emit: "clone-doc",
           tooltip: "clone document"
         }]);
@@ -1021,7 +982,7 @@ var content = new Vue({
           emit: "toggle-presenter-mode",
           tooltip: "toggle presenter mode (p)"
         }, {
-          class: ["mdi-content-duplicate"],
+          class: ["mdi-checkbox-multiple-blank-outline"],
           emit: "clone-presentation",
           tooltip: "clone presentation (c)"
         }, {
@@ -1032,12 +993,13 @@ var content = new Vue({
       }
       if (!presentationView) {
         actions = actions.concat([{ 
-          class: [ this.docOrPres == 0 ? 'mdi-file-document' : 'mdi-file-powerpoint'],
+          class: [ this.docOrPres == 0 ? 'mdi-file-document-box' : 'mdi-file-powerpoint'],
           emit: "toggle-render",
           tooltip: "render as document/slides"
         }, { 
           class: ['mdi-lead-pencil', 'show-md'], 
-          emit: 'toggle-view' 
+          emit: 'toggle-view',
+          tooltip: "view editor"
         }]);
       }
       return actions;
@@ -1212,7 +1174,7 @@ function initApis() {
               openedFile.canEdit = res.result.capabilities.canEdit;
 
               if (!openedFile.canEdit) {
-                notiObj.notify("This file is not editable.", "error");
+                notiObj.notify("This file is not editable.", "danger");
               }
   
               async function findParents(currentPath, currentPathInName, parents) {

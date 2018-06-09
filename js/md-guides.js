@@ -257,17 +257,18 @@
   }, {
     icon: "mdi-file-powerpoint",
     tooltip: "Presentation",
-    guide: "To render the text as slides, click <i class='mdi mdi-file-document'></i> at the bottom of the display panel. "
+    guide: "To render the text as slides, click <i class='mdi mdi-file-document-box'></i> at the bottom of the display panel. "
       + "To render it as document, click <i class='mdi mdi-file-powerpoint'></i>.\n\n"
       + "**Buttons** \n"
       + "| Button | Function |\n"
       + "|:------:|:---------|\n"
       + "| <i class='mdi mdi-triangle mdi-rotate-270'></i> | Go to previous slide            |\n"
       + "| <i class='mdi mdi-triangle mdi-rotate-90'></i>  | Go to next slide                |\n"
-      + "| <i class='mdi mdi-fullscreen'></i>              | Fullscreen view                 |\n"
-      + "| <i class='mdi mdi-file-powerpoint'></i>         | Render as document              |\n"
+      + "| <i class='mdi mdi-presentation-play'></i>       | Fullscreen view                 |\n"
+      + "| <i class='mdi mdi-checkbox-multiple-blank-outline'></i>   | Clone slides in separate window |\n"
       + "| <i class='mdi mdi-file-presentation-box'></i>   | Toggle presenter mode           |\n"
-      + "| <i class='mdi mdi-content-duplicate'></i>       | Clone slides in separate window |\n"
+      + "| <i class='mdi mdi-image-off'></i>               | Toggle blackout |\n"
+      + "| <i class='mdi mdi-file-powerpoint'></i>         | Render as document              |\n"
       + "\n"
       + "**Keyboard shortcuts** \n"
       + "| Shortcut | Function |\n"

@@ -19,9 +19,7 @@
     <meta name="keywords" content="markee, markdown editor, markdown, editor">
     <link rel="icon" type="image/png" href="icons/icon.png?v=1.0">
     <link rel="stylesheet" href="css/md-themes.css">
-    <link rel="stylesheet" href="css/custom.css">
-    <link rel="stylesheet" href="css/spectre.min.css">
-    <link rel="stylesheet" href="css/spectre-icons.min.css">
+    <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/materialdesignicons.min.css">
     <link rel="stylesheet" href="css/highlight/default.css">
     <script src="js/vue.min.js"></script>
@@ -37,86 +35,88 @@
   </head>
 
   <body class="v-box">
-    <header id="navbar">
-      <div class="navbar bg-dark px-2" ref="titleBar">
-        <section class="navbar-section">
-          <span class="navbar-brand" style="display: flex"><img src="icons/icon.png" style="height: 24px;">&nbsp;<strong>Markee</strong></span>
+    <header id="navbar" class="v-box">
+      <div class="h-box v-center bg-primary-dark text-white p-1" ref="titleBar">
+        <section class="h-box v-center">
+          <img src="icons/icon.png" style="height: 24px;">&nbsp;<strong>Markee</strong>
           <span>&nbsp;Markdown&nbsp;Editor</span></span>
         </section>
-        <section class="navbar-section">
-          <!-- <span class="tooltip tooltip-bottom px-2 mdi mdi-24px mdi-circle " :style="fileDot" :data-tooltip="fileSavedString"></span> -->
-          <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-file" data-tooltip="New file" @click="createNewFile"></span>
-          <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-content-save" data-tooltip="Save file" @click="saveFile" v-if="!saving"></span>
-          <span class="tooltip tooltip-bottom px-2 mdi mdi-24px mdi-loading mdi-spin" data-tooltip="Saving file" v-if="saving"></span>
-          <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-content-save-settings" data-tooltip="Save as" @click="saveAs"></span>
-          <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-folder-open" data-tooltip="Open from cloud" @click="openFile"></span>
-          <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-download" data-tooltip="Save as html file" @click="saveAsHtml" v-if="!savingashtml && openedFile.parents.length > 0"></span>
-          <span class="tooltip tooltip-bottom px-2 mdi mdi-24px mdi-loading mdi-spin" data-tooltip="Saving as html file" v-if="savingashtml"></span>
-          <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-settings" data-tooltip="Preferences" @click="openPreferences"></span>
-          <span class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-laptop" data-tooltip="Markee desktop" @click="openMarkeeDesktop"></span>
-          <div class="divider-vert"></div>
-          <span id="user" class="tooltip tooltip-bottom px-2 c-hand mdi mdi-24px mdi-account-circle" data-tooltip="User" @click="clickUser"></span>
+        <section class="grow"></section>
+        <section class="h-box v-center">
+          <span class="mr-1 c-hand mdi mdi-24px mdi-file" data-tooltip="New file" @click="createNewFile"></span>
+          <span class="mr-1 c-hand mdi mdi-24px mdi-content-save" data-tooltip="Save file" @click="saveFile" v-if="!saving"></span>
+          <span class="mr-1 mdi mdi-24px mdi-loading mdi-spin" data-tooltip="Saving file" v-if="saving"></span>
+          <span class="mr-1 c-hand mdi mdi-24px mdi-content-save-settings" data-tooltip="Save as" @click="saveAs"></span>
+          <span class="mr-1 c-hand mdi mdi-24px mdi-folder-open" data-tooltip="Open from cloud" @click="openFile"></span>
+          <span class="mr-1 c-hand mdi mdi-24px mdi-download" data-tooltip="Save as html file" @click="saveAsHtml" v-if="!savingashtml && openedFile.parents.length > 0"></span>
+          <span class="mr-1 mdi mdi-24px mdi-loading mdi-spin" data-tooltip="Saving as html file" v-if="savingashtml"></span>
+          <span class="mr-1 c-hand mdi mdi-24px mdi-settings" data-tooltip="Preferences" @click="openPreferences"></span>
+          <span class="mr-1 c-hand mdi mdi-24px mdi-laptop" data-tooltip="Markee desktop" @click="openMarkeeDesktop"></span>
+          <span class="mr-1">|</span>
+          <span id="user" class="mr-1 c-hand mdi mdi-24px mdi-account-circle" data-tooltip="User" @click="clickUser"></span>
         </section>
       </div>
-      <div id="md-guide" class="col-12 bg-secondary px-2" ref="guideBar">
+      <div id="md-guide" class="bg-gray-light pl-1 pr-1 h-box" ref="guideBar">
         <div id="guide-items">
-          <span v-for="g in guides.slice(0, nguideshown)"
-            :class="['c-hand', 'px-1', 'mdi', 'mdi-24px', 'tooltip', 'tooltip-bottom', g.icon]"
+          <span v-for="(g,i) in guides.slice(0, nguideshown)"
+            :class="['c-hand', 'mr-1', 'mdi', 'mdi-24px', g.icon]"
             :data-tooltip="g.tooltip"
             @click="clickGuide(g)">
           </span>
         </div>
-        <div class="dropdown dropdown-right text-right" v-if="guides.slice(nguideshown).length > 0">
+        <div class="grow"></div>
+        <div class="dropdown dropdown-right h-right" v-if="guides.slice(nguideshown).length > 0">
           <span class="c-hand mdi mdi-24px mdi-chevron-down dropdown-toggle" tabIndex="0"></span>
-          <ul class="menu text-left">
-            <li v-for="g in guides.slice(nguideshown)" class="c-hand" @click="clickGuide(g)">
-              <i :class="['mdi', 'mdi-24px', g.icon]"></i><span class="px-1">{{ g.tooltip }}</span>
-            </li>
-          </ul>
+          <div class="content v-box h-left bg-gray-light">
+            <span v-for="g in guides.slice(nguideshown)" 
+              :class="['c-hand', 'mdi', 'mdi-24px', g.icon, 'p-1', 'h-box', 'v-center']" 
+              @click="clickGuide(g)">
+              {{ g.tooltip.replace(" ", "&nbsp;") }}
+          </span>
+          </div>
         </div>
       </div>
-      <div class="pt-1" :style="fileBar"></div>
-      <div id="file-info" class="px-2 h-box" ref="fileInfoBar">          
+      <div :class="['pt-1', openedFile.raw == openedFile.saved && openedFile.id ? 'bg-success' : 'bg-danger']"></div>
+      <div id="file-info" class="pt-1 pl-1 pr-1 h-box smaller v-center" ref="fileInfoBar">          
         <template v-if="openedFile.id">
-          <div class="dropdown grow" v-if="openedFile.pathsInName.length > 0">
-            <span :class="openedFile.pathsInName.length > 1 ? ['dropdown-toggle', 'c-hand', 'tooltip', 'tooltip-bottom'] : ['dropdown-toggle']" tabindex="0" data-tooltip="Show other paths that point to this file">
-              <ul class="breadcrumb">
-                <li class="breadcrumb-item" v-for="n in openedFile.pathsInName[0].slice().reverse()">
+          <div class="dropdown grow smaller" v-if="openedFile.pathsInName.length > 0">
+            <span :class="openedFile.pathsInName.length > 1 ? ['dropdown-toggle', 'c-hand'] : ['dropdown-toggle']" tabindex="0">
+              <div class="breadcrumb">
+                <div class="bc-item" v-for="n in openedFile.pathsInName[0].slice().reverse()">
                   {{ n }}
-                </li>
-              </ul>
+                </div>
+              </div>
               <span class="mdi mdi-chevron-down text-right" v-if="openedFile.pathsInName.length > 1"></span>
             </span>
-            <ul class="menu grow" v-if="openedFile.pathsInName.length > 1">
+            <div class="content grow v-box bg-white" v-if="openedFile.pathsInName.length > 1">
               <template v-for="(p,i) in openedFile.pathsInName.slice(1)">
-                <li>
-                  <ul class="breadcrumb">
-                    <li class="breadcrumb-item" v-for="n in p.slice().reverse()">
-                      {{ n }}
-                    </li>
-                  </ul>
-                </li>
-                <li class="divider" v-if="i !== openedFile.pathsInName.length-2"></li>
+                <div class="breadcrumb">
+                  <div class="bc-item" v-for="n in p.slice().reverse()">
+                    {{ n }}
+                  </div>
+                </div>
+                <div class="pt-1" v-if="i !== openedFile.pathsInName.length-2"></div>
               </template>
-            </ul>
+            </div>
           </div>
         </template>
         <template v-else>
           <div class="grow">{{ openedFile.name }}</div>
         </template>
-        <div class="mdi mdi-chevron-up tooltip tooltip-left" @click="hideHeader" data-tooltip="Hide header" ref="hideHeaderAction"></div>
-        <div class="mdi mdi-chevron-down tooltip tooltip-left hide" @click="showHeader" data-tooltip="Show header" ref="showHeaderAction"></div>
+        <div class="mdi mdi-chevron-up c-hand" @click="hideHeader" data-tooltip="Hide header" ref="hideHeaderAction"></div>
+        <div class="mdi mdi-chevron-down hide c-hand" @click="showHeader" data-tooltip="Show header" ref="showHeaderAction"></div>
       </div>
-      <div id="notifications" class="col-12 bg-secondary p-2" v-if="notiObj.notifications.length > 0">
-        <div v-for="(noti, index) in notiObj.notifications" :class="['toast', noti.statusClass]">
-          <button class="btn btn-clear float-right" @click="notiObj.notifications.splice(index, 1)"></button>
+      <div id="notifications" class="grow bg-white p-1 pb-0 smaller v-box" v-if="notiObj.notifications.length > 0">
+        <div v-for="(noti, index) in notiObj.notifications" :class="['h-box', 'p-1', 'text-white', noti.statusClass]">
           {{ noti.message }}
+          <div class="grow"></div>
+          <div class="mdi mdi-close c-hand" @click="notiObj.notifications.splice(index, 1)"></div>
         </div>
       </div>
     </header>
 
     <div :class="['modal', activate ? 'active' : '']" id="modal-loading">
-      <div class="modal-overlay" :style="fontSizeStyle">
+      <div class="modal-overlay v-box h-center v-center" style="font-size: 2rem">
         <i id="loading-icon" class="mdi mdi-loading mdi-spin"></i>
         <div id="loading-text" ref="loadingText">{{ loadingText }}</div>
       </div>
@@ -125,39 +125,35 @@
     <div class="modal" id="modal-user">
       <span class="modal-overlay" aria-label="Close" @click="closeModal"></span>
       <div class="modal-container">
-        <div class="modal-header">
-          <a @click="closeModal" class="btn btn-clear float-right" aria-label="Close"></a>
-          <strong>User profile</strong>
+        <div class="modal-title h-box">
+          <strong class="grow">User profile</strong>
+          <a @click="closeModal" class="c-hand mdi mdi-close" aria-label="Close"></a>
         </div>
-        <div class="modal-body">
-          <div class="card" v-if="(Object.values(signedIn)).some(el => el)">
-            <div class="card-header columns">
-              <div class="column col-2 columns"><img :src="signedInUser.profilePic" class="img-responsive img-fit-contain"></div>
-              <div class="column columns" style="flex-direction: column; align-items: center; justify-content: center">
-                <div class="card-title h5">{{ signedInUser.name }}</div>
-                <div class="card-subtitle text-gray">{{ signedInUser.email }}</div>
+        <div class="modal-body v-box h-center v-center">
+          <div class="v-box b-1 b-solid bd-gray p-1 br-1" v-if="(Object.values(signedIn)).some(el => el)">
+            <div class="h-box">
+              <div class="br-1"><img :src="signedInUser.profilePic" class="img-responsive img-fit-contain"></div>
+              <div class="pl-2 v-box h-start v-center">
+                <strong class="p-0 m-0">{{ signedInUser.name }}</strong>
+                <div class="text-gray">{{ signedInUser.email }}</div>
               </div>
             </div>
-            <div class="card-footer columns">
-              <button class="btn btn-outline col-12" @click="signOut">Sign out</button>
-            </div>
+            <div class="grow p-1 br-1 b-1 b-solid bd-gray hv-bg-primary-dark hv-text-white c-hand h-center" @click="signOut">Sign out</div>
           </div>
-          <div class="columns" v-else>
-            <div class="column col-12">Sign in to </div>
-            <div class="column col-12 flex-centered" id="sign-in-icons">
-              <span class="tooltip tooltip-top px-2 c-hand mdi mdi-24px mdi-google-drive" data-tooltip="Google Drive" @click="signInGoogle"></span>
+          <div class="v-box h-center" v-else>
+            <div>Sign in to </div>
+            <div class="h-box h-center" id="sign-in-icons">
+              <span class="p-1 c-hand mdi mdi-24px mdi-google-drive hv-bg-primary-dark hv-text-white br-1" data-tooltip="Google Drive" @click="signInGoogle"></span>
               <!-- <span class="tooltip tooltip-top px-2 c-hand mdi mdi-24px mdi-onedrive" data-tooltip="Onedrive"></span>
               <span class="tooltip tooltip-top px-2 c-hand mdi mdi-24px mdi-dropbox" data-tooltip="Dropbox"></span> -->
             </div>
           </div>
-          <div class="divider"></div>
-          <div class="c-hand text-center full-width-button" @click="openPrivacyPolicy">
+          <div class="mt-1 p-1 c-hand br-1 h-center hv-bg-primary-dark hv-text-white" @click="openPrivacyPolicy">
             Privacy policy
           </div>
-          <div class="divider"></div>
         </div>
         <div class="modal-footer">
-          <small>This site is powered by <a href="https://picturepan2.github.io/spectre/">Spectre</a>, <a href="https://materialdesignicons.com/">Material Design Icons</a>, <a href="https://github.com/showdownjs/showdown">Showdown</a>, and <a href="https://vuejs.org/">Vue</a></small>
+          <small>This site is powered by <a href="https://materialdesignicons.com/">Material Design Icons</a>, <a href="https://github.com/showdownjs/showdown">Showdown</a>, and <a href="https://vuejs.org/">Vue</a></small>
         </div>
       </div>
     </div>
@@ -165,78 +161,115 @@
     <div class="modal" id="modal-preferences">
       <span class="modal-overlay" aria-label="Close" @click="toggleModal"></span>
       <div class="modal-container">
-        <div class="modal-header">
-          <a @click="toggleModal" class="btn btn-clear float-right" aria-label="Close"></a>
-          <strong>Preferences</strong>
+        <div class="modal-title h-box">
+          <strong class="grow">Preferences</strong>
+          <a @click="toggleModal" class="mdi mdi-close c-hand" aria-label="Close"></a>
         </div>
-        <div class="modal-body v-box">
+        <div class="modal-body v-box pl-1 pr-1">
           <div>
             <strong>Editor font</strong>
             <small>Fonts are provided by <a href="https://fonts.google.com/" target="_blank">Google Fonts</a>.</small>
           </div>
           <div class="h-box">
-            <select class="grow-3 form-select mr-1" v-model="editorFont['font-family']"><option v-for="ff in fontFamilies" :value="ff">{{ ff }}</option></select>
-            <select class="grow-1 form-select mr-1" v-model="editorFont['font-weight']"><option v-for="fw in getFontWeights(editorFont['font-family'])" :value="fw">{{ fw }}</option></select>
-            <select class="grow-1 form-select" v-model="editorFont['font-size']"><option v-for="n in fontSizes" :value="n + 'px'">{{ n + 'px' }}</option></select>
+            <div class="form-select-wrapper grow-3 mr-1">
+              <select class="grow form-select p-1" v-model="editorFont['font-family']"><option v-for="ff in fontFamilies" :value="ff">{{ ff }}</option></select>
+              <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>
+            </div>
+            <div class="form-select-wrapper grow-1 mr-1">
+              <select class="grow form-select p-1" v-model="editorFont['font-weight']"><option v-for="fw in getFontWeights(editorFont['font-family'])" :value="fw">{{ fw }}</option></select>
+              <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>
+            </div>
+            <div class="form-select-wrapper grow-1">
+              <select class="grow form-select p-1" v-model="editorFont['font-size']"><option v-for="n in fontSizes" :value="n + 'px'">{{ n + 'px' }}</option></select>
+              <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>
+            </div>
           </div>
-          <div class="py-1" :style="{ 'font-family': editorFont['font-family'], 'font-weight': editorFont['font-weight'], 'font-size': editorFont['font-size'] }">
+          <div class="pt-1 pb-1" :style="{ 'font-family': editorFont['font-family'], 'font-weight': editorFont['font-weight'], 'font-size': editorFont['font-size'] }">
             {{ fontExample }}
           </div>
 
-          <div class="py-2"></div>
+          <div class="pt-2"></div>
 
           <strong>Base font for display</strong>
           <div class="v-box ml-2">
-            <div class="form-label">Document</div>
+            <div class="pt-1">Document</div>
             <div class="h-box">
-                <select class="grow-3 form-select mr-1" v-model="docFont['font-family']"><option v-for="ff in fontFamilies" :value="ff">{{ ff }}</option></select>
-                <select class="grow-1 form-select mr-1" v-model="docFont['font-weight']"><option v-for="fw in getFontWeights(docFont['font-family'])" :value="fw">{{ fw }}</option></select>
-                <select class="grow-1 form-select" v-model="docFont['font-size']"><option v-for="n in fontSizes" :value="n + 'px'">{{ n + 'px' }}</option></select>
+              <div class="form-select-wrapper grow-3 mr-1">
+                <select class="grow form-select p-1" v-model="docFont['font-family']"><option v-for="ff in fontFamilies" :value="ff">{{ ff }}</option></select>
+                <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>
+              </div>
+              <div class="form-select-wrapper grow-1 mr-1">
+                <select class="grow form-select p-1" v-model="docFont['font-weight']"><option v-for="fw in getFontWeights(docFont['font-family'])" :value="fw">{{ fw }}</option></select>
+                <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>
+              </div>
+              <div class="form-select-wrapper grow-1">
+                <select class="grow form-select p-1" v-model="docFont['font-size']"><option v-for="n in fontSizes" :value="n + 'px'">{{ n + 'px' }}</option></select>
+                <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>
+              </div>
             </div>
-            <div class="py-1" :style="{ 'font-family': docFont['font-family'], 'font-weight': docFont['font-weight'], 'font-size': docFont['font-size'] }">
+            <div class="pt-1 pb-1" :style="{ 'font-family': docFont['font-family'], 'font-weight': docFont['font-weight'], 'font-size': docFont['font-size'] }">
               {{ fontExample }}
             </div>
           </div>
           <div class="v-box ml-2">
-            <div class="form-label">Presentation</div>
+            <div class="pt-1">Presentation</div>
             <div class="h-box">
-                <select class="grow-3 form-select mr-1" v-model="slideFont['font-family']"><option v-for="ff in fontFamilies" :value="ff">{{ ff }}</option></select>
-                <select class="grow-1 form-select mr-1" v-model="slideFont['font-weight']"><option v-for="fw in getFontWeights(slideFont['font-family'])" :value="fw">{{ fw }}</option></select>
-                <select class="grow-1 form-select" v-model="slideFont['font-size']"><option v-for="n in fontSizes" :value="n + 'px'">{{ n + 'px' }}</option></select>
+              <div class="form-select-wrapper grow-3 mr-1">
+                <select class="grow form-select p-1" v-model="slideFont['font-family']"><option v-for="ff in fontFamilies" :value="ff">{{ ff }}</option></select>
+                <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>
+              </div>
+              <div class="form-select-wrapper grow-1 mr-1">
+                <select class="grow form-select p-1" v-model="slideFont['font-weight']"><option v-for="fw in getFontWeights(slideFont['font-family'])" :value="fw">{{ fw }}</option></select>
+                <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>
+              </div>
+              <div class="form-select-wrapper grow-1">
+                <select class="grow form-select p-1" v-model="slideFont['font-size']"><option v-for="n in fontSizes" :value="n + 'px'">{{ n + 'px' }}</option></select>
+                <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>
+              </div>
             </div>
-            <div class="py-1" :style="{ 'font-family': slideFont['font-family'], 'font-weight': slideFont['font-weight'], 'font-size': slideFont['font-size'] }">
+            <div class="pt-1 pb-1" :style="{ 'font-family': slideFont['font-family'], 'font-weight': slideFont['font-weight'], 'font-size': slideFont['font-size'] }">
               {{ fontExample }}
             </div>
           </div>
 
-          <div class="py-2"></div>
+          <div class="pt-2"></div>
           
           <strong>Syntax theme</strong>
           <div class="v-box ml-2">
-            <div class="form-label">Default</div>
-            <select class="form-select" v-model="defaultSyntaxTheme">
-              <option v-for="hlt in hltheme.list" :value="hlt">{{ hlt }}</option>
-            </select>
+            <div class="pt-1">Default</div>
+            <div class="form-select-wrapper">
+              <select class="form-select grow p-1" v-model="defaultSyntaxTheme">
+                <option v-for="hlt in hltheme.list" :value="hlt">{{ hlt }}</option>
+              </select>
+              <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>
+            </div>
           </div>
           <div class="v-box ml-2" v-if="hasLocation">
-            <div class="h-box">
-              <div class="form-label mr-2">This document</div>
-              <label class="form-switch"><input type="checkbox" v-model="useSeparateSyntaxTheme"><i class="form-icon"></i></label>
+            <div class="h-box v-center pt-1">
+              <div class="mr-2">This document</div>
+              <label class="form-switch text-primary-dark">
+                <input type="checkbox" v-model="useSeparateSyntaxTheme">
+                <div class="form-switch-on mdi mdi-24px mdi-checkbox-marked"></div>
+                <div class="form-switch-off mdi mdi-24px mdi-checkbox-blank-outline"></div>
+              </label>
             </div>
-            <select class="form-select" v-model="documentSyntaxTheme" :disabled="!useSeparateSyntaxTheme">
-              <option v-for="hlt in hltheme.list" :value="hlt">{{ hlt }}</option>
-            </select>
+            <div class="form-select-wrapper">
+              <select class="form-select grow p-1" v-model="documentSyntaxTheme" :disabled="!useSeparateSyntaxTheme">
+                <option v-for="hlt in hltheme.list" :value="hlt">{{ hlt }}</option>
+              </select>
+              <div class="form-select-icon mdi mdi-unfold-more-horizontal"></div>
+            </div>
           </div>
 
-          <div class="py-2"></div>
+          <div class="pt-2"></div>
 
           <strong>Custom CSS</strong>
-          <textarea class="form-input" rows="10" style="overflow: initial; resize: none;" 
+          <textarea class="form-textarea form-input no-resize" rows="10" style="overflow: initial;" 
             v-model="customCSS"
             @keydown.tab.prevent="addTab"
           ></textarea>
 
-          <div class="py-2"></div>
+          <div class="pt-2"></div>
         </div>
       </div>
     </div>
@@ -244,75 +277,68 @@
     <div class="modal" id="modal-guide">
       <span class="modal-overlay" aria-label="Close" @click="toggleModal"></span>
       <div class="modal-container">
-        <div class="modal-header">
-          <a @click="toggleModal" class="btn btn-clear float-right" aria-label="Close"></a>
-          <strong>{{ title }}</strong>
+        <div class="modal-title">
+          <strong class="grow">{{ title }}</strong>
+          <a @click="toggleModal" class="mdi mdi-close c-hand" aria-label="Close"></a>
         </div>
-        <div :class="['modal-body', 'md-'+mdTheme]" v-html="compiledContent"></div>
+        <div class="modal-body">
+          <div :class="['md-' + mdTheme, 'normal']" v-html="compiledContent"></div>
+        </div>
       </div>
     </div>
 
     <div class="modal" id="modal-file-explorer">
       <span class="modal-overlay" aria-label="Close" @click="toggleModal"></span>
       <div class="modal-container">
-        <div class="modal-header">
-          <a @click="toggleModal" class="btn btn-clear float-right" aria-label="Close"></a>
-          <strong>{{ title }}</strong>
+        <div class="modal-title">
+          <strong class="grow">{{ title }}</strong>
+          <a @click="toggleModal" class="mdi mdi-close c-hand" aria-label="Close"></a>
         </div>
-        <div class="modal-body bg-gray">
-          <div class="navbar">
-            <span class="navbar-section">
-              <span v-if="folder.parents" class="mdi mdi-chevron-left mr-2 px-1 c-hand nav-button" @click="goUpALevel"></span>
-              <span v-if="loadingFolder" class="mdi mdi-loading mdi-spin"></span>
-              <span v-else class="navbar-brand">{{ folder.name }}</span>
-            </span>
+        <div class="modal-body bg-gray-light br-1">
+          <div class="h-box v-center pl-1 pr-1 pt-2 pb-2">
+            <span v-if="folder.parents" class="mdi mdi-chevron-left mr-2 c-hand p-1 br-1 hv-bg-primary-dark hv-text-white" @click="goUpALevel"></span>
+            <span v-if="loadingFolder" class="p-1 mdi mdi-loading mdi-spin"></span>
+            <span v-else class="p-1">{{ folder.name }}</span>
           </div>
-          <div class="divider"></div>
-          <div class="col-12 file-list" ref="fileList">
+          <div class="ml-1 mr-1 divider"></div>
+          <div :class="['p-1', 'h-box', 'grow', 'no-select', ...loadingList ? ['v-center', 'h-center'] : ['wrap', 'h-start', 'v-start']]" ref="fileList">
             <template v-if="loadingList">
-              <span class="mdi mdi-loading mdi-spin"></span>
+              <span class="mdi mdi-loading mdi-spin p-1"></span>
             </template>
             <template v-else>
-              <div class="column col-12" v-if="list.length == 0">
-                <div class="tile tile-centered p-2">
-                  <div class="tile-icon">
-                    <i class="mdi mdi-24px mdi-file-hidden"></i>
-                  </div>
-                  <div class="tile-content">
-                    <div class="tile-title">No file</div>
-                  </div>
+              <div class="min-width-12 grow p-1" v-if="list.length == 0">
+                <div class="h-box v-center p-2 grow">
+                  <i class="mdi mdi-24px mdi-file-hidden"></i>
+                  <div class="ml-1 h-start grow text-ellipsis">No file</div>
                 </div>
               </div>
-              <span class="column col-4 col-sm-12 my-1" v-for="(item,i) in list">
-                <div class="tile tile-centered p-2 file-tile my-1" @click="onClickFile(item, 'ft-' + i)" :ref="'ft-' + i">
-                  <div class="tile-icon">
-                    <i v-if="item.mimeType == 'application/vnd.google-apps.folder'" class="mdi mdi-24px mdi-folder"></i>
-                    <i v-else-if="item.mimeType == 'text/markdown' || item.name.endsWith('.md')" class="mdi mdi-24px mdi-markdown"></i>
-                    <i v-else-if="item.mimeType == 'text/plain' && item.name.endsWith('.md')" class="mdi mdi-24px mdi-markdown"></i>
-                    <i v-else class="mdi mdi-24px mdi-file-document"></i>
-                  </div>
-                  <div class="tile-content">
-                    <div class="tile-title" :title="item.name">{{item.name}}</div>
-                    <!-- <div class="tile-subtitle text-gray">{{item.mimeType}}</div> -->
+              <span class="min-width-4 sm-min-width-12 grow p-1" v-for="(item,i) in list">
+                <div class="h-box v-center p-2 bg-white grow hv-bg-primary-dark hv-text-white" @click="onClickFile(item, 'ft-' + i)" :ref="'ft-' + i">
+                  <i v-if="item.mimeType == 'application/vnd.google-apps.folder'" class="mdi mdi-24px mdi-folder"></i>
+                  <i v-else-if="item.mimeType == 'text/markdown' || item.name.endsWith('.md')" class="mdi mdi-24px mdi-markdown"></i>
+                  <i v-else-if="item.mimeType == 'text/plain' && item.name.endsWith('.md')" class="mdi mdi-24px mdi-markdown"></i>
+                  <i v-else class="mdi mdi-24px mdi-file-document"></i>
+                  <div class="ml-1 h-start grow text-ellipsis" :title="item.name">
+                    {{item.name}}
                   </div>
                 </div>
               </span>
-              <div class="column col-12 text-center" v-if="loadingNextPage">
+              <div class="min-width-12 h-center" v-if="loadingNextPage">
                 <i class="mdi mdi-24px mdi-loading mdi-spin"></i>
               </div>
             </template>
           </div>
         </div>
-        <div class="modal-footer columns">
-          <span class="selected-file-name file-name px-2" v-if="options.type==options.TYPE.OPENFILE" contenteditable="false">{{ selectedFile ? selectedFile.name : "" }}</span>
-          <span class="save-to-file-name file-name px-2" v-else contenteditable="true" ref="fileNameToSave">Save file</span>
-          <div class="btn btn-outline" @click="clickAction">{{ actionTitle }}</div>
-          <div class="btn btn-outline" @click="toggleModal">Cancel</div>
+        <div class="modal-footer h-box v-stretch">
+          <span class="p-1 grow br-1 b-solid b-1 bd-gray" v-if="options.type==options.TYPE.OPENFILE" contenteditable="false">{{ selectedFile ? selectedFile.name : "&nbsp;" }}</span>
+          <input class="p-1 grow br-1 b-solid b-1 bd-gray form-input" v-else ref="fileNameToSave" placeholder="file name">
+          <button class="btn ml-1 mr-1 hv-bg-gray-light c-hand" @click="clickAction">{{ actionTitle }}</button>
+          <button class="btn hv-bg-gray-light c-hand" @click="toggleModal">Cancel</button>
         </div>
       </div>
     </div>
 
-    <div id="content" class="px-1 grow v-box">
+    <div id="content" class="grow v-box">
       <div id="actual-content" class="grow h-box">
         <content-container
           ref="editorWrapper"
