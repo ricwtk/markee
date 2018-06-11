@@ -19,7 +19,7 @@ body, html {
   margin: 0;
   font-family: var(--font-family);
   color: var(--black-color);
-  height: 100%;
+  height: 100vh;
 }
 
 *, *::before, *::after {
