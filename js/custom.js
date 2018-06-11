@@ -691,12 +691,14 @@ var modalFileExplorer = new Vue({
       this.updateFileExplorer(this.folder.parents[0]);
     },
     clickAction: function () {
+      console.log(this.options.type);
       if (this.options.type == this.options.TYPE.CREATENEW) {
-        if (this.$refs.fileNameToSave.textContent) {
+        console.log(this.$refs.fileNameToSave.value);
+        if (this.$refs.fileNameToSave.value) {
           this.$el.classList.remove("active");
           modalLoading.loadingText = "Creating file";
           modalLoading.activate = true;
-          gd.createFile(this.folder.id, this.$refs.fileNameToSave.textContent, initialText)
+          gd.createFile(this.folder.id, this.$refs.fileNameToSave.value, initialText)
             .then((res) => {
               if (res.status == 200) {
                 modalLoading.loadingText = "Opening file";
@@ -713,11 +715,11 @@ var modalFileExplorer = new Vue({
           gd.openFile(this.selectedFile.id);
         }
       } else if(this.options.type == this.options.TYPE.SAVEAS) {
-        if (this.$refs.fileNameToSave.textContent) {
+        if (this.$refs.fileNameToSave.value) {
           this.$el.classList.remove("active");
           modalLoading.loadingText = "Creating and saving file";
           modalLoading.activate = true;
-          gd.createFile(this.folder.id, this.$refs.fileNameToSave.textContent, openedFile.raw)
+          gd.createFile(this.folder.id, this.$refs.fileNameToSave.value, openedFile.raw)
             .then((res) => {
               if (res.status == 200) {
                 modalLoading.loadingText = "Opening file";
