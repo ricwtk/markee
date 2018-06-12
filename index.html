@@ -47,9 +47,8 @@
           <span class="mr-1 mdi mdi-24px mdi-loading mdi-spin" data-tooltip="Saving file" v-if="saving"></span>
           <span class="mr-1 c-hand mdi mdi-24px mdi-content-save-settings" data-tooltip="Save as" @click="saveAs"></span>
           <span class="mr-1 c-hand mdi mdi-24px mdi-folder-open" data-tooltip="Open from cloud" @click="openFile"></span>
-          <span class="mr-1 c-hand mdi mdi-24px mdi-download" data-tooltip="Save as html file" @click="saveAsHtml" v-if="!savingashtml && openedFile.parents.length > 0"></span>
-          <span class="mr-1 mdi mdi-24px mdi-loading mdi-spin" data-tooltip="Saving as html file" v-if="savingashtml"></span>
           <span class="mr-1 c-hand mdi mdi-24px mdi-settings" data-tooltip="Preferences" @click="openPreferences"></span>
+          <span class="mr-1 c-hand mdi mdi-24px mdi-dots-horizontal" data-tooltip="More" @click="openMoreActions"></span>
           <span class="mr-1 c-hand mdi mdi-24px mdi-laptop" data-tooltip="Markee desktop" @click="openMarkeeDesktop"></span>
           <span class="mr-1">|</span>
           <span id="user" class="mr-1 c-hand mdi mdi-24px mdi-account-circle" data-tooltip="User" @click="clickUser"></span>
@@ -269,6 +268,23 @@
           ></textarea>
 
           <div class="pt-2"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="modal-more-actions">
+      <span class="modal-overlay" aria-label="Close" @click="toggle"></span>
+      <div class="modal-container">
+        <div class="modal-title">
+          <strong class="grow">More actions</strong>
+          <a @click="toggle" class="mdi mdi-close c-hand"></a>
+        </div>
+        <div class="modal-body v-box v-center h-center">
+          <div class="button-group v-box">
+            <button class="btn normal p-1 hv-bg-primary-dark hv-text-white c-hand h-box v-center" v-if="openedFile.parents.length > 0" @click="saveAsHtml"><i class="mdi mdi-download"></i><span class="grow pl-1">Save as standalone html file</span></button>
+            <button class="btn normal p-1 hv-bg-primary-dark hv-text-white c-hand h-box v-center" @click="openPrinterVersion"><i class="mdi mdi-printer"></i><span class="grow pl-1">Open printer friendly version</span></button>
+          </div>
+          <a v-if="printerVersionUri" :href="printerVersionUri" target="_blank">Link to printer version</a>
         </div>
       </div>
     </div>

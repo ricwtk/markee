@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Markee (Printer-friendly)</title>
+    <style>
+      *, *::before, *::after {
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+      }
+      #main {
+        display: flex;
+        flex: column;
+      }
+      .presentation-display {
+        flex-grow: 1;
+      }
+      .remark-help, .remark-notes-area, .remark-preview-area, .remark-backdrop, .remark-pause {
+        display: none;
+      }
+      .remark-slide-container {
+        padding: 5px;
+      }
+      .remark-slide-scaler, .remark-slide-notes {
+        overflow: auto;
+        position: relative;
+      }
+      .remark-slide-scaler {
+        border: 3px solid #ddd;
+      }
+      .remark-slide {
+        height:100%;
+        width:100%;
+        display:table;
+        table-layout:fixed;
+        position:relative
+      }
+      .remark-slide>.left {
+        text-align:left
+      }
+      .remark-slide>.center {
+        text-align:center
+      }
+      .remark-slide>.right {
+        text-align:right
+      }
+      .remark-slide>.top {
+        vertical-align:top
+      }
+      .remark-slide>.middle {
+        vertical-align:middle
+      }
+      .remark-slide>.bottom {
+        vertical-align:bottom
+      }
+      .remark-slide-content {
+        background-color:#fff;
+        background-position:center;
+        background-repeat:no-repeat;
+        display:table-cell;
+        padding:1em 4em 1em 4em
+      }
+      .remark-slide-content .left {
+        display:block;
+        text-align:left
+      }
+      .remark-slide-content .center {
+        display:block;
+        text-align:center
+      }
+      .remark-slide-content .right {
+        display:block;
+        text-align:right
+      }
+      .remark-slide-number {
+        bottom:12px;
+        opacity:.5;
+        position:absolute;
+        right:20px
+      }
+    </style>
+    <link id="md-theme" rel="stylesheet" href="css/md-themes.css">
+    <link id="hl-theme" rel="stylesheet" href="css/highlight/default.css">
+    <style id="custom-css"></style>
+    <link id="font" rel="stylesheet" href="">
+  </head>
+  <body>
+    <div id="main" class="md-default"></div>
+    <script>
+      var oWidth, oHeight;
+      window.addEventListener("message", ev => {
+        if (ev.data.msg == "set-source") {
+          let main = document.querySelector("#main");
+          main.innerHTML = ev.data.content;
+          main.style.fontFamily = ev.data.font["font-family"];
+          main.style.fontWeight = ev.data.font["font-weight"];
+          main.style.fontSize = ev.data.font["font-size"];
+          document.title = ev.data.title;
+          document.querySelector("#hl-theme").href = "css/highlight/" + ev.data.codeBlockTheme + ".css";
+          document.querySelector("#custom-css").innerHTML = ev.data.customCSS;
+          document.querySelector("#font").href = "https://fonts.googleapis.com/css?family=" + ev.data.font["font-family"] + ":" + ev.data.font["font-weight"];
+          // slideshow conditioning
+          document.querySelectorAll(".remark-slide-scaler").forEach(el => {
+            console.log(el.style.cssText);
+            oWidth = parseInt(el.style.width.slice(0,-2));
+            oHeight = parseInt(el.style.height.slice(0,-2));
+            el.style.transformOrigin = "top left";
+            el.style.transform = null;
+            el.style.left = null;
+            el.style.top = null;
+          });
+          document.querySelector(".presentation-display").style.cssText = "";
+          resizeHandler();
+          window.addEventListener("resize", resizeHandler);
+        }
+      });
+
+      window.addEventListener("load", () => {
+        window.opener.postMessage("printer-friendly-loaded", "*");
+      });
+
+      function resizeHandler() {
+        let ww = window.innerWidth;
+        let scale = ww*0.5/oWidth;
+        document.querySelectorAll(".remark-slide-scaler").forEach(el => {
+          el.style.transform = "scale(" + scale + ")";
+        });
+        document.querySelectorAll(".remark-slide-container").forEach(el => {
+          el.style.height = scale * oHeight + 10 + "px";
+        });
+      }
+    </script>
+  </body>
+</html>

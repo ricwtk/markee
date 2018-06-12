@@ -224,8 +224,7 @@ new Vue({
     nguideshown: 3,
     openedFile: openedFile,
     notiObj: notiObj,
-    saving: false,
-    savingashtml: false
+    saving: false
   },
   methods: {
     clickUser: function () {
@@ -284,46 +283,6 @@ new Vue({
       fileExplorerOptions.type = fileExplorerOptions.TYPE.OPENFILE;
       modalFileExplorer.toggleModal();
     },
-    saveAsHtml: function () {
-      this.savingashtml = true;
-      let mdcss = new Request("css/md-themes.css");
-      let hlcss = new Request(hltheme.getThemeLocation());
-
-      let filesToFetch = [mdcss, hlcss];
-
-      Promise.all(filesToFetch.map(f => fetch(f))).then(res => 
-        Promise.all(res.map(r => r.text()))
-      ).then(t => {
-        if (content.docOrPres == 0) // document
-          return ["<!DOCTYPE html>\n<html>\n<head>\n",
-            "<meta charset='utf-8'>\n",
-            "<meta name='viewport' content='width=device-width, initial-scale=1'>\n",
-            "<style>\n",
-            t.join("\n"),
-            "\n</style>\n</head>\n<body class='md-default'>\n",
-            content.compiledDoc,
-            "\n</body>\n</html>"
-          ].join("");
-        else // slide
-          return ["<!DOCTYPE html>\n<html>\n<head>\n",
-            "<meta charset='utf-8'>\n",
-            "<meta name='viewport' content='width=device-width, initial-scale=1'>\n",
-            "<style>\n",
-            t.join("\n"),
-            "\n</style>\n</head>\n<body class='md-default presentation'>\n",
-            "<textarea id='source'>", content.compiledDoc, "</textarea>\n",
-            "<script>", jsForHtml, "\n",
-            "var slideshow = remark.create({ converter: mdconverter, externalHighlighter: true });\n",
-            "</script>\n",
-            "</body>\n</html>"
-          ].join("");
-      }).then(c => {
-        return gd.saveFileAsHtml(openedFile.parents[0], openedFile.name, c).then((res) => {
-          notiObj.notify("Compiled HTML is saved in " + res.result.name, "success");
-          this.savingashtml = false;
-        });
-      });
-    },
     autosave: function () {
       setTimeout(() => {
         if (this.openedFile.id && this.openedFile.raw !== this.openedFile.saved) {
@@ -331,6 +290,9 @@ new Vue({
         }
         this.autosave();
       }, 30000);
+    },
+    openMoreActions: function () {
+      modalMoreActions.toggle();
     },
     openPreferences: function () {
       modalPreferences.toggleModal();
@@ -562,6 +524,67 @@ var modalPreferences = new Vue({
     }
   }
 });
+
+var modalMoreActions = new Vue({
+  el: "#modal-more-actions",
+  data: {
+    openedFile: openedFile,
+    printerVersionUri: ""
+  },
+  methods: {
+    toggle: function () {
+      this.$el.classList.toggle("active");
+    },
+    saveAsHtml: function () {
+      modalLoading.loadingText = "Saving as standalone HTML file";
+      modalLoading.activate = true;
+
+      let mdcss = new Request("css/md-themes.css");
+      let hlcss = new Request(hltheme.getThemeLocation());
+
+      let filesToFetch = [mdcss, hlcss];
+
+      Promise.all(filesToFetch.map(f => fetch(f))).then(res => 
+        Promise.all(res.map(r => r.text()))
+      ).then(t => {
+        if (content.docOrPres == 0) // document
+          return ["<!DOCTYPE html>\n<html>\n<head>\n",
+            "<meta charset='utf-8'>\n",
+            "<meta name='viewport' content='width=device-width, initial-scale=1'>\n",
+            "<style>\n",
+            t.join("\n"),
+            "\n</style>\n</head>\n<body class='md-default'>\n",
+            content.compiledDoc,
+            "\n</body>\n</html>"
+          ].join("");
+        else // slide
+          return ["<!DOCTYPE html>\n<html>\n<head>\n",
+            "<meta charset='utf-8'>\n",
+            "<meta name='viewport' content='width=device-width, initial-scale=1'>\n",
+            "<style>\n",
+            t.join("\n"),
+            "\n</style>\n</head>\n<body class='md-default presentation'>\n",
+            "<textarea id='source'>", content.compiledDoc, "</textarea>\n",
+            "<script>", jsForHtml, "\n",
+            "var slideshow = remark.create({ converter: mdconverter, externalHighlighter: true });\n",
+            "</script>\n",
+            "</body>\n</html>"
+          ].join("");
+      }).then(c => {
+        return gd.saveFileAsHtml(openedFile.parents[0], openedFile.name, c).then((res) => {
+          notiObj.notify("Compiled HTML is saved in " + res.result.name, "success");
+          modalLoading.activate = false;
+        });
+      });    
+    },
+    openPrinterVersion: function () {
+      modalLoading.loadingText = "Preparing printer friendly version";
+      modalLoading.activate = true;
+      window.open("./printer-friendly.html", "_blank");
+      modalLoading.activate = false;
+    }
+  }
+})
 
 var modalGuide = new Vue({
   el: "#modal-guide",
@@ -824,8 +847,7 @@ var contentContainer = {
         @keydown.ctrl.73.exact="e => e.preventDefault()">
       </textarea>
       <div v-else-if="docOrPres == 0" v-html="value" 
-        class="p-1 grow content-display" 
-        style="overflow-y: scroll; background-color: white;" 
+        class="p-1 grow content-display bg-white overflow-auto" 
         ref="docDisplay" 
         @scroll.passive="$emit('scroll-doc', $event)"
         :style="fontStyle">
@@ -1061,6 +1083,8 @@ var content = new Vue({
         } else if (ev.data.msg == "scroll-top") {
           this.scrollSource = ev.source;
           this.$refs.displayWrapper.setScrollTop(ev.data.scrollTop);
+        } else if (ev.data == "printer-friendly-loaded") {
+          ev.source.postMessage(this.getPrinterMessage(), "*");
         } else {
           if (this.slideshow !== null) this.slideshow.events.emit("message", ev);
         }
@@ -1139,6 +1163,22 @@ var content = new Vue({
         this.docClone.postMessage({ msg: "scroll-top", scrollTop: ev.target.scrollTop }, "*");
       }
       this.scrollSource = null;
+    },
+    getPrinterMessage: function () {
+      let fn = this.docOrPres == 0 ? modalPreferences.docFont : modalPreferences.slideFont;
+      fn = {
+        "font-family": fn["font-family"],
+        "font-weight": fn["font-weight"],
+        "font-size": fn["font-size"]
+      };
+      return {
+        msg: "set-source",
+        title: "Printer-friendly: " + document.title,
+        content: this.$refs.displayWrapper.$refs.innerWrapper.firstChild.innerHTML,
+        font: fn,
+        codeBlockTheme: modalPreferences.actualSyntaxTheme,
+        customCSS: modalPreferences.customCSS
+      }
     }
   }
 })
