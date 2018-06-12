@@ -19,7 +19,7 @@ body, html {
   margin: 0;
   font-family: var(--font-family);
   color: var(--black-color);
-  height: 100vh;
+  height: 100%;
 }
 
 *, *::before, *::after {
@@ -361,8 +361,8 @@ a, a:visited {
 .modal {
   display: none;
   position: absolute;
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
   background-color: rgba(189, 189, 189, .9);
   justify-content: center;
   align-items: center;
