@@ -9,6 +9,7 @@
         box-sizing: border-box;
         padding: 0;
         margin: 0;
+        min-width: 0;
       }
       #main {
         display: flex;
@@ -22,10 +23,18 @@
       }
       .remark-slide-container {
         padding: 5px;
+        position: relative;
       }
-      .remark-slide-scaler, .remark-slide-notes {
+      .remark-slide-scaler {
         overflow: auto;
         position: relative;
+      }
+      .remark-slide-notes {
+        overflow: auto;
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 13px;
       }
       .remark-slide-scaler {
         border: 3px solid #ddd;
@@ -103,7 +112,6 @@
           document.querySelector("#font").href = "https://fonts.googleapis.com/css?family=" + ev.data.font["font-family"] + ":" + ev.data.font["font-weight"];
           // slideshow conditioning
           document.querySelectorAll(".remark-slide-scaler").forEach(el => {
-            console.log(el.style.cssText);
             oWidth = parseInt(el.style.width.slice(0,-2));
             oHeight = parseInt(el.style.height.slice(0,-2));
             el.style.transformOrigin = "top left";
@@ -127,8 +135,15 @@
         document.querySelectorAll(".remark-slide-scaler").forEach(el => {
           el.style.transform = "scale(" + scale + ")";
         });
+        document.querySelectorAll(".remark-slide-notes").forEach(el => {
+          el.style.left = scale * oWidth + 15 + "px";
+        });
         document.querySelectorAll(".remark-slide-container").forEach(el => {
-          el.style.height = scale * oHeight + 10 + "px";
+          let slideHeight = scale * oHeight + 10;
+          let noteHeight = getComputedStyle(el.querySelector(".remark-slide-notes")).height;
+          if (noteHeight == "auto") noteHeight = 0;
+          else noteHeight = parseInt(noteHeight.slice(0, -2));
+          el.style.height = noteHeight > slideHeight ? noteHeight + "px" : slideHeight + "px";
         });
       }
     </script>
